@@ -1,0 +1,26 @@
+# Dépendances
+node_modules/
+
+# Variables d'environnement (ne jamais committer de clé API)
+.env
+.env.*
+!.env.example
+
+# Builds
+dist/
+build/
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Éditeurs / OS
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude Code (réglages locaux)
+.claude/settings.local.json

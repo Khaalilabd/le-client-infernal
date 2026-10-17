@@ -1,0 +1,284 @@
+// Schéma de données partagé — « Le Client Infernal »
+// Toute modification passe par une migration (npm run db:migrate -- --name <nom>)
+// et doit être signalée à l'équipe. Le propriétaire de chaque table est indiqué en commentaire.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// Énumérations
+// ============================================================
+
+enum Role {
+  STUDENT
+  TEACHER
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum SessionStatus {
+  IN_PROGRESS
+  COMPLETED
+  ABANDONED
+}
+
+enum MessageSender {
+  STUDENT
+  CLIENT
+}
+
+enum ChangeRequestStatus {
+  PENDING
+  ANSWERED
+}
+
+enum ChangeDecision {
+  ACCEPT
+  NEGOTIATE
+  REFUSE
+}
+
+enum RequirementType {
+  FUNCTIONAL
+  NON_FUNCTIONAL
+  USER_STORY
+}
+
+enum Priority {
+  MUST
+  SHOULD
+  COULD
+  WONT
+}
+
+enum DocumentStatus {
+  DRAFT
+  SUBMITTED
+  EVALUATED
+}
+
+enum AiCallStatus {
+  SUCCESS
+  ERROR
+}
+
+// ============================================================
+// BASE COMMUNE
+// ============================================================
+
+/// Utilisateur de la plateforme. Propriétaire : base commune.
+/// firstName, lastName et email ne sont JAMAIS envoyés au LLM.
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  role         Role     @default(STUDENT)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions         TrainingSession[]
+  createdScenarios Scenario[]        @relation("ScenarioCreator")
+  givenFeedbacks   TeacherFeedback[]
+}
+
+/// Séance d'entraînement d'un étudiant sur un scénario.
+/// Relie les modules 2, 3, 4 et 5. Propriétaire : base commune.
+model TrainingSession {
+  id          String        @id @default(cuid())
+  studentId   String
+  scenarioId  String
+  status      SessionStatus @default(IN_PROGRESS)
+  finalScore  Float?
+  startedAt   DateTime      @default(now())
+  completedAt DateTime?
+
+  student              User                  @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  scenario             Scenario              @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
+  messages             InterviewMessage[]
+  changeRequests       ChangeRequest[]
+  requirementsDocument RequirementsDocument?
+  feedbacks            TeacherFeedback[]
+
+  @@index([studentId])
+  @@index([scenarioId])
+}
+
+/// Journal technique des appels au LLM (aucun contenu, aucune donnée personnelle).
+/// Propriétaire : base commune (service IA). Utilisé par le dashboard pour les statistiques.
+model AiCallLog {
+  id         String       @id @default(cuid())
+  module     String
+  promptName String
+  provider   String
+  model      String?
+  status     AiCallStatus
+  errorCode  String?
+  attempts   Int          @default(1)
+  durationMs Int
+  createdAt  DateTime     @default(now())
+
+  @@index([module, createdAt])
+}
+
+// ============================================================
+// MODULE 1 — client-generator (Khalil Abdelmoumen)
+// ============================================================
+
+/// Scénario de client fictif généré par le LLM.
+/// hiddenNeed et implicitConstraints sont SECRETS : omis par défaut par le client Prisma
+/// (voir server/src/shared/db/prisma.js) et jamais envoyés au front-end.
+model Scenario {
+  id                  String   @id @default(cuid())
+  domain              String
+  level               Level
+  title               String
+  clientName          String
+  clientRole          String
+  companyName         String
+  /// { traits: string[], communicationStyle: string, mood: string }
+  personality         Json
+  context             String   @db.Text
+  expressedNeed       String   @db.Text
+  /// SECRET — ne quitte jamais le serveur
+  hiddenNeed          String   @db.Text
+  /// SECRET — string[]
+  implicitConstraints Json
+  createdById         String?
+  createdAt           DateTime @default(now())
+
+  createdBy User?             @relation("ScenarioCreator", fields: [createdById], references: [id], onDelete: SetNull)
+  sessions  TrainingSession[]
+
+  @@index([domain, level])
+}
+
+// ============================================================
+// MODULE 2 — interview (Kenza Baccar)
+// ============================================================
+
+/// Message du chat d'entretien entre l'étudiant et le client simulé.
+model InterviewMessage {
+  id        String        @id @default(cuid())
+  sessionId String
+  sender    MessageSender
+  content   String        @db.Text
+  /// Proximité de la question avec le besoin caché (0 à 1), calculée par le LLM. Usage serveur.
+  proximity Float?
+  createdAt DateTime      @default(now())
+
+  session TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId, createdAt])
+}
+
+// ============================================================
+// MODULE 3 — change-requests (Ismail Ismail)
+// ============================================================
+
+/// Demande de changement émise par le client et réponse de l'étudiant.
+model ChangeRequest {
+  id            String              @id @default(cuid())
+  sessionId     String
+  title         String
+  description   String              @db.Text
+  reason        String              @db.Text
+  /// { scope: string, effort: "LOW"|"MEDIUM"|"HIGH", risk: string }
+  impact        Json
+  status        ChangeRequestStatus @default(PENDING)
+  decision      ChangeDecision?
+  justification String?             @db.Text
+  /// Note de la réponse de l'étudiant (0 à 100)
+  score         Int?
+  feedback      String?             @db.Text
+  createdAt     DateTime            @default(now())
+  answeredAt    DateTime?
+
+  session TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}
+
+// ============================================================
+// MODULE 4 — requirements (Nadhem Hmida)
+// ============================================================
+
+/// Cahier des charges rédigé par l'étudiant (un par séance).
+model RequirementsDocument {
+  id        String         @id @default(cuid())
+  sessionId String         @unique
+  status    DocumentStatus @default(DRAFT)
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+
+  session      TrainingSession          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  requirements Requirement[]
+  evaluations  RequirementsEvaluation[]
+}
+
+/// Exigence du cahier des charges.
+model Requirement {
+  id                 String          @id @default(cuid())
+  documentId         String
+  type               RequirementType
+  /// Identifiant lisible, ex. EF-01, ENF-02, US-03
+  code               String
+  title              String
+  description        String          @db.Text
+  priority           Priority        @default(SHOULD)
+  /// string[]
+  acceptanceCriteria Json?
+  position           Int             @default(0)
+
+  document RequirementsDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
+
+/// Évaluation du cahier des charges par le LLM selon la grille.
+model RequirementsEvaluation {
+  id            String   @id @default(cuid())
+  documentId    String
+  /// Note globale (0 à 100)
+  globalScore   Int
+  /// [{ name, score, maxScore, comment }]
+  criteria      Json
+  feedback      String   @db.Text
+  /// Pistes formulées sans révéler le besoin caché : string[]
+  missingPoints Json
+  createdAt     DateTime @default(now())
+
+  document RequirementsDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+
+  @@index([documentId])
+}
+
+// ============================================================
+// MODULE 5 — dashboard (Aziz Louati)
+// ============================================================
+
+/// Commentaire et note de l'enseignant sur une séance.
+model TeacherFeedback {
+  id        String   @id @default(cuid())
+  sessionId String
+  teacherId String
+  comment   String   @db.Text
+  grade     Float?
+  createdAt DateTime @default(now())
+
+  session TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  teacher User            @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+}

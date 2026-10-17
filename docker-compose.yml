@@ -1,0 +1,24 @@
+# Base PostgreSQL locale de développement (une instance par membre de l'équipe).
+# Port 5434 côté machine pour éviter un conflit avec un PostgreSQL déjà installé (5432)
+# ou un autre projet (5433). Modifiable : DB_PORT=5440 docker compose up -d (et adapter DATABASE_URL).
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: client-infernal-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: infernal
+      POSTGRES_PASSWORD: infernal
+      POSTGRES_DB: client_infernal
+    ports:
+      - "${DB_PORT:-5434}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U infernal -d client_infernal"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+
+volumes:
+  pgdata:
