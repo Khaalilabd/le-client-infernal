@@ -406,7 +406,7 @@ Voir le résumé détaillé ci-dessous, rédigé pour le rapport.
    - endpoints `/options` et `DELETE` (avec refus 409 si le scénario est utilisé), filtre par personnalité sans migration (JSON) ;
    - interface : formulaire avec cartes de profils, filtres, page de détail, états de chargement, d'erreur et vide ;
    - mock avec 5 familles de domaines, un mode générique, 6 profils et 3 niveaux.
-3. **Fichiers** : le détail est dans le README du module ; 8 commits sur `feature/client-generator`.
+3. **Fichiers** : le détail est dans le README du module ; 10 commits sur `feature/client-generator`.
 4. **Vérifications** :
    - 31 tests sur 31 réussis : 18 nouveaux tests du module (dont le mock pour 108 combinaisons et les endpoints sur une vraie base) et les 13 tests communs ;
    - build du client réussi ;
