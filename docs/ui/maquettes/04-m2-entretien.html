@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maquette — M2 Entretien client</title>
+<!-- Maquette statique : utilise le système de design réel de l'application -->
+<link rel="stylesheet" href="../../../client/src/styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a href="#" class="brand"><span class="brand-mark">CI</span><span>Le Client <span>Infernal</span></span></a>
+    <div class="user-box">
+      <span class="user-meta">Yassine Ferchichi<em>Étudiant</em></span>
+      <button class="btn btn-ghost btn-sm">Déconnexion</button>
+    </div>
+  </header>
+  <div class="app-body">
+    <nav class="app-nav">
+      <a href="#" class=""><span class="nav-index">◆</span>Accueil</a>
+      <span class="nav-section">Parcours</span>
+      <a href="#" class=""><span class="nav-index">1</span>Générateur de clients</a>
+      <a href="#" class="active"><span class="nav-index">2</span>Entretien client</a>
+      <a href="#" class=""><span class="nav-index">3</span>Cahier des charges</a>
+      <a href="#" class=""><span class="nav-index">4</span>Demandes de changement</a>
+      <a href="#" class=""><span class="nav-index">5</span>Tableau de bord</a>
+    </nav>
+    <main class="app-main">
+<div class="page-header"><div><span class="eyebrow">Module 2</span><h1>Entretien client</h1>
+  <p>Le client ne révèle son véritable besoin que si vos questions s'en approchent. Posez des questions ouvertes.</p></div>
+  <div class="page-header-actions"><button class="btn btn-secondary">Terminer l'entretien</button></div></div>
+  <label class="session-picker">Séance :
+        <select><option>Boulangerie artisanale : commandes en ligne — 17/10/2026</option></select>
+      </label>
+  <ol class="stepper"><li class="step is-done">Scénario</li><li class="step is-current">Entretien</li><li class="step ">Cahier des charges</li><li class="step ">Changements</li><li class="step ">Évaluation</li></ol>
+  <div class="split">
+    <div class="chat">
+      <div class="chat-messages">
+        <div class="chat-bubble from-student"><span class="chat-author">Vous</span>Bonjour, pouvez-vous me décrire votre activité ?</div>
+        <div class="chat-bubble from-client"><span class="chat-author">M. Ben Salah</span>Bien sûr ! Nous faisons du pain et surtout des gâteaux sur commande, dans nos deux boutiques.</div>
+        <div class="chat-bubble from-student"><span class="chat-author">Vous</span>Comment gérez-vous les commandes actuellement, et quels problèmes rencontrez-vous ?</div>
+        <div class="chat-bubble from-client"><span class="chat-author">M. Ben Salah</span>On note tout sur un cahier… et le mois dernier, on a oublié deux gâteaux d'anniversaire. Une catastrophe !</div>
+        <div class="chat-bubble from-student"><span class="chat-author">Vous</span>Que se passe-t-il quand une commande est prise dans une boutique et retirée dans l’autre ?</div>
+        <div class="chat-bubble from-client chat-typing">M. Ben Salah réfléchit…</div>
+      </div>
+      <form class="chat-input"><textarea rows="2" placeholder="Posez une question au client…"></textarea><button class="btn">Envoyer</button></form>
+    </div>
+    <aside class="stack" style="margin-top:0">
+      <div class="card client-card">
+        <div class="client-card-head"><div class="avatar avatar-lg">HB</div><div><h3>M. Hédi Ben Salah</h3><span class="muted small">Gérant — Boulangerie Le Bon Grain</span></div></div>
+        <div class="cluster"><span class="chip">chaleureux</span><span class="chip">bavard</span><span class="chip">peu technique</span></div>
+        <dl>
+          <dt>Ce qu'il demande</dt><dd>« Un site web pour que les clients puissent commander leurs gâteaux. »</dd>
+          <dt>Contexte</dt><dd class="small">Boulangerie familiale, deux points de vente, commandes notées sur un cahier.</dd>
+        </dl>
+      </div>
+      <div class="card">
+        <h4>Votre entretien</h4>
+        <p class="muted small" style="margin:4px 0 8px">3 questions posées · objectif conseillé : 8 à 12</p>
+        <div class="bar bar-warning"><span style="width:30%"></span></div>
+      </div>
+      <div class="alert alert-info" style="margin:0"><strong>Astuce</strong>Demandez « pourquoi » : le vrai besoin se cache souvent derrière un problème actuel.</div>
+    </aside>
+  </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

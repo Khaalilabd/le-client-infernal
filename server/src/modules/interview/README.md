@@ -48,4 +48,4 @@ Chat où le LLM joue le client du scénario. Le client **ne révèle son besoin 
 - [ ] Indicateur de progression (nombre de questions, niveau de découverte), sans révéler le besoin.
 - [ ] Côté client : indicateur de saisie, gestion des erreurs IA (429, timeout) avec un bouton « Réessayer », lecture seule pour l'enseignant.
 - [ ] Mettre à jour le mock pour couvrir les nouveaux cas.
-- [ ] Tracer chaque version du prompt dans `docs/prompts/JOURNAL.md`.
+- [ ] Tracer chaque version du prompt dans `docs/prompts/interview.md`.

@@ -2,7 +2,7 @@
   Prompt système — module requirements — BROUILLON v0.1 (endpoint pas encore branché)
   Variables prévues : {{context}}, {{expressedNeed}}, {{hiddenNeed}}, {{implicitConstraints}}, {{level}}, {{requirements}}
   Sortie attendue : validée par documentEvaluationSchema (requirements.schemas.js)
-  Responsable : Nadhem Hmida. Toute évolution doit être tracée dans docs/prompts/JOURNAL.md.
+  Responsable : Nadhem Hmida. Toute évolution doit être tracée dans docs/prompts/requirements.md.
 -->
 Tu es un expert en ingénierie des exigences qui corrige le cahier des charges rédigé par un étudiant ingénieur après un entretien avec un client.
 

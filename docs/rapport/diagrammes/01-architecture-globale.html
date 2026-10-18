@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="capture-width" content="1400" />
+<title>architecture-globale</title>
+<style>
+  body { margin: 0; padding: 32px; background: #fff; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .mermaid { display: flex; justify-content: center; }
+</style>
+</head>
+<body>
+<pre class="mermaid">
+flowchart LR
+    subgraph Navigateur
+        UI["Client React (Vite)&lt;br/>React Router&lt;br/>modules/* + shared/*"]
+    end
+
+    subgraph Serveur["Serveur Node.js / Express"]
+        MW["Middlewares communs&lt;br/>helmet · cors · JSON&lt;br/>responseGuard · authenticate · requireRole · validate (Zod)"]
+        AUTH["Base commune&lt;br/>/api/auth · /api/sessions"]
+        MOD["Modules métier&lt;br/>client-generator · interview&lt;br/>change-requests · requirements · dashboard"]
+        AI["Service IA partagé&lt;br/>callLLM()&lt;br/>prompts · sanitize · timeout · retry · Zod"]
+        ERR["Gestion centralisée&lt;br/>des erreurs"]
+        PRISMA["Prisma Client&lt;br/>(champs secrets omis par défaut)"]
+    end
+
+    DB[("PostgreSQL 16&lt;br/>Docker")]
+
+    subgraph Fournisseurs["Fournisseurs LLM (au choix)"]
+        CLAUDE["Anthropic Claude"]
+        OPENAI["OpenAI"]
+        OLLAMA["Ollama (local)"]
+        MOCK["Mock (par défaut)"]
+    end
+
+    UI -- "HTTP JSON + JWT&lt;br/>/api/*" --> MW
+    MW --> AUTH
+    MW --> MOD
+    MOD --> AI
+    AUTH --> PRISMA
+    MOD --> PRISMA
+    AI --> PRISMA
+    PRISMA --> DB
+    AI --> CLAUDE
+    AI --> OPENAI
+    AI --> OLLAMA
+    AI --> MOCK
+    MOD -. erreurs .-> ERR
+    AI -. AiError .-> ERR
+</pre>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'Segoe UI, system-ui, sans-serif',
+      primaryColor: '#FDECEB',
+      primaryBorderColor: '#B3261E',
+      primaryTextColor: '#161A22',
+      lineColor: '#5B6474',
+      secondaryColor: '#FFF4E5',
+      tertiaryColor: '#F7F8FA',
+    },
+    flowchart: { htmlLabels: true, curve: 'basis' },
+  });
+</script>
+</body>
+</html>

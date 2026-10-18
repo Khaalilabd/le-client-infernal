@@ -47,4 +47,4 @@
 - [ ] Éditeur : modification d'une exigence existante, réordonnancement, critères d'acceptation des user stories, filtres par type.
 - [ ] Affichage de l'évaluation : note globale, détail par critère, pistes.
 - [ ] Affiner la grille du prompt (pondérations, exemples).
-- [ ] Tracer chaque version du prompt dans `docs/prompts/JOURNAL.md`.
+- [ ] Tracer chaque version du prompt dans `docs/prompts/requirements.md`.

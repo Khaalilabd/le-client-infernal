@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maquette — M5 Tableau de bord étudiant</title>
+<!-- Maquette statique : utilise le système de design réel de l'application -->
+<link rel="stylesheet" href="../../../client/src/styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a href="#" class="brand"><span class="brand-mark">CI</span><span>Le Client <span>Infernal</span></span></a>
+    <div class="user-box">
+      <span class="user-meta">Yassine Ferchichi<em>Étudiant</em></span>
+      <button class="btn btn-ghost btn-sm">Déconnexion</button>
+    </div>
+  </header>
+  <div class="app-body">
+    <nav class="app-nav">
+      <a href="#" class=""><span class="nav-index">◆</span>Accueil</a>
+      <span class="nav-section">Parcours</span>
+      <a href="#" class=""><span class="nav-index">1</span>Générateur de clients</a>
+      <a href="#" class=""><span class="nav-index">2</span>Entretien client</a>
+      <a href="#" class=""><span class="nav-index">3</span>Cahier des charges</a>
+      <a href="#" class=""><span class="nav-index">4</span>Demandes de changement</a>
+      <a href="#" class="active"><span class="nav-index">5</span>Tableau de bord</a>
+    </nav>
+    <main class="app-main">
+<div class="page-header"><div><span class="eyebrow">Module 5</span><h1>Mon tableau de bord</h1>
+  <p>Suivez vos progrès et laissez-vous guider vers le prochain scénario.</p></div></div>
+  <div class="grid stats-grid">
+    <div class="card stat-card"><span class="stat-label">Séances</span><span class="stat-value">6</span><span class="muted small">4 terminées</span></div>
+    <div class="card stat-card"><span class="stat-label">Note moyenne</span><span class="stat-value">71</span><span class="stat-trend">+9 depuis le début</span></div>
+    <div class="card stat-card"><span class="stat-label">Besoins cachés trouvés</span><span class="stat-value">4 / 6</span></div>
+    <div class="card stat-card"><span class="stat-label">Changements gérés</span><span class="stat-value">11</span><span class="muted small">Moyenne : 74</span></div>
+  </div>
+  <div class="two-columns" style="margin-top:24px">
+    <div class="card">
+      <h3 style="margin-bottom:16px">Historique des séances</h3>
+      <ul class="timeline">
+        <li><div><strong>Boulangerie artisanale</strong> <span class="badge badge-info">En cours</span><div class="muted small">Débutant · démarrée le 17/10/2026</div></div></li>
+        <li><div><strong>Cabinet médical</strong> <span class="badge badge-success">72 / 100</span><div class="muted small">Intermédiaire · terminée le 12/10/2026 · commentaire de l'enseignant</div></div></li>
+        <li><div><strong>Agence de voyage</strong> <span class="badge badge-success">80 / 100</span><div class="muted small">Débutant · terminée le 05/10/2026</div></div></li>
+        <li><div><strong>Salle de sport</strong> <span class="badge badge-success">61 / 100</span><div class="muted small">Débutant · terminée le 28/09/2026</div></div></li>
+      </ul>
+    </div>
+    <div class="stack" style="margin-top:0">
+      <div class="card" style="border-color:var(--brand-100);background:linear-gradient(180deg,var(--brand-50),#fff)">
+        <span class="eyebrow">Recommandation</span>
+        <h3>Logistique · Avancé</h3>
+        <p class="small" style="margin:6px 0">Vos cahiers des charges sont bien structurés. Travaillez maintenant vos questions ouvertes face à un client méfiant.</p>
+        <span class="chip">Compétence : découverte du besoin caché</span>
+        <div class="card-footer"><button class="btn btn-sm">Lancer ce scénario</button></div>
+      </div>
+      <div class="card">
+        <h4>Compétences</h4>
+        <div class="criteria" style="margin-top:12px">
+          <div><div class="criterion-head"><span>Découverte du besoin</span><span>62 %</span></div><div class="bar bar-warning"><span style="width:62%"></span></div></div>
+          <div><div class="criterion-head"><span>Rédaction des exigences</span><span>78 %</span></div><div class="bar bar-success"><span style="width:78%"></span></div></div>
+          <div><div class="criterion-head"><span>Gestion des changements</span><span>74 %</span></div><div class="bar bar-success"><span style="width:74%"></span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

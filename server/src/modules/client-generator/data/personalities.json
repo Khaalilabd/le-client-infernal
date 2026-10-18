@@ -1,0 +1,38 @@
+[
+  {
+    "id": "COOPERATIVE",
+    "label": "Coopératif",
+    "description": "Répond volontiers et clairement, mais ne pense pas à tout.",
+    "behavior": "Le client est bienveillant et répond aux questions, mais il ne mentionne spontanément ni son vrai problème ni ses contraintes : il suppose que l'ingénieur les devinera."
+  },
+  {
+    "id": "RUSHED",
+    "label": "Pressé",
+    "description": "Manque de temps, réponses courtes, veut une solution vite.",
+    "behavior": "Le client est débordé : phrases courtes, impatience, tendance à couper court aux questions jugées inutiles et à réclamer un délai très serré."
+  },
+  {
+    "id": "SKEPTICAL",
+    "label": "Méfiant",
+    "description": "A déjà été déçu par des prestataires, doute de tout.",
+    "behavior": "Le client a eu une mauvaise expérience avec un ancien prestataire : il doute des promesses, demande des garanties et ne se confie qu'aux ingénieurs qui montrent qu'ils comprennent son métier."
+  },
+  {
+    "id": "TALKATIVE",
+    "label": "Bavard",
+    "description": "Parle beaucoup, se perd dans les détails et les anecdotes.",
+    "behavior": "Le client raconte des anecdotes et des détails sans importance ; les informations utiles sont noyées dans le bavardage et l'ingénieur doit recentrer la discussion."
+  },
+  {
+    "id": "CONTRADICTORY",
+    "label": "Contradictoire",
+    "description": "Change d'avis et se contredit d'une réponse à l'autre.",
+    "behavior": "Le client exprime des souhaits qui se contredisent (rapide mais complet, simple mais avec toutes les options) ; l'ingénieur doit faire émerger les vraies priorités."
+  },
+  {
+    "id": "INDECISIVE",
+    "label": "Indécis",
+    "description": "Ne sait pas vraiment ce qu'il veut, attend des propositions.",
+    "behavior": "Le client a une idée floue, hésite et renvoie souvent la question (« qu'est-ce que vous me conseillez ? ») ; le besoin réel n'apparaît qu'avec des questions sur son quotidien."
+  }
+]

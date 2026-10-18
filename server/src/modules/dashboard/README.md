@@ -49,4 +49,4 @@ Le dashboard **n'écrit jamais** dans les tables des autres modules.
 - [ ] Espace enseignant : fiche étudiant, commentaire et note sur une séance (`TeacherFeedback`), filtres.
 - [ ] Graphiques de progression (une bibliothèque comme Recharts peut être ajoutée à `client/package.json` ; à signaler à l'équipe).
 - [ ] Définir avec l'équipe le calcul de `TrainingSession.finalScore` (pondération entretien / cahier des charges / demandes de changement).
-- [ ] Tracer chaque version du prompt dans `docs/prompts/JOURNAL.md`.
+- [ ] Tracer chaque version du prompt dans `docs/prompts/dashboard.md`.

@@ -1,0 +1,10 @@
+// État vide : affiché quand une liste ne contient encore rien, avec une action pour avancer.
+export default function EmptyState({ title, description, action }) {
+  return (
+    <div className="empty-state">
+      <h3>{title}</h3>
+      {description && <p>{description}</p>}
+      {action}
+    </div>
+  );
+}

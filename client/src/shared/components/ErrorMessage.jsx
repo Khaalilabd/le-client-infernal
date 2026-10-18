@@ -1,6 +1,12 @@
 // Affiche une erreur de l'API (ApiError) ou toute autre erreur.
-export default function ErrorMessage({ error }) {
+// Pour les erreurs temporaires de l'IA (quota, délai dépassé), un bouton « Réessayer »
+// est proposé si onRetry est fourni.
+const RETRYABLE_CODES = ['AI_RATE_LIMIT', 'AI_TIMEOUT', 'AI_PROVIDER_ERROR', 'AI_INVALID_RESPONSE', 'NETWORK_ERROR'];
+
+export default function ErrorMessage({ error, onRetry }) {
   if (!error) return null;
+  const canRetry = onRetry && RETRYABLE_CODES.includes(error.code);
+
   return (
     <div className="alert alert-error" role="alert">
       <strong>{error.message ?? 'Une erreur est survenue.'}</strong>
@@ -13,6 +19,13 @@ export default function ErrorMessage({ error }) {
             </li>
           ))}
         </ul>
+      )}
+      {canRetry && (
+        <div className="alert-actions">
+          <button type="button" className="btn btn-secondary btn-sm" onClick={onRetry}>
+            Réessayer
+          </button>
+        </div>
       )}
     </div>
   );

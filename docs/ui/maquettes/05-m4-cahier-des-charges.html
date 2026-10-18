@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maquette — M4 Cahier des charges</title>
+<!-- Maquette statique : utilise le système de design réel de l'application -->
+<link rel="stylesheet" href="../../../client/src/styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a href="#" class="brand"><span class="brand-mark">CI</span><span>Le Client <span>Infernal</span></span></a>
+    <div class="user-box">
+      <span class="user-meta">Yassine Ferchichi<em>Étudiant</em></span>
+      <button class="btn btn-ghost btn-sm">Déconnexion</button>
+    </div>
+  </header>
+  <div class="app-body">
+    <nav class="app-nav">
+      <a href="#" class=""><span class="nav-index">◆</span>Accueil</a>
+      <span class="nav-section">Parcours</span>
+      <a href="#" class=""><span class="nav-index">1</span>Générateur de clients</a>
+      <a href="#" class=""><span class="nav-index">2</span>Entretien client</a>
+      <a href="#" class="active"><span class="nav-index">3</span>Cahier des charges</a>
+      <a href="#" class=""><span class="nav-index">4</span>Demandes de changement</a>
+      <a href="#" class=""><span class="nav-index">5</span>Tableau de bord</a>
+    </nav>
+    <main class="app-main">
+<div class="page-header"><div><span class="eyebrow">Module 4</span><h1>Cahier des charges</h1>
+  <p>Traduisez ce que vous avez appris pendant l'entretien en exigences claires, testables et priorisées.</p></div>
+  <div class="page-header-actions"><button class="btn btn-secondary">Enregistrer</button><button class="btn">Soumettre à l'évaluation</button></div></div>
+  <label class="session-picker">Séance :
+        <select><option>Boulangerie artisanale : commandes en ligne — 17/10/2026</option></select>
+      </label>
+  <ol class="stepper"><li class="step is-done">Scénario</li><li class="step is-done">Entretien</li><li class="step is-current">Cahier des charges</li><li class="step ">Changements</li><li class="step ">Évaluation</li></ol>
+  <div class="tabs"><button class="tab is-active">Toutes <span class="badge">4</span></button><button class="tab">Fonctionnelles <span class="badge">2</span></button><button class="tab">Non fonctionnelles <span class="badge">1</span></button><button class="tab">User stories <span class="badge">1</span></button></div>
+  <div class="two-columns">
+    <div class="stack" style="margin-top:0">
+      <article class="card">
+        <div class="card-header"><h3>EF-01 — Saisie d'une commande</h3><div class="cluster"><span class="badge">MUST</span><button class="btn btn-ghost btn-sm">Modifier</button></div></div>
+        <p class="muted small" style="margin-bottom:6px">Fonctionnelle</p><p style="margin:0">Le système doit permettre au personnel d'enregistrer une commande avec la date de retrait et la boutique.</p>
+      </article>
+      <article class="card">
+        <div class="card-header"><h3>EF-02 — Consultation centralisée</h3><div class="cluster"><span class="badge">MUST</span><button class="btn btn-ghost btn-sm">Modifier</button></div></div>
+        <p class="muted small" style="margin-bottom:6px">Fonctionnelle</p><p style="margin:0">Le système doit afficher les commandes des deux boutiques dans une liste unique, filtrable par date.</p>
+      </article>
+      <article class="card">
+        <div class="card-header"><h3>US-01 — Rappel de commande</h3><div class="cluster"><span class="badge">MUST</span><button class="btn btn-ghost btn-sm">Modifier</button></div></div>
+        <p class="muted small" style="margin-bottom:6px">User story</p><p style="margin:0">En tant que vendeur, je veux recevoir la liste des commandes du lendemain afin de ne rien oublier.</p><ul class="small" style="margin:8px 0 0"><li>La liste est disponible chaque soir à 18 h</li><li>Elle regroupe les deux boutiques</li></ul>
+      </article>
+      <article class="card">
+        <div class="card-header"><h3>ENF-01 — Utilisation sur smartphone</h3><div class="cluster"><span class="badge">SHOULD</span><button class="btn btn-ghost btn-sm">Modifier</button></div></div>
+        <p class="muted small" style="margin-bottom:6px">Non fonctionnelle</p><p style="margin:0">L'interface doit être utilisable sur un smartphone sans formation préalable.</p>
+      </article>
+    </div>
+    <form class="card stack" style="margin-top:0">
+      <h3>Nouvelle exigence</h3>
+      <div class="row"><label>Type<select><option>User story</option></select></label><label>Priorité<select><option>SHOULD</option></select></label></div>
+      <label>Titre<input placeholder="ex. Paiement en ligne" /></label>
+      <label>Description<textarea rows="3" placeholder="En tant que…, je veux… afin de…"></textarea></label>
+      <label>Critères d'acceptation<textarea rows="2" placeholder="Un critère par ligne"></textarea><span class="field-hint">Rendez l'exigence testable.</span></label>
+      <button class="btn btn-secondary">Ajouter</button>
+    </form>
+  </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

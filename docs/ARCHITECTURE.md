@@ -108,10 +108,18 @@ Légende : **[COMMUN]** base commune (modification à signaler à toute l'équip
 ├── README.md                         [COMMUN]
 ├── package.json                      [COMMUN] workspaces npm + scripts
 ├── docker-compose.yml                [COMMUN] PostgreSQL local
-├── scripts/setup.mjs                 [COMMUN] installation complète
+├── scripts/
+│   ├── setup.mjs                     [COMMUN] installation complète
+│   ├── export-images.mjs             [COMMUN] export de pages HTML en PNG (maquettes, diagrammes)
+│   └── export-diagrams.mjs           [COMMUN] export des diagrammes Mermaid de ce document
 ├── docs/
 │   ├── ARCHITECTURE.md               [COMMUN] ce document
-│   └── prompts/JOURNAL.md            [TOUS]   journal des prompts (chacun ajoute ses entrées)
+│   ├── ui/
+│   │   ├── CHARTE.md                 [COMMUN] charte graphique et principes UX
+│   │   └── maquettes/                [COMMUN] maquettes HTML des écrans + png/
+│   ├── rapport/                      [TOUS]   rapport Word, images, captures
+│   ├── GUIDE_EQUIPE.md               [COMMUN] méthode de travail de l'équipe avec l'IA
+│   └── prompts/                      journaux des prompts : JOURNAL.md [COMMUN] + <module>.md [M1..M5], modeles/
 │
 ├── server/
 │   ├── .env.example                  [COMMUN]
@@ -179,11 +187,11 @@ erDiagram
     User ||--o{ Scenario : "a créé"
     User ||--o{ TeacherFeedback : "rédige (enseignant)"
     Scenario ||--o{ TrainingSession : "est joué dans"
-    TrainingSession ||--o{ InterviewMessage : contient
-    TrainingSession ||--o{ ChangeRequest : reçoit
-    TrainingSession ||--o| RequirementsDocument : produit
+    TrainingSession ||--o{ InterviewMessage : "contient"
+    TrainingSession ||--o{ ChangeRequest : "reçoit"
+    TrainingSession ||--o| RequirementsDocument : "produit"
     TrainingSession ||--o{ TeacherFeedback : "est commentée par"
-    RequirementsDocument ||--o{ Requirement : contient
+    RequirementsDocument ||--o{ Requirement : "contient"
     RequirementsDocument ||--o{ RequirementsEvaluation : "est évalué par"
 
     User {
@@ -329,7 +337,7 @@ Conventions :
 - Préfixe `/api`, JSON en entrée et en sortie.
 - Authentification : en-tête `Authorization: Bearer <jwt>`.
 - Format d'erreur unique : `{ "error": { "code": "…", "message": "…", "details"?: [{ "path", "message" }] } }`.
-- Codes d'erreur : `VALIDATION_ERROR` (400), `UNAUTHORIZED` / `INVALID_TOKEN` / `INVALID_CREDENTIALS` (401), `FORBIDDEN` (403), `NOT_FOUND` / `ROUTE_NOT_FOUND` (404), `CONFLICT` (409), `AI_RATE_LIMIT` (429), `INTERNAL_ERROR` / `AI_PROMPT_ERROR` (500), `AI_INVALID_RESPONSE` / `AI_PROVIDER_ERROR` (502), `AI_MISSING_KEY` / `DATABASE_UNAVAILABLE` (503), `AI_TIMEOUT` (504).
+- Codes d'erreur : `VALIDATION_ERROR` (400), `UNAUTHORIZED` / `INVALID_TOKEN` / `INVALID_CREDENTIALS` (401), `FORBIDDEN` (403), `NOT_FOUND` / `ROUTE_NOT_FOUND` (404), `CONFLICT` / `SCENARIO_IN_USE` (409), `AI_RATE_LIMIT` (429), `INTERNAL_ERROR` / `AI_PROMPT_ERROR` (500), `AI_INVALID_RESPONSE` / `AI_PROVIDER_ERROR` (502), `AI_MISSING_KEY` / `DATABASE_UNAVAILABLE` (503), `AI_TIMEOUT` (504).
 
 Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter par le responsable du module).
 
@@ -350,11 +358,11 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 
 | | Méthode | Route | Rôle | Requête | Réponse |
 |---|---|---|---|---|---|
-| ✅ | POST | `/scenarios` | connecté | `{ domain, level }` | `201 { scenario }` (public) |
-| ✅ | GET | `/scenarios?domain=&level=` | connecté | — | `{ scenarios: [...] }` |
+| ✅ | GET | `/options` | connecté | — | `{ domains, levels, personalities }` (domaines suggérés, niveaux, profils de personnalité) |
+| ✅ | POST | `/scenarios` | connecté | `{ domain, level, personality? }` (profil ou `RANDOM`, par défaut) | `201 { scenario }` (public, `personality.profile` renseigné) |
+| ✅ | GET | `/scenarios?domain=&level=&personality=` | connecté | — | `{ scenarios: [...] }` |
 | ✅ | GET | `/scenarios/:scenarioId` | connecté | — | `{ scenario }` |
-| 🔲 | DELETE | `/scenarios/:scenarioId` | TEACHER | — | `204` |
-| 🔲 | GET | `/domains` | connecté | — | `{ domains: [...] }` (domaines suggérés) |
+| ✅ | DELETE | `/scenarios/:scenarioId` | TEACHER | — | `204` ; `409 SCENARIO_IN_USE` si des séances utilisent le scénario |
 
 ### M2 — interview (`/api/interview`)
 
@@ -479,7 +487,7 @@ Autres réglages : `AI_TIMEOUT_MS` (30 000 par défaut) et `AI_MAX_RETRIES` (2 p
 
 - Les **prompts système** sont dans `server/src/modules/<module>/prompts/<nom>.md`. Les commentaires `<!-- … -->` en tête de fichier documentent le prompt (variables, version, responsable) et sont retirés avant l'envoi.
 - Les **mocks** sont dans `server/src/modules/<module>/mocks/<nom>.mock.js`. Ils exportent une fonction `({ variables, messages }) => objet` qui doit respecter le même schéma Zod que la vraie réponse.
-- Toute modification d'un prompt est tracée dans `docs/prompts/JOURNAL.md`.
+- Toute modification d'un prompt est tracée dans le journal du module, `docs/prompts/<module>.md`.
 
 ---
 
@@ -551,4 +559,4 @@ La note individuelle dépend des commits. Faites des commits **petits, fréquent
    ```
    Après un pull qui contient une nouvelle migration : `npm run db:deploy`.
 6. **Synchronisation régulière** : `git pull origin develop` sur sa branche `feature/*` au moins une fois par jour.
-7. **Traçabilité des prompts** : chaque demande faite à une IA pour le projet est ajoutée dans `docs/prompts/JOURNAL.md`.
+7. **Traçabilité des prompts** : chaque demande faite à une IA est ajoutée dans le journal du module, `docs/prompts/<module>.md` (P-M<x>-NNN) ; les demandes communes vont dans `docs/prompts/JOURNAL.md`. Méthode complète : `docs/GUIDE_EQUIPE.md`.

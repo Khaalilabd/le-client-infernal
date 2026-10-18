@@ -42,4 +42,4 @@ Génère des **demandes de changement** réalistes de la part du client, puis é
 - [ ] Améliorer les deux prompts ; s'appuyer sur le cahier des charges existant pour rendre les demandes plus réalistes.
 - [ ] Limiter le nombre de demandes par séance (par exemple 3).
 - [ ] Côté client : formulaire de réponse (choix de la décision + justification), affichage de la note et de la réaction du client.
-- [ ] Tracer chaque version des prompts dans `docs/prompts/JOURNAL.md`.
+- [ ] Tracer chaque version des prompts dans `docs/prompts/change-requests.md`.

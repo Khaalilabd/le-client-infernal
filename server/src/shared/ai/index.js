@@ -67,6 +67,7 @@ export function createAiClient({
   sleep = defaultSleep,
   loadIdentity = defaultLoadIdentity,
   logCall = defaultLogCall,
+  promptLoader = loadPrompt,
 } = {}) {
   async function call({ module, prompt, variables = {}, messages = [], schema, userId, maxTokens = 2000, temperature }) {
     if (!schema || typeof schema.safeParse !== 'function') {
@@ -75,7 +76,7 @@ export function createAiClient({
 
     const identity = await loadIdentity(userId);
     const safeVariables = sanitizeDeep(variables, identity);
-    const system = await loadPrompt(module, prompt, safeVariables);
+    const system = await promptLoader(module, prompt, safeVariables);
     const safeMessages = sanitizeDeep(messages, identity);
     if (safeMessages.length === 0) {
       safeMessages.push({ role: 'user', content: DEFAULT_USER_MESSAGE });

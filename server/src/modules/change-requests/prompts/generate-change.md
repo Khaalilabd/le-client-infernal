@@ -3,7 +3,7 @@
   Variables : {{clientName}}, {{personality}}, {{context}}, {{expressedNeed}}, {{hiddenNeed}},
               {{level}}, {{previousRequests}}
   Sortie attendue : validée par generatedChangeRequestSchema (change-requests.schemas.js)
-  Responsable : Ismail Ismail. Toute évolution doit être tracée dans docs/prompts/JOURNAL.md.
+  Responsable : Ismail Ismail. Toute évolution doit être tracée dans docs/prompts/change-requests.md.
 -->
 Tu joues le client {{clientName}} au milieu d'un projet logiciel. Tu envoies à l'équipe d'ingénieurs une demande de changement (change request).
 

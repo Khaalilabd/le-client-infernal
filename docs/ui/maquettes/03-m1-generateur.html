@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maquette — M1 Générateur de clients</title>
+<!-- Maquette statique : utilise le système de design réel de l'application -->
+<link rel="stylesheet" href="../../../client/src/styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a href="#" class="brand"><span class="brand-mark">CI</span><span>Le Client <span>Infernal</span></span></a>
+    <div class="user-box">
+      <span class="user-meta">Yassine Ferchichi<em>Étudiant</em></span>
+      <button class="btn btn-ghost btn-sm">Déconnexion</button>
+    </div>
+  </header>
+  <div class="app-body">
+    <nav class="app-nav">
+      <a href="#" class=""><span class="nav-index">◆</span>Accueil</a>
+      <span class="nav-section">Parcours</span>
+      <a href="#" class="active"><span class="nav-index">1</span>Générateur de clients</a>
+      <a href="#" class=""><span class="nav-index">2</span>Entretien client</a>
+      <a href="#" class=""><span class="nav-index">3</span>Cahier des charges</a>
+      <a href="#" class=""><span class="nav-index">4</span>Demandes de changement</a>
+      <a href="#" class=""><span class="nav-index">5</span>Tableau de bord</a>
+    </nav>
+    <main class="app-main">
+<div class="page-header"><div><span class="eyebrow">Module 1</span><h1>Générateur de clients</h1>
+  <p>Choisissez un domaine et un niveau : l'IA invente un client fictif, sa personnalité et un besoin caché à découvrir.</p></div></div>
+
+  <form class="card form-inline" style="margin-top:0">
+    <label>Domaine<input value="Éducation" placeholder="ex. Santé, Logistique" /></label>
+    <label>Niveau<select><option>Intermédiaire</option></select></label>
+    <button class="btn">Générer un client</button>
+    <span class="muted small">Le besoin caché n'est jamais affiché : à vous de le découvrir.</span>
+  </form>
+
+  <div class="cluster" style="justify-content:space-between;margin-top:24px">
+    <h2 style="margin:0">Scénarios disponibles</h2>
+    <div class="cluster"><span class="chip">Tous les niveaux</span><span class="chip">Tous les domaines</span></div>
+  </div>
+  <div class="grid" style="margin-top:16px">
+    <article class="card">
+      <div class="card-header"><h3>Boulangerie artisanale : commandes en ligne</h3><span class="badge level-beginner">Débutant</span></div>
+      <p class="muted small">Commerce de détail · M. Hédi Ben Salah, gérant</p>
+      <p>Boulangerie familiale avec deux points de vente. Les commandes de gâteaux sont notées sur un cahier.</p>
+      <p><strong>Demande du client :</strong> « Je veux un site web pour que les clients commandent leurs gâteaux. »</p>
+      <div class="card-footer"><button class="btn btn-ghost btn-sm">Aperçu</button><button class="btn btn-sm">Démarrer une séance</button></div>
+    </article>
+    <article class="card">
+      <div class="card-header"><h3>Cabinet médical : gestion des rendez-vous</h3><span class="badge level-intermediate">Intermédiaire</span></div>
+      <p class="muted small">Santé · Dr Amira Gharbi, médecin associée</p>
+      <p>Trois médecins, une seule secrétaire. Le téléphone sonne sans arrêt.</p>
+      <p><strong>Demande du client :</strong> « Il nous faut une application de prise de rendez-vous en ligne. »</p>
+      <div class="card-footer"><button class="btn btn-ghost btn-sm">Aperçu</button><button class="btn btn-sm">Démarrer une séance</button></div>
+    </article>
+    <article class="card">
+      <div class="card-header"><h3>Transporteur régional : suivi de flotte</h3><span class="badge level-advanced">Avancé</span></div>
+      <p class="muted small">Logistique · M. Karim Jaziri, directeur des opérations</p>
+      <p>Quarante camions. Un précédent logiciel a été abandonné au bout de six mois.</p>
+      <p><strong>Demande du client :</strong> « Je veux voir mes camions sur une carte en temps réel. »</p>
+      <div class="card-footer"><button class="btn btn-ghost btn-sm">Aperçu</button><button class="btn btn-sm">Démarrer une séance</button></div>
+    </article>
+  </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

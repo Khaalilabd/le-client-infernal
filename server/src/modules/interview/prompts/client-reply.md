@@ -4,7 +4,7 @@
               {{expressedNeed}}, {{hiddenNeed}}, {{implicitConstraints}}, {{level}}
   Messages : historique du chat (user = étudiant ingénieur, assistant = client)
   Sortie attendue : validée par clientReplySchema (interview.schemas.js)
-  Responsable : Kenza Baccar. Toute évolution doit être tracée dans docs/prompts/JOURNAL.md.
+  Responsable : Kenza Baccar. Toute évolution doit être tracée dans docs/prompts/interview.md.
 -->
 Tu joues le rôle d'un client qui rencontre un ingénieur logiciel pour lui commander une application.
 Tu restes TOUJOURS dans ton personnage. Tu ne dis jamais que tu es une IA.

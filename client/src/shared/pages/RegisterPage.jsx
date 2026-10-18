@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from '../auth/AuthContext.jsx';
 import ErrorMessage from '../components/ErrorMessage.jsx';
+import AuthLayout from '../layout/AuthLayout.jsx';
 
 export default function RegisterPage() {
   const { user, register } = useAuth();
@@ -29,7 +30,7 @@ export default function RegisterPage() {
   const update = (field) => (event) => setForm({ ...form, [field]: event.target.value });
 
   return (
-    <div className="auth-page">
+    <AuthLayout>
       <form className="card auth-card" onSubmit={handleSubmit}>
         <h1>Créer un compte étudiant</h1>
         <ErrorMessage error={error} />
@@ -51,13 +52,13 @@ export default function RegisterPage() {
           Mot de passe (8 caractères minimum)
           <input type="password" value={form.password} onChange={update('password')} required minLength={8} autoComplete="new-password" />
         </label>
-        <button type="submit" className="btn" disabled={submitting}>
+        <button type="submit" className="btn btn-block" disabled={submitting}>
           {submitting ? 'Création…' : 'Créer mon compte'}
         </button>
         <p className="muted">
           Déjà inscrit ? <Link to="/login">Se connecter</Link>
         </p>
       </form>
-    </div>
+    </AuthLayout>
   );
 }

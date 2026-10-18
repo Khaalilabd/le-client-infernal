@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="capture-width" content="1100" />
+<title>service-ia</title>
+<style>
+  body { margin: 0; padding: 32px; background: #fff; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .mermaid { display: flex; justify-content: center; }
+</style>
+</head>
+<body>
+<pre class="mermaid">
+flowchart TD
+    A["callLLM(options)"] --> B{"schéma Zod fourni ?"}
+    B -- non --> X1["Erreur de programmation"]
+    B -- oui --> C["Chargement de l'identité de l'étudiant (userId)"]
+    C --> D["sanitizeDeep(variables, messages)&lt;br/>email → [email masqué], nom/prénom → [étudiant]"]
+    D --> E["loadPrompt(module, prompt, variables)"]
+    E --> F["provider.complete() avec timeout (AI_TIMEOUT_MS)"]
+    F --> G["parseJsonResponse()"]
+    G --> H["schema.safeParse()"]
+    H -- valide --> OK["AiCallLog SUCCESS → renvoi des données validées"]
+    F -- erreur --> R{"temporaire ?&lt;br/>429 · 5xx · réseau · timeout · JSON invalide"}
+    G -- erreur --> R
+    H -- invalide --> R
+    R -- "oui et tentatives restantes" --> W["attente : Retry-After ou 500 ms × 2^n (max 10 s)"] --> F
+    R -- non --> KO["AiCallLog ERROR → AiError → réponse HTTP claire"]
+</pre>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'Segoe UI, system-ui, sans-serif',
+      primaryColor: '#FDECEB',
+      primaryBorderColor: '#B3261E',
+      primaryTextColor: '#161A22',
+      lineColor: '#5B6474',
+      secondaryColor: '#FFF4E5',
+      tertiaryColor: '#F7F8FA',
+    },
+    flowchart: { htmlLabels: true, curve: 'basis' },
+  });
+</script>
+</body>
+</html>
