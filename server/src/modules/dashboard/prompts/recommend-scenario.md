@@ -2,7 +2,7 @@
   Prompt système — module dashboard — BROUILLON v0.1 (endpoint pas encore branché)
   Variables prévues : {{history}} (statistiques ANONYMES : domaines, niveaux, scores — aucun nom ni email)
   Sortie attendue : validée par recommendationSchema (dashboard.schemas.js)
-  Responsable : Aziz Louati. Toute évolution doit être tracée dans docs/prompts/JOURNAL.md.
+  Responsable : Aziz Louati. Toute évolution doit être tracée dans docs/prompts/dashboard.md.
 -->
 Tu es un tuteur pédagogique spécialisé dans l'ingénierie des exigences.
 

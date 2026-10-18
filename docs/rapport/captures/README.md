@@ -26,4 +26,4 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 
 Après avoir ajouté une capture manquante, demander la régénération du rapport (ou l'insérer à la main dans Word à la place du cadre rouge correspondant).
 
-Pour les prochains prompts : `pXXX-NN-description.png` (numéro du prompt dans `docs/prompts/JOURNAL.md`).
+Pour les prochains prompts : `p-m<x>-NNN-NN-description.png` pour un module (ex. `p-m2-001-01-prompt.png`), `pNNN-NN-description.png` pour un prompt commun.

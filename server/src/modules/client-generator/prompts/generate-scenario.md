@@ -4,7 +4,7 @@
   Sortie attendue : validée par createGeneratedScenarioSchema(level) (client-generator.schemas.js)
     - besoin caché différent du besoin exprimé
     - nombre de contraintes implicites conforme au niveau
-  Responsable : Khalil Abdelmoumen. Toute évolution doit être tracée dans docs/prompts/JOURNAL.md.
+  Responsable : Khalil Abdelmoumen. Toute évolution doit être tracée dans docs/prompts/client-generator.md.
   Historique : v0.1 (P-001) brouillon initial · v0.2 (P-005) personnalité imposée, difficulté graduée,
                cohérence et découvrabilité du besoin caché, anti-doublons.
 -->

@@ -7,6 +7,8 @@ Plateforme web d'entraînement au **recueil des besoins**. L'étudiant joue l'in
 
 ## Équipe et modules
 
+> 👉 **Membres de l'équipe : commencez par lire [docs/GUIDE_EQUIPE.md](docs/GUIDE_EQUIPE.md)** (démarrage, règles, méthode de travail avec votre IA, prompt de départ de votre module).
+
 | # | Module | Responsable | Branche | Dossiers |
 |---|---|---|---|---|
 | 1 | Générateur de clients (`client-generator`) | Khalil Abdelmoumen (chef de projet) | `feature/client-generator` | `server/src/modules/client-generator/`, `client/src/modules/client-generator/` |
@@ -105,7 +107,7 @@ Modifiez alors le port dans `DATABASE_URL` (`server/.env`).
 - Commits conventionnels en français : `feat(interview): ajout de l'historique du chat`, `fix(core): …`, `docs(prompts): …`.
 - On travaille sur sa branche `feature/<module>`, puis on ouvre une pull request vers `develop`.
 - Code (identifiants) en anglais ; documentation, commentaires et interface en français.
-- Chaque prompt adressé à une IA pour le projet est ajouté dans `docs/prompts/JOURNAL.md`.
+- Chaque prompt adressé à une IA est ajouté dans le journal du module, `docs/prompts/<module>.md` ; les prompts communs dans `docs/prompts/JOURNAL.md`.
 
 ### Démarrer sur son module (après le premier pull)
 

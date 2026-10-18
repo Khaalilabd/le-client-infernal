@@ -118,7 +118,8 @@ Légende : **[COMMUN]** base commune (modification à signaler à toute l'équip
 │   │   ├── CHARTE.md                 [COMMUN] charte graphique et principes UX
 │   │   └── maquettes/                [COMMUN] maquettes HTML des écrans + png/
 │   ├── rapport/                      [TOUS]   rapport Word, images, captures
-│   └── prompts/JOURNAL.md            [TOUS]   journal des prompts (chacun ajoute ses entrées)
+│   ├── GUIDE_EQUIPE.md               [COMMUN] méthode de travail de l'équipe avec l'IA
+│   └── prompts/                      journaux des prompts : JOURNAL.md [COMMUN] + <module>.md [M1..M5], modeles/
 │
 ├── server/
 │   ├── .env.example                  [COMMUN]
@@ -486,7 +487,7 @@ Autres réglages : `AI_TIMEOUT_MS` (30 000 par défaut) et `AI_MAX_RETRIES` (2 p
 
 - Les **prompts système** sont dans `server/src/modules/<module>/prompts/<nom>.md`. Les commentaires `<!-- … -->` en tête de fichier documentent le prompt (variables, version, responsable) et sont retirés avant l'envoi.
 - Les **mocks** sont dans `server/src/modules/<module>/mocks/<nom>.mock.js`. Ils exportent une fonction `({ variables, messages }) => objet` qui doit respecter le même schéma Zod que la vraie réponse.
-- Toute modification d'un prompt est tracée dans `docs/prompts/JOURNAL.md`.
+- Toute modification d'un prompt est tracée dans le journal du module, `docs/prompts/<module>.md`.
 
 ---
 
@@ -558,4 +559,4 @@ La note individuelle dépend des commits. Faites des commits **petits, fréquent
    ```
    Après un pull qui contient une nouvelle migration : `npm run db:deploy`.
 6. **Synchronisation régulière** : `git pull origin develop` sur sa branche `feature/*` au moins une fois par jour.
-7. **Traçabilité des prompts** : chaque demande faite à une IA pour le projet est ajoutée dans `docs/prompts/JOURNAL.md`.
+7. **Traçabilité des prompts** : chaque demande faite à une IA est ajoutée dans le journal du module, `docs/prompts/<module>.md` (P-M<x>-NNN) ; les demandes communes vont dans `docs/prompts/JOURNAL.md`. Méthode complète : `docs/GUIDE_EQUIPE.md`.

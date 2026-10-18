@@ -38,7 +38,7 @@ Base commune : authentification avec rôles (STUDENT, TEACHER), layout, gestion 
 - Si une demande contredit cette architecture, signale-le avant d'agir. Si une information manque, pose la question au lieu de l'inventer.
 
 ## Traçabilité des prompts
-- Après chaque demande, ajoute une entrée dans docs/prompts/JOURNAL.md : numéro (P-001, P-002…), date, auteur, module, prompt copié mot pour mot, résumé de ce que tu as produit (fichiers créés ou modifiés).
+- Après chaque demande, ajoute une entrée dans le journal du module concerné, docs/prompts/<module>.md (numérotation P-M1-001, P-M2-001… selon le module) : numéro, date, auteur, module, prompt copié mot pour mot, résumé de ce que tu as produit (fichiers créés ou modifiés). Les demandes qui concernent la base commune ou tout le projet vont dans docs/prompts/JOURNAL.md (P-001, P-002…). _(Règle mise à jour le 2026-10-18 par le chef de projet, P-007 : un journal par module pour éviter les conflits Git.)_
 - Laisse vide la rubrique « Modifications de l'équipe » : l'équipe la remplit elle-même.
 - Les prompts système utilisés par l'application sont stockés dans le dossier prompts/ de chaque module, jamais écrits en dur dans le code.
 

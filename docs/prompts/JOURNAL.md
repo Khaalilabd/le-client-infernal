@@ -1,8 +1,23 @@
 # Journal des prompts
 
-Traçabilité des demandes faites à l'IA (Claude Code) pour le projet « Le Client Infernal ».
+Traçabilité des demandes faites à l'IA pour le projet « Le Client Infernal ».
 Chaque entrée contient : numéro, date, auteur, module, prompt copié mot pour mot, résumé de ce que l'IA a produit.
 La rubrique « Modifications de l'équipe » est remplie par l'équipe elle-même.
+
+## Organisation des journaux (depuis P-007)
+
+Pour que les 5 membres travaillent en parallèle sans conflit Git ni numéro en double, **chaque module a son propre journal** :
+
+| Journal | Contenu | Numérotation |
+|---|---|---|
+| **Ce fichier** (`JOURNAL.md`) | Prompts qui concernent la base commune ou tout le projet | P-001, P-002… |
+| [`client-generator.md`](client-generator.md) | Module 1 — Khalil Abdelmoumen | P-M1-001… |
+| [`interview.md`](interview.md) | Module 2 — Kenza Baccar | P-M2-001… |
+| [`change-requests.md`](change-requests.md) | Module 3 — Ismail Ismail | P-M3-001… |
+| [`requirements.md`](requirements.md) | Module 4 — Nadhem Hmida | P-M4-001… |
+| [`dashboard.md`](dashboard.md) | Module 5 — Aziz Louati | P-M5-001… |
+
+Les prompts de départ de chaque module sont dans [`modeles/`](modeles/). Le mode d'emploi complet est dans [`docs/GUIDE_EQUIPE.md`](../GUIDE_EQUIPE.md).
 
 ## Modèle d'entrée
 
@@ -475,6 +490,55 @@ L'IA a répondu qu'elle n'a pas accès à l'affichage de VS Code. Elle a décons
   - chapitre 6 mis à jour (31 tests) et annexe B avec l'état de chaque capture.
 - `docs/rapport/captures/README.md` mis à jour.
 - **Complément** : les 3 captures manquantes ont été ajoutées. La page des branches GitHub (dépôt public) a été capturée par l'IA. La sortie de `npm test` (31 tests sur 31) et l'arborescence (2 captures : serveur et client) ont été collées par l'auteur dans la conversation, puis rangées par l'IA. Le rapport a été régénéré : toutes les captures sont insérées, il ne reste plus aucun cadre « à insérer ».
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
+
+---
+
+## P-007 — Guide de l'équipe et prompts de départ des modules 2 à 5
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (organisation de l'équipe)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `docs/guide-equipe` (créée depuis `feature/client-generator`)
+
+### Prompt
+
+```text
+j'ai terminer mon module ? si oui je dois guider mon équipe pour qu'il travaille bien avec leur Modéle AI qui vvont utiliser je dois bien les guider
+```
+
+#### Échanges complémentaires (même demande)
+
+L'IA a confirmé que le module 1 est terminé. Il reste des formalités : pull request, « Modifications de l'équipe », test avec une vraie clé.
+
+Elle a ensuite signalé un problème. Avec un journal unique et une numérotation unique, cinq membres en parallèle créeraient des numéros en double et des conflits Git. Corriger cela imposait de modifier une règle de `CLAUDE.md`, d'où deux questions :
+- Organisation du journal → choix de l'auteur : « Un journal par module (Recommandé) ».
+- IA utilisées par l'équipe → choix de l'auteur : « Je ne sais pas, couvrir les plus courantes (Recommandé) ».
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : guider l'équipe pour qu'elle travaille correctement avec ses propres assistants IA.
+2. **Réalisé** :
+   - `docs/GUIDE_EQUIPE.md` : démarrage et identité Git, règles d'or, contexte à donner selon l'outil, méthode en 6 étapes, premier prompt et suivants, vérification, journal et captures, coordination entre modules, Git, rapport, définition de « module terminé », FAQ.
+   - `docs/prompts/modeles/` : un prompt de départ par module (M2 à M5), sur le modèle de P-005, aligné sur le tableau officiel.
+   - Journaux par module : `docs/prompts/<module>.md`, numérotation P-M1-001…P-M5-001, avec un modèle d'entrée.
+   - `AGENTS.md` (lu par Cursor, Codex…) et `.github/copilot-instructions.md` (lu par GitHub Copilot), qui renvoient vers `CLAUDE.md`.
+3. **Fichiers modifiés** :
+   - `CLAUDE.md` : règle de traçabilité (un journal par module ; signalé comme modification de la partie 1) ;
+   - `JOURNAL.md` : index des journaux ;
+   - `README.md` : lien vers le guide ;
+   - `docs/ARCHITECTURE.md` : arborescence et conventions ;
+   - `docs/rapport/captures/README.md` : nommage des captures ;
+   - **dans les modules 1 à 5** : chemin du journal dans les en-têtes de prompts système (commentaires HTML, retirés avant l'envoi au LLM) et dans les listes de tâches des README. Aucun code des autres modules n'est modifié.
+4. **Vérifications** : 31 tests sur 31 réussis. Affirmations du guide sur les outils relues : Gemini CLI ne lit pas `AGENTS.md` par défaut, le guide a été corrigé en conséquence.
+5. **Points d'attention** :
+   - la coordination M3/M4 sur les versions du cahier des charges et le calcul de `finalScore` sont à décider en équipe ;
+   - la règle de `CLAUDE.md` a été modifiée par le chef de projet, l'équipe doit en être informée.
+6. **Reste à faire** : fusionner `feature/client-generator` puis `docs/guide-equipe` dans `develop`, et présenter le guide à l'équipe.
 
 ### Modifications de l'équipe
 
