@@ -108,9 +108,16 @@ Légende : **[COMMUN]** base commune (modification à signaler à toute l'équip
 ├── README.md                         [COMMUN]
 ├── package.json                      [COMMUN] workspaces npm + scripts
 ├── docker-compose.yml                [COMMUN] PostgreSQL local
-├── scripts/setup.mjs                 [COMMUN] installation complète
+├── scripts/
+│   ├── setup.mjs                     [COMMUN] installation complète
+│   ├── export-images.mjs             [COMMUN] export de pages HTML en PNG (maquettes, diagrammes)
+│   └── export-diagrams.mjs           [COMMUN] export des diagrammes Mermaid de ce document
 ├── docs/
 │   ├── ARCHITECTURE.md               [COMMUN] ce document
+│   ├── ui/
+│   │   ├── CHARTE.md                 [COMMUN] charte graphique et principes UX
+│   │   └── maquettes/                [COMMUN] maquettes HTML des écrans + png/
+│   ├── rapport/                      [TOUS]   rapport Word, images, captures
 │   └── prompts/JOURNAL.md            [TOUS]   journal des prompts (chacun ajoute ses entrées)
 │
 ├── server/
@@ -179,11 +186,11 @@ erDiagram
     User ||--o{ Scenario : "a créé"
     User ||--o{ TeacherFeedback : "rédige (enseignant)"
     Scenario ||--o{ TrainingSession : "est joué dans"
-    TrainingSession ||--o{ InterviewMessage : contient
-    TrainingSession ||--o{ ChangeRequest : reçoit
-    TrainingSession ||--o| RequirementsDocument : produit
+    TrainingSession ||--o{ InterviewMessage : "contient"
+    TrainingSession ||--o{ ChangeRequest : "reçoit"
+    TrainingSession ||--o| RequirementsDocument : "produit"
     TrainingSession ||--o{ TeacherFeedback : "est commentée par"
-    RequirementsDocument ||--o{ Requirement : contient
+    RequirementsDocument ||--o{ Requirement : "contient"
     RequirementsDocument ||--o{ RequirementsEvaluation : "est évalué par"
 
     User {

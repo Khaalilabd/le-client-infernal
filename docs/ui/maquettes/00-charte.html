@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maquette — Charte graphique</title>
+<!-- Maquette statique : utilise le système de design réel de l'application -->
+<link rel="stylesheet" href="../../../client/src/styles.css" />
+</head>
+<body>
+<main class="app-main" style="max-width:1200px;margin:0 auto">
+  <div class="page-header"><div><span class="eyebrow">Système de design</span><h1>Charte graphique — Le Client Infernal</h1>
+  <p>Couleurs, typographie et composants communs. Toutes les maquettes et l'application utilisent le même fichier <code>client/src/styles.css</code>.</p></div></div>
+
+  <h2>Couleurs</h2>
+  <div class="grid" style="grid-template-columns:repeat(8,minmax(0,1fr))">
+    <div><div style="height:64px;border-radius:10px;background:var(--brand-700);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Marque 700</strong><br><code>#8C1D18</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--brand-600);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Marque 600</strong><br><code>#B3261E</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--brand-50);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Marque 50</strong><br><code>#FDECEB</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--accent-500);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Flamme 500</strong><br><code>#E8890C</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--success-600);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Succès</strong><br><code>#1E7D4F</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--warning-600);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Attention</strong><br><code>#8A5A00</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--info-600);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Info</strong><br><code>#1F5FBF</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--gray-900);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Texte</strong><br><code>#161A22</code></div></div>
+  </div>
+  <div class="grid" style="grid-template-columns:repeat(8,minmax(0,1fr));margin-top:12px">
+    <div><div style="height:64px;border-radius:10px;background:var(--gray-600);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Gris 600</strong><br><code>#5B6474</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--gray-400);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Gris 400</strong><br><code>#9AA3B2</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--gray-200);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Gris 200</strong><br><code>#DDE1E8</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--gray-100);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Gris 100</strong><br><code>#EEF0F4</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--gray-50);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Fond</strong><br><code>#F7F8FA</code></div></div>
+    <div><div style="height:64px;border-radius:10px;background:var(--gray-0);border:1px solid var(--border)"></div>
+   <div class="small" style="margin-top:6px"><strong>Surface</strong><br><code>#FFFFFF</code></div></div>
+  </div>
+
+  <div class="two-columns" style="margin-top:8px">
+    <div>
+      <h2>Typographie</h2>
+      <div class="card stack" style="margin-top:0">
+        <h1>Titre de page — 28 px, gras</h1>
+        <h2 style="margin:0">Titre de section — 22 px</h2>
+        <h3>Titre de carte — 18 px</h3>
+        <p style="margin:0">Texte courant — 15 px. Police système Segoe UI / system-ui, interligne 1,5.</p>
+        <p class="muted small" style="margin:0">Texte secondaire — 13 px, gris 600.</p>
+        <span class="eyebrow">Surtitre — 12 px majuscules</span>
+      </div>
+    </div>
+    <div>
+      <h2>Espacements et formes</h2>
+      <div class="card stack" style="margin-top:0">
+        <p style="margin:0">Échelle de 4 px : 4 · 8 · 12 · 16 · 24 · 32 · 48</p>
+        <div class="cluster"><span style="display:inline-block;width:4px;height:4px;background:var(--brand-100);border-radius:2px"></span><span style="display:inline-block;width:8px;height:8px;background:var(--brand-100);border-radius:2px"></span><span style="display:inline-block;width:12px;height:12px;background:var(--brand-100);border-radius:2px"></span><span style="display:inline-block;width:16px;height:16px;background:var(--brand-100);border-radius:2px"></span><span style="display:inline-block;width:24px;height:24px;background:var(--brand-100);border-radius:2px"></span><span style="display:inline-block;width:32px;height:32px;background:var(--brand-100);border-radius:2px"></span><span style="display:inline-block;width:48px;height:48px;background:var(--brand-100);border-radius:2px"></span></div>
+        <p style="margin:0">Rayons : 6 px (champs, boutons) · 10 px (cartes) · arrondi complet (badges)</p>
+      </div>
+    </div>
+  </div>
+
+  <h2>Boutons</h2>
+  <div class="cluster">
+    <button class="btn">Action principale</button>
+    <button class="btn btn-secondary">Secondaire</button>
+    <button class="btn btn-ghost">Discrète</button>
+    <button class="btn" disabled>Désactivé</button>
+    <button class="btn btn-sm">Petit</button>
+    <button class="btn btn-lg">Grand</button>
+  </div>
+
+  <div class="two-columns">
+    <div>
+      <h2>Badges et puces</h2>
+      <div class="cluster">
+        <span class="badge level-beginner">Débutant</span>
+        <span class="badge level-intermediate">Intermédiaire</span>
+        <span class="badge level-advanced">Avancé</span>
+        <span class="badge badge-info">En cours</span>
+        <span class="badge badge-success">Terminée</span>
+        <span class="badge">MUST</span>
+        <span class="chip">pressée</span><span class="chip">méfiante</span>
+      </div>
+      <h2>Alertes</h2>
+      <div class="alert alert-error"><strong>Quota du fournisseur IA dépassé (429). Réessayez dans quelques instants.</strong>
+        <div class="alert-actions"><button class="btn btn-secondary btn-sm">Réessayer</button></div></div>
+      <div class="alert alert-warning">Le client semble agacé : reformulez votre question.</div>
+      <div class="alert alert-info">Astuce : posez des questions ouvertes (« pourquoi », « comment »).</div>
+      <div class="alert alert-success">Cahier des charges enregistré.</div>
+    </div>
+    <div>
+      <h2>Formulaire</h2>
+      <div class="card stack" style="margin-top:0">
+        <label>Domaine<input value="Santé" /></label>
+        <label>Niveau<select><option>Intermédiaire</option></select><span class="field-hint">Influence la personnalité du client.</span></label>
+        <label>Description<textarea rows="2" placeholder="Le système doit…"></textarea><span class="field-error">Description trop courte</span></label>
+      </div>
+    </div>
+  </div>
+  <h2>Parcours, onglets et jauge</h2>
+  <ol class="stepper"><li class="step is-done">Scénario</li><li class="step is-done">Entretien</li><li class="step is-current">Cahier des charges</li><li class="step ">Changements</li><li class="step ">Évaluation</li></ol>
+  <div class="tabs"><button class="tab is-active">Fonctionnelles</button><button class="tab">Non fonctionnelles</button><button class="tab">User stories</button></div>
+  <div class="bar" style="max-width:420px"><span style="width:64%"></span></div>
+</main>
+</body>
+</html>

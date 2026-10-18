@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maquette — M3 Demandes de changement</title>
+<!-- Maquette statique : utilise le système de design réel de l'application -->
+<link rel="stylesheet" href="../../../client/src/styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a href="#" class="brand"><span class="brand-mark">CI</span><span>Le Client <span>Infernal</span></span></a>
+    <div class="user-box">
+      <span class="user-meta">Yassine Ferchichi<em>Étudiant</em></span>
+      <button class="btn btn-ghost btn-sm">Déconnexion</button>
+    </div>
+  </header>
+  <div class="app-body">
+    <nav class="app-nav">
+      <a href="#" class=""><span class="nav-index">◆</span>Accueil</a>
+      <span class="nav-section">Parcours</span>
+      <a href="#" class=""><span class="nav-index">1</span>Générateur de clients</a>
+      <a href="#" class=""><span class="nav-index">2</span>Entretien client</a>
+      <a href="#" class=""><span class="nav-index">3</span>Cahier des charges</a>
+      <a href="#" class="active"><span class="nav-index">4</span>Demandes de changement</a>
+      <a href="#" class=""><span class="nav-index">5</span>Tableau de bord</a>
+    </nav>
+    <main class="app-main">
+<div class="page-header"><div><span class="eyebrow">Module 3</span><h1>Demandes de changement</h1>
+  <p>En cours de projet, le client change d'avis. À vous de décider : accepter, négocier ou refuser, en le justifiant.</p></div>
+  <div class="page-header-actions"><button class="btn btn-secondary">Recevoir une nouvelle demande</button></div></div>
+  <label class="session-picker">Séance :
+        <select><option>Boulangerie artisanale : commandes en ligne — 17/10/2026</option></select>
+      </label>
+  <ol class="stepper"><li class="step is-done">Scénario</li><li class="step is-done">Entretien</li><li class="step is-done">Cahier des charges</li><li class="step is-current">Changements</li><li class="step ">Évaluation</li></ol>
+  <div class="two-columns">
+    <div class="stack" style="margin-top:0">
+      <article class="card">
+        <div class="card-header"><div><span class="eyebrow">Demande n° 2 · reçue aujourd'hui</span><h3>Ajouter la livraison à domicile</h3></div><span class="badge badge-warning">En attente</span></div>
+        <p>Le client veut proposer la livraison des gâteaux à domicile, dès la première version.</p>
+        <div class="alert alert-warning" style="margin:8px 0">« Un concurrent vient de lancer ce service, je ne peux pas attendre ! »</div>
+        <div class="cluster small"><span class="chip">Impact : commandes et planning</span><span class="chip">Effort : élevé</span><span class="chip">Risque : retard de la V1</span></div>
+      </article>
+      <form class="card stack" style="margin-top:0">
+        <h3>Votre réponse</h3>
+        <div class="choice-group">
+          <label class="choice"><strong>Accepter</strong><span>Intégrer le changement tel quel</span></label>
+          <label class="choice is-selected"><strong>Négocier</strong><span>Proposer une alternative ou un report</span></label>
+          <label class="choice"><strong>Refuser</strong><span>Expliquer pourquoi ce n'est pas souhaitable</span></label>
+        </div>
+        <label>Justification<textarea rows="4">La livraison demande une gestion des tournées et des créneaux : je propose de livrer d'abord le suivi des commandes, puis la livraison dans la version 2, dans un mois.</textarea><span class="field-hint">Parlez délai, coût, risque et propose une alternative.</span></label>
+        <div class="card-footer" style="margin-top:0"><button class="btn">Envoyer ma réponse</button></div>
+      </form>
+    </div>
+    <aside class="stack" style="margin-top:0">
+      <h3>Historique</h3>
+      <article class="card card-muted">
+        <div class="card-header"><h4>Export PDF des rapports</h4><span class="badge badge-success">Négociée</span></div>
+        <div class="score"><span class="score-value" style="font-size:1.8rem">78</span><span class="score-max">/ 100</span></div>
+        <p class="small" style="margin:6px 0 0">Bonne analyse de l'impact. Alternative concrète proposée.</p>
+        <p class="small muted" style="margin:6px 0 0"><em>Client : « D'accord, si c'est livré le mois prochain, ça me convient. »</em></p>
+      </article>
+    </aside>
+  </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

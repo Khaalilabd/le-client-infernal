@@ -3,7 +3,7 @@
 Plateforme web d'entraînement au **recueil des besoins**. L'étudiant joue l'ingénieur ; un LLM joue un client fictif doté d'une personnalité et d'un **besoin caché**. L'étudiant doit découvrir ce besoin pendant un entretien en chat, rédiger un cahier des charges et gérer des demandes de changement. Il est ensuite évalué.
 
 > Projet ESPRIT — module « IA for Software Engineering » — A.U 2026-2027.
-> Architecture détaillée : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Journal des prompts : [docs/prompts/JOURNAL.md](docs/prompts/JOURNAL.md)
+> Architecture : [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · Charte et maquettes : [docs/ui/CHARTE.md](docs/ui/CHARTE.md) · Rapport : [docs/rapport/](docs/rapport/) · Journal des prompts : [docs/prompts/JOURNAL.md](docs/prompts/JOURNAL.md)
 
 ## Équipe et modules
 
@@ -82,6 +82,12 @@ Ne committez jamais le fichier `.env`.
 | `npm run db:seed` | réinitialise les données de démonstration |
 | `npm run db:reset` | supprime la base, la recrée et relance le seed |
 | `npm run db:studio` | interface graphique Prisma Studio |
+| `node scripts/export-images.mjs docs/ui/maquettes docs/ui/maquettes/png` | exporte les maquettes en PNG (Chrome ou Edge requis) |
+| `node scripts/export-diagrams.mjs` | exporte les diagrammes de `docs/ARCHITECTURE.md` en PNG pour le rapport |
+
+## Interface
+
+Toutes les pages suivent la charte [docs/ui/CHARTE.md](docs/ui/CHARTE.md) et réutilisent les classes de `client/src/styles.css`. Chaque module a sa maquette dans [docs/ui/maquettes/](docs/ui/maquettes/) (ouvrir `index.html` dans un navigateur).
 
 ### Port PostgreSQL
 

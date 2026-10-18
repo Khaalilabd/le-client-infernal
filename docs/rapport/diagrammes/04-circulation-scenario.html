@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="capture-width" content="1200" />
+<title>circulation-scenario</title>
+<style>
+  body { margin: 0; padding: 32px; background: #fff; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .mermaid { display: flex; justify-content: center; }
+</style>
+</head>
+<body>
+<pre class="mermaid">
+flowchart TD
+    M1["M1 client-generator&lt;br/>callLLM(generate-scenario)"] -->|"INSERT Scenario&lt;br/>(avec hiddenNeed)"| SC[("Scenario")]
+    SC -->|"toPublicScenario()&lt;br/>sans secrets"| FRONT["Front-end"]
+    FRONT -->|"POST /api/sessions { scenarioId }"| TS[("TrainingSession")]
+    TS --> M2["M2 interview"]
+    TS --> M3["M3 change-requests"]
+    TS --> M4["M4 requirements"]
+    TS --> M5["M5 dashboard"]
+    SC -. "getScenarioSecrets()&lt;br/>serveur uniquement" .-> M2
+    SC -. "getScenarioSecrets()" .-> M3
+    SC -. "getScenarioSecrets()" .-> M4
+    M2 -->|"hiddenNeed injecté dans le prompt&lt;br/>client-reply"| LLM["LLM"]
+    M3 -->|"prompts generate-change / evaluate-response"| LLM
+    M4 -->|"prompt evaluate-document&lt;br/>(comparaison au besoin caché)"| LLM
+</pre>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'Segoe UI, system-ui, sans-serif',
+      primaryColor: '#FDECEB',
+      primaryBorderColor: '#B3261E',
+      primaryTextColor: '#161A22',
+      lineColor: '#5B6474',
+      secondaryColor: '#FFF4E5',
+      tertiaryColor: '#F7F8FA',
+    },
+    flowchart: { htmlLabels: true, curve: 'basis' },
+  });
+</script>
+</body>
+</html>

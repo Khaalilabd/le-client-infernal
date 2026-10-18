@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="capture-width" content="1400" />
+<title>modele-de-donnees</title>
+<style>
+  body { margin: 0; padding: 32px; background: #fff; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .mermaid { display: flex; justify-content: center; }
+</style>
+</head>
+<body>
+<pre class="mermaid">
+erDiagram
+    User ||--o{ TrainingSession : "suit (étudiant)"
+    User ||--o{ Scenario : "a créé"
+    User ||--o{ TeacherFeedback : "rédige (enseignant)"
+    Scenario ||--o{ TrainingSession : "est joué dans"
+    TrainingSession ||--o{ InterviewMessage : "contient"
+    TrainingSession ||--o{ ChangeRequest : "reçoit"
+    TrainingSession ||--o| RequirementsDocument : "produit"
+    TrainingSession ||--o{ TeacherFeedback : "est commentée par"
+    RequirementsDocument ||--o{ Requirement : "contient"
+    RequirementsDocument ||--o{ RequirementsEvaluation : "est évalué par"
+
+    User {
+        string id PK
+        string email UK
+        string passwordHash
+        string firstName
+        string lastName
+        Role role "STUDENT | TEACHER"
+    }
+    TrainingSession {
+        string id PK
+        string studentId FK
+        string scenarioId FK
+        SessionStatus status "IN_PROGRESS | COMPLETED | ABANDONED"
+        float finalScore
+        datetime startedAt
+        datetime completedAt
+    }
+    AiCallLog {
+        string id PK
+        string module
+        string promptName
+        string provider
+        AiCallStatus status
+        string errorCode
+        int attempts
+        int durationMs
+    }
+    Scenario {
+        string id PK
+        string domain
+        Level level "BEGINNER | INTERMEDIATE | ADVANCED"
+        string title
+        string clientName
+        string clientRole
+        string companyName
+        json personality
+        text context
+        text expressedNeed
+        text hiddenNeed "SECRET"
+        json implicitConstraints "SECRET"
+        string createdById FK
+    }
+    InterviewMessage {
+        string id PK
+        string sessionId FK
+        MessageSender sender "STUDENT | CLIENT"
+        text content
+        float proximity "serveur uniquement"
+    }
+    ChangeRequest {
+        string id PK
+        string sessionId FK
+        string title
+        text description
+        text reason
+        json impact
+        ChangeRequestStatus status "PENDING | ANSWERED"
+        ChangeDecision decision "ACCEPT | NEGOTIATE | REFUSE"
+        text justification
+        int score
+        text feedback
+    }
+    RequirementsDocument {
+        string id PK
+        string sessionId FK,UK
+        DocumentStatus status "DRAFT | SUBMITTED | EVALUATED"
+    }
+    Requirement {
+        string id PK
+        string documentId FK
+        RequirementType type "FUNCTIONAL | NON_FUNCTIONAL | USER_STORY"
+        string code
+        string title
+        text description
+        Priority priority "MUST | SHOULD | COULD | WONT"
+        json acceptanceCriteria
+        int position
+    }
+    RequirementsEvaluation {
+        string id PK
+        string documentId FK
+        int globalScore
+        json criteria
+        text feedback
+        json missingPoints
+    }
+    TeacherFeedback {
+        string id PK
+        string sessionId FK
+        string teacherId FK
+        text comment
+        float grade
+    }
+</pre>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'Segoe UI, system-ui, sans-serif',
+      primaryColor: '#FDECEB',
+      primaryBorderColor: '#B3261E',
+      primaryTextColor: '#161A22',
+      lineColor: '#5B6474',
+      secondaryColor: '#FFF4E5',
+      tertiaryColor: '#F7F8FA',
+    },
+    flowchart: { htmlLabels: true, curve: 'basis' },
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="capture-width" content="1200" />
+<title>parcours-etudiant</title>
+<style>
+  body { margin: 0; padding: 32px; background: #fff; font-family: 'Segoe UI', system-ui, sans-serif; }
+  .mermaid { display: flex; justify-content: center; }
+</style>
+</head>
+<body>
+<pre class="mermaid">
+sequenceDiagram
+    actor E as Étudiant
+    participant M1 as client-generator
+    participant S as Séances (commun)
+    participant M2 as interview
+    participant M4 as requirements
+    participant M3 as change-requests
+    participant M5 as dashboard
+
+    E->>M1: Choisit domaine + niveau
+    M1-->>E: Scénario public (sans besoin caché)
+    E->>S: Démarre une séance (scenarioId)
+    loop Entretien
+        E->>M2: Question
+        M2-->>E: Réponse du client simulé
+    end
+    E->>M4: Rédige le cahier des charges
+    M4-->>E: Évaluation selon la grille
+    E->>M3: Reçoit une demande de changement
+    E->>M3: Accepte / négocie / refuse
+    M3-->>E: Note + réaction du client
+    E->>M5: Consulte historique, statistiques et recommandation
+</pre>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@11.4.1/dist/mermaid.min.js"></script>
+<script>
+  mermaid.initialize({
+    startOnLoad: true,
+    theme: 'base',
+    themeVariables: {
+      fontFamily: 'Segoe UI, system-ui, sans-serif',
+      primaryColor: '#FDECEB',
+      primaryBorderColor: '#B3261E',
+      primaryTextColor: '#161A22',
+      lineColor: '#5B6474',
+      secondaryColor: '#FFF4E5',
+      tertiaryColor: '#F7F8FA',
+    },
+    flowchart: { htmlLabels: true, curve: 'basis' },
+  });
+</script>
+</body>
+</html>

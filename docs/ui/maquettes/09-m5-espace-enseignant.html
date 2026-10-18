@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Maquette — M5 Espace enseignant</title>
+<!-- Maquette statique : utilise le système de design réel de l'application -->
+<link rel="stylesheet" href="../../../client/src/styles.css" />
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <a href="#" class="brand"><span class="brand-mark">CI</span><span>Le Client <span>Infernal</span></span></a>
+    <div class="user-box">
+      <span class="user-meta">Sonia Mansour<em>Enseignante</em></span>
+      <button class="btn btn-ghost btn-sm">Déconnexion</button>
+    </div>
+  </header>
+  <div class="app-body">
+    <nav class="app-nav">
+      <a href="#" class=""><span class="nav-index">◆</span>Accueil</a>
+      <span class="nav-section">Parcours</span>
+      <a href="#" class=""><span class="nav-index">1</span>Générateur de clients</a>
+      <a href="#" class=""><span class="nav-index">2</span>Entretien client</a>
+      <a href="#" class=""><span class="nav-index">3</span>Cahier des charges</a>
+      <a href="#" class=""><span class="nav-index">4</span>Demandes de changement</a>
+      <a href="#" class="active"><span class="nav-index">5</span>Tableau de bord</a>
+    </nav>
+    <main class="app-main">
+<div class="page-header"><div><span class="eyebrow">Module 5</span><h1>Espace enseignant</h1>
+  <p>Vue d'ensemble de la promotion, suivi individuel et commentaires.</p></div>
+  <div class="page-header-actions"><button class="btn btn-ghost">Exporter (CSV)</button></div></div>
+  <div class="grid stats-grid">
+    <div class="card stat-card"><span class="stat-label">Étudiants</span><span class="stat-value">42</span></div>
+    <div class="card stat-card"><span class="stat-label">Séances</span><span class="stat-value">187</span><span class="stat-trend">+23 cette semaine</span></div>
+    <div class="card stat-card"><span class="stat-label">Note moyenne</span><span class="stat-value">67</span></div>
+    <div class="card stat-card"><span class="stat-label">Appels IA</span><span class="stat-value">2 314</span><span class="muted small">0,4 % d’erreurs</span></div>
+  </div>
+  <div class="split" style="margin-top:24px">
+    <div>
+      <div class="cluster" style="justify-content:space-between;margin-bottom:12px"><h3>Séances récentes</h3><div class="cluster"><span class="chip">Toutes les classes</span><span class="chip">Tous les statuts</span></div></div>
+      <table class="table">
+        <thead><tr><th>Étudiant</th><th>Scénario</th><th>Statut</th><th>Note</th><th></th></tr></thead>
+        <tbody>
+          <tr><td><strong>Ines Hamdi</strong></td><td>Cabinet médical</td><td><span class="badge badge-success">Terminée</span></td><td>72</td><td><button class="btn btn-ghost btn-sm">Ouvrir</button></td></tr>
+          <tr><td><strong>Yassine Ferchichi</strong></td><td>Boulangerie artisanale</td><td><span class="badge badge-info">En cours</span></td><td>—</td><td><button class="btn btn-ghost btn-sm">Ouvrir</button></td></tr>
+          <tr><td><strong>Sami Trabelsi</strong></td><td>Transporteur régional</td><td><span class="badge badge-success">Terminée</span></td><td>58</td><td><button class="btn btn-ghost btn-sm">Ouvrir</button></td></tr>
+          <tr><td><strong>Meriem Khelifi</strong></td><td>Agence de voyage</td><td><span class="badge badge-success">Terminée</span></td><td>84</td><td><button class="btn btn-ghost btn-sm">Ouvrir</button></td></tr>
+          <tr><td><strong>Omar Jebali</strong></td><td>Cabinet médical</td><td><span class="badge">Abandonnée</span></td><td>—</td><td><button class="btn btn-ghost btn-sm">Ouvrir</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <aside class="card stack" style="margin-top:0">
+      <div class="client-card-head"><div class="avatar">IH</div><div><h3>Ines Hamdi</h3><span class="muted small">Cabinet médical · Intermédiaire</span></div></div>
+      <div class="cluster small"><span class="chip">Entretien : 14 questions</span><span class="chip">Cahier : 68</span><span class="chip">Changements : 76</span></div>
+      <label>Commentaire<textarea rows="4">Bon entretien. Les contraintes de confidentialité auraient dû apparaître dans les exigences non fonctionnelles.</textarea></label>
+      <label>Note sur 20<input value="14" /></label>
+      <button class="btn">Enregistrer le retour</button>
+    </aside>
+  </div>
+    </main>
+  </div>
+</div>
+</body>
+</html>

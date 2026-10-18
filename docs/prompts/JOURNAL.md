@@ -170,3 +170,148 @@ Pendant la génération, l'auteur a demandé une pause pour fermer Docker (« av
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-002 — Auteur des commits avant le premier push
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (Git)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Attendez lorsque je vais push j'aimerai pas vour khaalilabd et claude (et on voit vos commit )
+```
+
+#### Échanges complémentaires (même demande)
+
+L'IA a proposé trois choix pour l'auteur des commits. L'auteur a choisi « Khalil Abdelmoumen, même email ». Il a ensuite posé deux questions sur la publication, mot pour mot :
+
+```text
+vous êtes sur que vous avez push ou je dois le faire manuellement
+```
+
+```text
+comment crer un depot vide
+```
+
+### Résumé de la production de l'IA
+
+- Commit initial réécrit, alors qu'il n'avait pas encore été poussé : la ligne `Co-Authored-By` a été retirée et l'auteur est devenu « Khalil Abdelmoumen <khalilabdelmoumen7@gmail.com> ». La branche `develop` a été recalée sur `main`.
+- Identité Git réglée pour ce dépôt seulement (`git config user.name` et `user.email`).
+- Préférence mémorisée pour les prochaines sessions : aucune mention de l'assistant dans les commits.
+- Rappel : GitHub rattache un commit à un compte par l'email. L'IA a confirmé qu'aucun push n'avait été fait et qu'aucun dépôt distant n'était configuré, puis a expliqué comment créer un dépôt GitHub vide et pousser `main` et `develop`. C'est l'auteur qui a fait le push.
+- Aucun fichier du projet modifié.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
+
+---
+
+## P-003 — Charte graphique, maquettes UI/UX et début du rapport
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (interface) + documentation (rapport)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+On devrait commecner a rédiger el rapport petit a petit car on a taper un prompt il nous faut une photo qui nous a fait générer l'architechture il nous faut des captures vous m'avez compris ou pas ?
+```
+
+#### Échanges complémentaires (même demande)
+
+L'IA a reformulé la demande. Elle a signalé qu'elle ne peut pas faire de captures de l'écran de l'utilisateur, a proposé de préparer tout le reste, puis a demandé le format du rapport. Réponse de l'auteur, mot pour mot :
+
+```text
+Pdf  , ou world , mais maintenant puisque on est entrain de faire marcher le projet , on va commecner a préparer l'itnerface UIX et preparer l'architechture des modules ( je crois que c'est déja fait ) on a push et rédiger le rapport ce qu'on a fait et je vvais vous donner chacun d'entre nous qu'elle est son module
+```
+
+L'IA a ensuite vérifié que le push était bien fait. Elle a rappelé que la répartition des modules était déjà enregistrée dans `CLAUDE.md` et que l'architecture des modules existait déjà. Elle a ensuite proposé deux choix :
+- Rapport : « Word (.docx) » (choisi), « PDF directement » ou « Les deux ».
+- Interface : « Charte + maquettes » (choisi), « Améliorer l'interface commune » ou « Maquettes seulement ».
+
+### Résumé de la production de l'IA
+
+**Charte graphique et interface commune** (modifications de la base commune, signalées à l'équipe) :
+- `client/src/styles.css` réécrit comme système de design : jetons (couleurs, typographie, espacements) et composants (boutons, badges, alertes, onglets, parcours de séance, jauges, fiche client, choix exclusif, note, chronologie, statistiques). Les noms de classes existants sont conservés, donc les pages des modules fonctionnent toujours.
+- Nouveaux composants : `shared/layout/AuthLayout.jsx`, `shared/components/PageHeader.jsx`, `shared/components/EmptyState.jsx`.
+- Mises à jour : `Layout.jsx` (logo, menu numéroté), `LoginPage.jsx`, `RegisterPage.jsx`, `HomePage.jsx` (parcours de séance), `ErrorMessage.jsx` (bouton « Réessayer » pour les erreurs temporaires de l'IA).
+- Contrastes vérifiés par calcul (WCAG AA). Le gris 400 (2,5:1) a été retiré des libellés de texte.
+
+**Maquettes** :
+- `docs/ui/CHARTE.md` : charte, principes UX, accessibilité, correspondance entre composants et classes, écran par module.
+- `docs/ui/maquettes/*.html` : 10 écrans (charte, connexion, accueil, M1, M2, M4 éditeur, M4 évaluation, M3, M5 étudiant, M5 enseignant) et `index.html`. Ils utilisent le vrai `styles.css`.
+- `docs/ui/maquettes/png/*.png` : exports pleine page.
+
+**Scripts** :
+- `scripts/export-images.mjs` : export de pages HTML en PNG pleine page via Chrome ou Edge sans interface (protocole DevTools).
+- `scripts/export-diagrams.mjs` : extraction des diagrammes Mermaid de `docs/ARCHITECTURE.md` et export en PNG.
+
+**Rapport** :
+- `docs/rapport/Rapport_Client_Infernal.docx` (version 0.1, 25 figures, 11 tableaux), avec :
+  - page de garde, sommaire, introduction ;
+  - chapitre 1 : présentation du projet ;
+  - chapitre 2 : démarche IA, analyse de P-001 à P-003 ;
+  - chapitre 3 : architecture, avec les diagrammes ;
+  - chapitre 4 : UI/UX, avec les maquettes ;
+  - chapitres 5 et 6 et conclusion : à compléter ;
+  - annexe A : prompt P-001 intégral ; annexe B : liste des captures.
+- 9 cadres « [CAPTURE N À INSÉRER] » à remplacer par les captures de l'équipe.
+- `docs/rapport/README.md`, `docs/rapport/captures/README.md`, `docs/rapport/images/*.png` (6 diagrammes), `docs/rapport/diagrammes/*.html`.
+
+**Corrections** :
+- `docs/ARCHITECTURE.md` : erreur de syntaxe Mermaid dans le modèle de données (accents dans des étiquettes sans guillemets). Le diagramme ne s'affichait pas sur GitHub ; il est corrigé et les 6 diagrammes sont validés par l'analyseur Mermaid.
+- `README.md` et `docs/ARCHITECTURE.md` : liens et arborescence mis à jour. `.gitattributes` : fichiers binaires déclarés.
+
+**Vérifications** :
+- `npm run build` (client) réussi.
+- Rapport validé par le contrôle XSD de Word.
+- Le rendu visuel du `.docx` n'a pas pu être contrôlé : ni Word ni LibreOffice ne sont installés sur la machine.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
+
+---
+
+## P-004 — Publication du travail et préparation du prompt du module 1
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (Git) + client-generator (préparation)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Alors maintenant faisons un push de ce qu'on a fait et commence a améliorer  notre partie mais l'objectif c'est de laner un sseul script  pour voir si qu'il va faire , la base c'est le principe du prompt car je dois le mettre dans le rapport pour faire un résumé de chaque prompt ce qu'il a réaliser
+```
+
+#### Échanges précédents (questions sans production de fichiers)
+
+```text
+Comment je lance le projet ?
+```
+
+```text
+COmment je fais pour tester un peu le projet ou rien n'est encore fait car la je me suis connecter avec les deux comptes
+```
+
+L'auteur a ensuite partagé le tableau officiel des 5 modules et demandé quel module prendre (« A vvotre avis je prend quelle module ? »). L'IA a recommandé le module 1 pour le chef de projet. Elle a aussi relevé les écarts entre le tableau officiel et le code généré : choix de la personnalité, compteur de questions, versions du cahier des charges, grille couverture/clarté/ambiguïtés, graphiques.
+
+### Résumé de la production de l'IA
+
+- Commit `feat(core): charte graphique, maquettes UI et rapport v0.1` (travail de P-003) sur `develop`, puis push sur GitHub.
+- Rédaction d'un prompt unique et complet pour le module 1, à envoyer par le chef de projet comme entrée P-005 : cadrage, périmètre aligné sur le tableau officiel, contraintes, plan avant action, vérifications et résumé final destiné au rapport.
+- Aucun code du module 1 modifié dans cette étape.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->

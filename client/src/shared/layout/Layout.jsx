@@ -19,13 +19,17 @@ export default function Layout() {
     <div className="app">
       <header className="app-header">
         <NavLink to="/" className="brand">
-          Le Client Infernal
+          <span className="brand-mark" aria-hidden="true">CI</span>
+          <span>
+            Le Client <span>Infernal</span>
+          </span>
         </NavLink>
         <div className="user-box">
-          <span>
-            {user.firstName} {user.lastName} · <em>{ROLE_LABELS[user.role]}</em>
+          <span className="user-meta">
+            {user.firstName} {user.lastName}
+            <em>{ROLE_LABELS[user.role]}</em>
           </span>
-          <button type="button" className="btn btn-ghost" onClick={handleLogout}>
+          <button type="button" className="btn btn-ghost btn-sm" onClick={handleLogout}>
             Déconnexion
           </button>
         </div>
@@ -34,10 +38,13 @@ export default function Layout() {
       <div className="app-body">
         <nav className="app-nav" aria-label="Modules">
           <NavLink to="/" end>
+            <span className="nav-index" aria-hidden="true">◆</span>
             Accueil
           </NavLink>
-          {visibleModules.map((module) => (
+          <span className="nav-section">Parcours</span>
+          {visibleModules.map((module, index) => (
             <NavLink key={module.id} to={`/${module.path}`}>
+              <span className="nav-index" aria-hidden="true">{index + 1}</span>
               {module.label}
             </NavLink>
           ))}
