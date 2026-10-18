@@ -315,3 +315,108 @@ L'auteur a ensuite partagé le tableau officiel des 5 modules et demandé quel m
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-005 — Module 1 client-generator : version complète (v0.2)
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet, responsable du module 1)
+- **Module** : client-generator
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `feature/client-generator`
+
+### Prompt
+
+```text
+Tu es le développeur du module 1 « client-generator » (responsable : Khalil Abdelmoumen). Le contexte du projet, l'architecture et les conventions sont dans CLAUDE.md, docs/ARCHITECTURE.md, docs/ui/CHARTE.md et server/src/modules/client-generator/README.md : lis-les avant de commencer.
+
+Objectif : faire passer le module 1 du squelette actuel à une version complète et démontrable, conforme au tableau officiel du projet :
+- Partie web : choix du domaine, du niveau et de la personnalité ; stockage des scénarios.
+- Rôle de l'IA : générer un scénario complet en JSON (client fictif, contexte, besoin exprimé, besoin caché, contraintes implicites).
+
+Avant de modifier le moindre fichier, présente-moi ton plan (fichiers créés ou modifiés, endpoints, choix techniques) et attends ma validation. Si une information manque, pose la question.
+
+# 1. Fonctionnalités attendues
+
+Génération
+- L'étudiant choisit le domaine (saisie libre + liste de domaines suggérés), le niveau (débutant, intermédiaire, avancé) et la personnalité du client : une liste de profils prédéfinis (par exemple coopératif, pressé, méfiant, bavard, contradictoire, indécis) ou « aléatoire ».
+- Le prompt système generate-scenario passe en version 0.2 : il respecte la personnalité choisie, gradue réellement la difficulté selon le niveau, garantit un besoin caché cohérent avec le contexte et découvrable par de bonnes questions, et évite les doublons en recevant les titres des scénarios déjà existants pour ce domaine.
+- La réponse du LLM reste validée par un schéma Zod ; enrichis-le si nécessaire.
+
+Stockage et consultation
+- Liste des scénarios avec filtres (domaine, niveau, personnalité) et un état vide clair.
+- Page de détail d'un scénario (version publique uniquement), avec le bouton « Démarrer une séance ».
+- Suppression d'un scénario réservée à l'enseignant.
+
+Interface
+- Les pages respectent la maquette docs/ui/maquettes/03-m1-generateur.html et la charte : PageHeader, cartes, badges de niveau, états de chargement (« Génération… »), erreurs avec bouton « Réessayer », EmptyState.
+
+Mode sans clé API
+- Le mock du prompt generate-scenario produit des scénarios variés selon le domaine, le niveau et la personnalité choisis, pour que la démo soit crédible sans clé API.
+
+# 2. Contraintes
+
+- Respecte les 4 contraintes obligatoires de CLAUDE.md. En particulier, ni hiddenNeed ni implicitConstraints ne doivent apparaître dans une réponse API ou dans l'interface.
+- Ne modifie que server/src/modules/client-generator/ et client/src/modules/client-generator/. Si tu dois toucher la base commune, le schéma Prisma ou un autre module, signale-le et demande-moi avant. Privilégie les solutions sans migration (par exemple stocker le profil de personnalité dans le JSON personality).
+- Les prompts restent dans le dossier prompts/ du module, jamais en dur dans le code.
+
+# 3. Vérification
+
+- Crée la branche feature/client-generator à partir de develop.
+- Ajoute des tests automatisés pour le module : validation du schéma, mock conforme, absence du besoin caché dans les réponses des endpoints du module.
+- Lance npm test et npm run build, démarre le serveur, puis appelle chaque endpoint du module. Corrige les erreurs éventuelles.
+- Mets à jour le README du module et le tableau des endpoints du module 1 dans docs/ARCHITECTURE.md.
+- Fais plusieurs petits commits conventionnels « feat(client-generator): … », puis pousse la branche feature/client-generator, sans fusionner dans develop.
+
+# 4. Traçabilité pour le rapport
+
+- Ajoute l'entrée P-005 dans docs/prompts/JOURNAL.md, avec ce prompt mot pour mot.
+- Termine par un résumé au format suivant, que je reprendrai dans le rapport :
+  1. Ce qui était demandé.
+  2. Ce qui a été réalisé.
+  3. Fichiers créés et modifiés.
+  4. Vérifications effectuées et résultats.
+  5. Problèmes rencontrés et corrections.
+  6. Limites et ce qui reste à faire.
+```
+
+#### Échanges complémentaires (même demande)
+
+L'IA a présenté son plan et posé deux questions : que faire d'un scénario déjà utilisé lors de sa suppression, et qui a le droit de générer des scénarios. Réponse de l'auteur, mot pour mot :
+
+```text
+Faîtes cequi convient le mieux
+```
+
+Choix appliqués : la suppression est refusée (409) si des séances utilisent le scénario ; la génération est ouverte aux étudiants et aux enseignants.
+
+En cours de route, l'IA a signalé que les tests communs du service IA dépendaient du prompt du module 1 et a demandé comment corriger. Option choisie par l'auteur : « Découpler les tests (Recommandé) ».
+
+### Résumé de la production de l'IA
+
+Voir le résumé détaillé ci-dessous, rédigé pour le rapport.
+
+1. **Demandé** : version complète du module 1, avec choix du domaine, du niveau et de la personnalité, prompt v0.2, filtres, page de détail, suppression par l'enseignant, interface conforme à la maquette, mock varié, tests, documentation et traçabilité.
+2. **Réalisé** :
+   - 6 profils de personnalité plus « aléatoire » (tiré au sort par le serveur) ;
+   - 12 domaines suggérés ;
+   - prompt v0.2 avec des fragments de règles par niveau ;
+   - validation Zod renforcée : besoin caché différent du besoin exprimé, nombre de contraintes implicites selon le niveau ;
+   - endpoints `/options` et `DELETE` (avec refus 409 si le scénario est utilisé), filtre par personnalité sans migration (JSON) ;
+   - interface : formulaire avec cartes de profils, filtres, page de détail, états de chargement, d'erreur et vide ;
+   - mock avec 5 familles de domaines, un mode générique, 6 profils et 3 niveaux.
+3. **Fichiers** : le détail est dans le README du module ; 8 commits sur `feature/client-generator`.
+4. **Vérifications** :
+   - 31 tests sur 31 réussis : 18 nouveaux tests du module (dont le mock pour 108 combinaisons et les endpoints sur une vraie base) et les 13 tests communs ;
+   - build du client réussi ;
+   - endpoints appelés via le serveur de développement ;
+   - écrans capturés dans Chrome sans interface (génération par l'interface, page de détail vue par l'enseignant), sans erreur JavaScript.
+5. **Problèmes et corrections** :
+   - les tests communs utilisaient le prompt du module 1 : ils ont été découplés avec l'accord de l'auteur (base commune, commit `test(core)`) ;
+   - le mock générique ne mentionnait pas le domaine demandé : corrigé.
+6. **Limites** : le prompt v0.2 n'a pas été testé avec un vrai LLM, faute de clé API ; la variété du mock reste limitée (2 situations par famille) ; pas de pagination.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
