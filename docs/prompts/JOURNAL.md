@@ -420,3 +420,61 @@ Voir le résumé détaillé ci-dessous, rédigé pour le rapport.
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-006 — Captures d'écran et rapport v0.2
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : documentation (rapport) + client-generator (section 5.1)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Je viens de réaliser tout les captures sur le desktop , vérifiez ces captures et déplacer les dans leur emplacement et faîtes le nécéssaire
+```
+
+#### Échanges précédents (même sujet)
+
+```text
+La je dois faire quoi exactement qu'est ce qui manque pour que je dis mon module est totalement termineé et ma partie du rapport aussi
+```
+
+L'IA a listé ce qui restait : test du prompt v0.2 avec un vrai LLM, pull request, information de l'équipe, captures, section 5.1 du rapport, rubrique « Modifications de l'équipe ».
+
+```text
+Donc la on va prendre les captures c'est CA , e problléme je sais pas qu'elle capture prendre
+```
+
+L'IA a généré elle-même les 5 captures de l'application, avec Chrome sans interface et les comptes de démonstration : connexion, accueil, maquette, écrans du module 1. Elle a ensuite donné la liste précise des 11 captures restantes (où les prendre, quoi montrer, nom du fichier).
+
+```text
+Faut lancer l'application non ?
+```
+
+```text
+petite question vite fait vous pouvez pass faire la capture d'écran des prompt et la réponse par vous même ?
+```
+
+L'IA a répondu qu'elle n'a pas accès à l'affichage de VS Code. Elle a déconseillé de fabriquer une image imitant l'interface (crédibilité de la démarche) et proposé à la place un export de la session, clairement présenté comme tel.
+
+### Résumé de la production de l'IA
+
+- **Vérification des 20 captures** du Bureau (`OneDrive\Desktop`) :
+  - 19 sont conformes et ont été déplacées dans `docs/rapport/captures/` en `pXXX-NN-description-N.png`. Les deux fichiers mal nommés (`… .png .png`) ont été corrigés.
+  - `p005-04-resume3.png` n'est pas utilisable : on y voit des chemins techniques et un message système, mais pas la fin du résumé. Elle est restée sur le Bureau.
+  - Il manque encore `p001-04-arborescence`, `p001-05-tests` et `p001-07-github`.
+- **Captures générées par l'IA** (application réelle) : `p001-06-application-connexion`, `p001-06-application-accueil`, `p003-02-maquettes-navigateur`, `p005-05-ecran-generateur`, `p005-06-ecran-detail-scenario`.
+- **Rapport Word v0.2** (`docs/rapport/Rapport_Client_Infernal.docx`, 31 figures, 15 tableaux, validation XSD réussie) :
+  - captures insérées automatiquement ; les 3 manquantes restent sous forme de cadre ;
+  - prompts P-004 et P-005 ajoutés au tableau ;
+  - nouvelles sections 2.7 (P-004) et 2.8 (P-005 : structure, déroulement, analyse critique) ;
+  - section 5.1 du module 1 rédigée : fonctionnalités, endpoints, prompts, évolution v0.1 → v0.2, écrans, tests, difficultés, limites ;
+  - chapitre 6 mis à jour (31 tests) et annexe B avec l'état de chaque capture.
+- `docs/rapport/captures/README.md` mis à jour.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
