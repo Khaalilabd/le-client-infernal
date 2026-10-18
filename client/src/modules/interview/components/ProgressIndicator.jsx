@@ -14,7 +14,7 @@ const DISCOVERY_BAR_CLASS = {
   HIGH: 'bar-success',
 };
 
-export default function ProgressIndicator({ sessionId }) {
+export default function ProgressIndicator({ sessionId, messagesCount = 0 }) {
   const [progress, setProgress] = useState(null);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function ProgressIndicator({ sessionId }) {
       .getProgress(sessionId)
       .then(setProgress)
       .catch(console.error);
-  }, [sessionId]);
+  }, [sessionId, messagesCount]); // Se rafraîchit quand le nombre de messages change
 
   if (!progress) return null;
 

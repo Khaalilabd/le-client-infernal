@@ -120,7 +120,7 @@ export default function InterviewHomePage() {
           />
           <aside className="stack" style={{ marginTop: 0 }}>
             <ClientCard sessionId={sessionId} />
-            {!isCompleted && <ProgressIndicator sessionId={sessionId} />}
+            {!isCompleted && <ProgressIndicator sessionId={sessionId} messagesCount={messages?.length || 0} />}
             {!isCompleted && (
               <div className="alert alert-info" style={{ margin: 0 }}>
                 <strong>Astuce</strong>
