@@ -54,6 +54,7 @@ Toutes les règles du projet sont dans [`CLAUDE.md`](../CLAUDE.md). Votre IA doi
 | **Claude Code** (VS Code ou terminal) | Rien : `CLAUDE.md` est lu automatiquement. Ouvrez le dossier du projet dans VS Code et lancez Claude Code. |
 | **Cursor** | Rien : Cursor lit [`AGENTS.md`](../AGENTS.md), qui renvoie vers `CLAUDE.md`. Utilisez le mode Agent. |
 | **GitHub Copilot** (VS Code) | Rien : Copilot lit [`.github/copilot-instructions.md`](../.github/copilot-instructions.md). Utilisez le mode Agent du chat Copilot. |
+| **Kiro** (agent avec Claude Sonnet) | Rien : Kiro charge [`.kiro/steering/projet.md`](../.kiro/steering/projet.md), qui inclut `CLAUDE.md`. Utilisez le **chat en mode agent (« Vibe »)** et envoyez votre prompt de départ tel quel : il contient déjà le plan à valider. Laissez **Autopilot désactivé** pour relire chaque modification avant de l'accepter. Dans le journal, notez l'outil : « Kiro — Claude Sonnet <version affichée> ». |
 | **Codex** | Rien : Codex lit `AGENTS.md`. |
 | **Gemini CLI et autres agents** | Commencez la session par : « Lis CLAUDE.md et applique ses règles pendant toute la session. » |
 | **ChatGPT, Gemini, Claude.ai (version web)** | L'IA ne voit pas vos fichiers. **Avant** le prompt, collez le contenu de `CLAUDE.md` puis celui du `README.md` de votre module. Ensuite, joignez les fichiers qu'elle vous demande. C'est **vous** qui lancez les commandes (`npm test`…) et qui collez les résultats. |

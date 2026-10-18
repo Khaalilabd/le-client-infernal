@@ -643,3 +643,42 @@ Après la revue, l'IA a posé 6 points. Réponse de l'auteur, mot pour mot :
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-010 — Accompagnement de Kenza (module 2) et configuration de Kiro
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (organisation de l'équipe)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Elle utilise Kiro qui utilise claude sonnet
+```
+
+#### Échanges précédents (même sujet, sans production de fichiers)
+
+```text
+Alors maintenant il reste le travail de kenza et ismail c'"est ca ?
+```
+
+L'IA a vérifié GitHub : il reste trois modules (Kenza M2, Ismail M3, Aziz M5), sans aucun travail poussé. La branche `change-requests` est vide et mal nommée. L'IA a rédigé un message de point d'avancement pour l'équipe.
+
+```text
+Kenza va traaviller elle a juste a coller ce prompt  c'est tout et sa lui fera ton travail ?
+```
+
+L'IA a répondu que le prompt lance le travail technique, mais que Kenza doit elle-même valider le plan, prendre les décisions, vérifier, faire les captures, écrire sa rubrique « Modifications de l'équipe » et rédiger sa section du rapport. Elle a donné une liste de 9 étapes.
+
+### Résumé de la production de l'IA
+
+- `.kiro/steering/projet.md` : fichier de règles chargé automatiquement par Kiro (`inclusion: always`). Il inclut `CLAUDE.md` (`#[[file:CLAUDE.md]]`) et rappelle les règles principales, dont la nouvelle règle du rapport.
+- `docs/GUIDE_EQUIPE.md` (section 3) : ligne Kiro avec le mode agent, Autopilot désactivé pour relire chaque modification, et le nom de l'outil à noter dans le journal.
+- Point d'attention : la syntaxe des fichiers de règles de Kiro peut évoluer selon sa version. Kenza doit vérifier dans Kiro (panneau « Steering ») que le fichier est bien chargé.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
