@@ -1,0 +1,30 @@
+/* Styles propres au module requirements (préfixe requirements-), basés sur les jetons de la charte. */
+
+.requirements-toolbar { margin-bottom: var(--space-3); }
+.requirements-unsaved { color: var(--warning-600); font-weight: 600; }
+
+.requirements-list,
+.requirements-side { margin-top: 0; }
+
+.requirements-card.is-editing { border-color: var(--primary); box-shadow: var(--focus-ring); }
+.requirements-card-type { margin: 0 0 var(--space-1); }
+.requirements-card-text { margin: 0; white-space: pre-line; }
+.requirements-card-criteria { margin: var(--space-2) 0 0; padding-left: var(--space-5); }
+.requirements-card-warning { margin: var(--space-2) 0 0; color: var(--warning-600); }
+
+.requirements-change-banner a { font-weight: 600; }
+
+.requirements-versions h3 { margin-bottom: var(--space-3); }
+.requirements-version-meta,
+.requirements-version-reason { margin: 2px 0; }
+.requirements-version-content { margin-top: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--border); }
+
+.requirements-evaluate { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); flex-wrap: wrap; margin-bottom: var(--space-4); }
+.requirements-evaluate h3,
+.requirements-evaluate p { margin: 0; }
+
+.requirements-section-title { margin-bottom: var(--space-4); }
+.requirements-criterion-comment { margin: var(--space-1) 0 0; }
+.requirements-feedback { margin: var(--space-2) 0 0; }
+.requirements-points { margin: var(--space-2) 0 0; padding-left: 18px; }
+.requirements-hidden-note { margin: 0; }
