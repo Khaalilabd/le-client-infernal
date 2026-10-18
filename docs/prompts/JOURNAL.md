@@ -543,3 +543,42 @@ Elle a ensuite signalé un problème. Avec un journal unique et une numérotatio
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-008 — Ordre de travail de l'équipe et coordination M3/M4
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (organisation, Git)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Qui doit travailler en premier
+```
+
+#### Échanges complémentaires (même sujet)
+
+```text
+La j'ai nadhem et ismail sur discord il doient faire quoi dîtes moi ce qu'il doivent faire
+```
+
+```text
+Oui
+```
+
+### Résumé de la production de l'IA
+
+- Constat : la pull request #2 avait été fusionnée dans `main` au lieu de `develop`. Le guide demandant de partir de `develop`, l'équipe serait partie d'une base sans le module 1 ni le guide.
+- Ordre de travail proposé : tout le monde démarre en parallèle (mock, données de démonstration, registres de modules), après une réunion préalable entre Ismail (M3) et Nadhem (M4) sur les versions du cahier des charges. La migration est faite en priorité par Nadhem et fusionnée tôt, Aziz (M5) termine en dernier, et une seule migration de schéma est faite à la fois.
+- Message Discord rédigé pour Ismail et Nadhem :
+  - préparation ;
+  - 4 décisions à prendre, avec une solution proposée : table `RequirementsDocumentVersion` propriété du M4, lue seulement par le M3, versions créées à la soumission puis après une demande acceptée ou négociée, liaison par `?changeRequest=<id>` et endpoints de lecture des versions ;
+  - étapes après la réunion.
+- Après l'accord de l'auteur (« Oui »), `develop` a été avancé jusqu'à `main` (avance rapide, sans réécriture) et poussé : les deux branches sont identiques (`2dde647`).
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
