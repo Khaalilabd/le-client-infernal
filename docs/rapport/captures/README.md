@@ -11,7 +11,7 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | 1 | `p001-01-prompt-1.png` à `-4.png` | Prompt P-001 dans Claude Code | ✅ |
 | 2 | `p001-02-plan-1.png` à `-4.png` | Plan proposé par l'IA avant la création des fichiers | ✅ |
 | 3 | `p001-03-questions.png` | Questions de l'IA et réponses du chef de projet | ✅ |
-| 4 | `p001-04-arborescence.png` | Explorateur de VS Code, dossiers `server/src` et `client/src` dépliés | ❌ à fournir |
+| 4 | `p001-04-arborescence-1.png`, `-2.png` | Explorateur de VS Code : `server/src` puis `client/src` dépliés | ✅ |
 | 5 | `p001-05-tests.png` | Terminal : `npm test` (« pass 31 / fail 0 ») | ✅ |
 | 6 | `p001-06-application-connexion.png`, `p001-06-application-accueil.png` | Application dans le navigateur | ✅ (générées) |
 | 7 | `p001-07-github.png` | Page des branches du dépôt GitHub | ✅ (générée) |

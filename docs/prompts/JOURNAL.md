@@ -474,6 +474,7 @@ L'IA a répondu qu'elle n'a pas accès à l'affichage de VS Code. Elle a décons
   - section 5.1 du module 1 rédigée : fonctionnalités, endpoints, prompts, évolution v0.1 → v0.2, écrans, tests, difficultés, limites ;
   - chapitre 6 mis à jour (31 tests) et annexe B avec l'état de chaque capture.
 - `docs/rapport/captures/README.md` mis à jour.
+- **Complément** : les 3 captures manquantes ont été ajoutées. La page des branches GitHub (dépôt public) a été capturée par l'IA. La sortie de `npm test` (31 tests sur 31) et l'arborescence (2 captures : serveur et client) ont été collées par l'auteur dans la conversation, puis rangées par l'IA. Le rapport a été régénéré : toutes les captures sont insérées, il ne reste plus aucun cadre « à insérer ».
 
 ### Modifications de l'équipe
 
