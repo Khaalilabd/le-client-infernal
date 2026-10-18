@@ -383,8 +383,8 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 |---|---|---|---|---|---|
 | ✅ | GET | `/sessions/:sessionId/messages` | propriétaire ou TEACHER | — | `{ messages: [{ id, sender, content, createdAt }] }` |
 | ✅ | POST | `/sessions/:sessionId/messages` | STUDENT propriétaire | `{ content }` | `201 { studentMessage, clientMessage }` |
-| 🔲 | POST | `/sessions/:sessionId/end` | STUDENT propriétaire | — | `{ summary }` (synthèse de l'entretien) |
-| 🔲 | GET | `/sessions/:sessionId/progress` | propriétaire ou TEACHER | — | `{ questionsCount, discoveryLevel }` |
+| ✅ | POST | `/sessions/:sessionId/end` | STUDENT propriétaire | — | `{ summary: { discoveredPoints, questionsAsked, qualityFeedback } }` |
+| ✅ | GET | `/sessions/:sessionId/progress` | propriétaire ou TEACHER | — | `{ questionsCount, discoveryLevel, recommendedQuestions }` |
 
 ### M3 — change-requests (`/api/change-requests`)
 
