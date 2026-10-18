@@ -23,22 +23,27 @@ export default function generateScenarioMock({ variables }, random = Math.random
 
   // Évite de reproduire un titre déjà existant quand c'est possible
   const existing = String(variables.existingTitles ?? '');
-  const fresh = family.situations.filter((situation) => !existing.includes(`${situation.org} : ${situation.subject}`));
+  const fresh = family.situations.filter((situation) => !existing.includes(situation.subject));
   const situation = pick(fresh.length ? fresh : family.situations, random);
 
   const constraints = [...family.constraints].sort(() => random() - 0.5).slice(0, CONSTRAINT_COUNT[levelId]);
 
+  // Domaine sans gabarit dédié : le scénario générique est rattaché au domaine demandé
+  const isGeneric = family === GENERIC_FAMILY;
+  const org = isGeneric ? `${situation.org} ${domain}` : situation.org;
+  const context = isGeneric ? `Organisation du secteur « ${domain} ». ${situation.context}` : situation.context;
+
   return {
-    title: `${situation.org} : ${situation.subject}`,
+    title: `${org} : ${situation.subject}`,
     clientName: situation.clientName,
     clientRole: situation.clientRole,
-    companyName: `${situation.org} (fictif)`,
+    companyName: `${org} (fictif)`,
     personality: {
       traits: style.traits,
       communicationStyle: style.communicationStyle,
       mood: style.mood,
     },
-    context: situation.context,
+    context,
     expressedNeed: style.phrase(situation.expressedNeed),
     hiddenNeed: situation.hiddenNeed,
     implicitConstraints: constraints,
