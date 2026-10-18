@@ -193,6 +193,8 @@ erDiagram
     TrainingSession ||--o{ TeacherFeedback : "est commentée par"
     RequirementsDocument ||--o{ Requirement : "contient"
     RequirementsDocument ||--o{ RequirementsEvaluation : "est évalué par"
+    RequirementsDocument ||--o{ RequirementsDocumentVersion : "est figé en"
+    ChangeRequest |o--o| RequirementsDocumentVersion : "provoque"
 
     User {
         string id PK
@@ -279,6 +281,15 @@ erDiagram
         json criteria
         text feedback
         json missingPoints
+        int version "version évaluée"
+    }
+    RequirementsDocumentVersion {
+        string id PK
+        string documentId FK
+        int version "1, 2, 3… UK avec documentId"
+        json snapshot "exigences figées"
+        text reason
+        string changeRequestId FK,UK "vide pour la V1"
     }
     TeacherFeedback {
         string id PK
@@ -298,8 +309,9 @@ erDiagram
 | `AiCallLog` | Base commune (service IA) | service IA | M5 |
 | `Scenario` | **M1** client-generator | M1, seed | M2, M3, M4 (via `getScenarioSecrets`), M5 |
 | `InterviewMessage` | **M2** interview | M2 | M4 (contexte d'évaluation, optionnel), M5 |
-| `ChangeRequest` | **M3** change-requests | M3 | M5 |
+| `ChangeRequest` | **M3** change-requests | M3 | M4 (vérifie la demande avant une nouvelle version), M5 |
 | `RequirementsDocument`, `Requirement`, `RequirementsEvaluation` | **M4** requirements | M4 | M3 (contexte, optionnel), M5 |
+| `RequirementsDocumentVersion` | **M4** requirements | M4 | M3 (versions créées suite à ses demandes), M5 |
 | `TeacherFeedback` | **M5** dashboard | M5 | M5 |
 
 Règle : **un module n'écrit que dans ses propres tables**. Il peut lire celles des autres.
@@ -385,10 +397,16 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 
 | | Méthode | Route | Rôle | Requête | Réponse |
 |---|---|---|---|---|---|
-| ✅ | GET | `/sessions/:sessionId/document` | propriétaire ou TEACHER | — | `{ document: { status, requirements, evaluations } }` |
-| ✅ | PUT | `/sessions/:sessionId/document` | STUDENT propriétaire | `{ requirements: [{ type, code, title, description, priority, acceptanceCriteria? }] }` | `{ document }` |
-| 🔲 | POST | `/sessions/:sessionId/document/evaluate` | STUDENT propriétaire | — | `201 { evaluation }` |
-| 🔲 | GET | `/sessions/:sessionId/document/evaluations` | propriétaire ou TEACHER | — | `{ evaluations: [...] }` |
+| ✅ | GET | `/sessions/:sessionId/document` | propriétaire ou TEACHER | — | `{ document: { status, currentVersion, requirements, evaluations (la dernière) } }` |
+| ✅ | PUT | `/sessions/:sessionId/document` | STUDENT propriétaire | `{ requirements: [{ type, code, title, description, priority, acceptanceCriteria? }] }` | `{ document }` ; `409` si le document n'est plus un brouillon |
+| ✅ | POST | `/sessions/:sessionId/document/submit` | STUDENT propriétaire | — | `{ document }` (statut SUBMITTED, version 1) ; `409` si déjà soumis |
+| ✅ | POST | `/sessions/:sessionId/document/evaluate` | STUDENT propriétaire | — | `201 { evaluation }` (version courante) ; `409` si brouillon ou version déjà évaluée |
+| ✅ | GET | `/sessions/:sessionId/document/evaluations` | propriétaire ou TEACHER | — | `{ evaluations: [...] }` (la plus récente d'abord) |
+| ✅ | POST | `/sessions/:sessionId/document/versions` | STUDENT propriétaire | `{ changeRequestId, reason, requirements }` | `201 { version }` (V N+1, document SUBMITTED) ; `404` demande d'une autre séance ; `409` demande non acceptée/négociée ou déjà utilisée |
+| ✅ | GET | `/sessions/:sessionId/document/versions?changeRequestId=` | propriétaire ou TEACHER | — | `{ versions: [{ version, reason, changeRequest, requirementsCount, globalScore, createdAt }] }` |
+| ✅ | GET | `/sessions/:sessionId/document/versions/:version` | propriétaire ou TEACHER | — | `{ version: { …, snapshot: [...] } }` |
+
+Cycle de vie : `DRAFT` → submit → `SUBMITTED` (V1) → evaluate → `EVALUATED` ; une demande de changement acceptée ou négociée (module 3) permet `POST /versions` → `SUBMITTED` (V N+1), qui peut à nouveau être évaluée. Côté interface, le module 3 ouvre `/requirements?session=<id>&changeRequest=<id>`.
 
 ### M5 — dashboard (`/api/dashboard`)
 

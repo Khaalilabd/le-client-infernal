@@ -205,7 +205,9 @@ model ChangeRequest {
   createdAt     DateTime            @default(now())
   answeredAt    DateTime?
 
-  session TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  session         TrainingSession              @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  /// Relation inverse exigée par Prisma (table du M4, lecture seule pour le M3)
+  documentVersion RequirementsDocumentVersion?
 
   @@index([sessionId])
 }
@@ -222,9 +224,30 @@ model RequirementsDocument {
   createdAt DateTime       @default(now())
   updatedAt DateTime       @updatedAt
 
-  session      TrainingSession          @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  session      TrainingSession               @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   requirements Requirement[]
   evaluations  RequirementsEvaluation[]
+  versions     RequirementsDocumentVersion[]
+}
+
+/// Version figée du cahier des charges : V1 à la soumission, puis une version
+/// par demande de changement acceptée ou négociée. Seul le M4 écrit, le M3 lit.
+model RequirementsDocumentVersion {
+  id              String   @id @default(cuid())
+  documentId      String
+  /// 1, 2, 3…
+  version         Int
+  /// Liste des exigences à ce moment : [{ type, code, title, description, priority, acceptanceCriteria? }]
+  snapshot        Json
+  reason          String   @db.Text
+  /// Demande de changement à l'origine de la version (vide pour la V1)
+  changeRequestId String?  @unique
+  createdAt       DateTime @default(now())
+
+  document      RequirementsDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  changeRequest ChangeRequest?       @relation(fields: [changeRequestId], references: [id], onDelete: SetNull)
+
+  @@unique([documentId, version])
 }
 
 /// Exigence du cahier des charges.
@@ -257,6 +280,8 @@ model RequirementsEvaluation {
   feedback      String   @db.Text
   /// Pistes formulées sans révéler le besoin caché : string[]
   missingPoints Json
+  /// Numéro de la version évaluée (RequirementsDocumentVersion.version)
+  version       Int?
   createdAt     DateTime @default(now())
 
   document RequirementsDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
