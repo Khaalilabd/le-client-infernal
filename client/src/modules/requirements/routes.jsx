@@ -1,4 +1,5 @@
-import RequirementsHomePage from './pages/RequirementsHomePage.jsx';
+import RequirementsEditorPage from './pages/RequirementsEditorPage.jsx';
+import RequirementsEvaluationPage from './pages/RequirementsEvaluationPage.jsx';
 
 export default {
   id: 'requirements',
@@ -6,5 +7,8 @@ export default {
   label: 'Cahier des charges',
   description: 'Rédigez exigences fonctionnelles, non fonctionnelles et user stories, puis faites-les évaluer.',
   roles: ['STUDENT', 'TEACHER'],
-  routes: [{ path: '', element: <RequirementsHomePage /> }],
+  routes: [
+    { path: '', element: <RequirementsEditorPage /> },
+    { path: 'evaluation', element: <RequirementsEvaluationPage /> },
+  ],
 };
