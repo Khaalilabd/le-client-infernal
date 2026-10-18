@@ -176,3 +176,39 @@ L'IA a considéré le plan comme validé avec ses propositions par défaut pour 
 ### Modifications de l'équipe
 
 <!-- À remplir par le responsable du module -->
+
+## P-M4-002 — Section 5.4 du rapport et captures du module 4
+
+- **Date** : 2026-10-18
+- **Auteur** : Nadhem Hmida
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : feature/requirements
+
+### Prompt
+
+```text
+si mon module est terminer en doit terminer le rapport avec des capture de ma partie
+```
+
+### Résumé de la production de l'IA
+
+1. **Ce qui était demandé.** Compléter la partie du module 4 dans le rapport Word, avec des captures d'écran.
+2. **Ce qui a été réalisé.**
+   - 4 captures des écrans réels, prises automatiquement (navigateur sans interface piloté par le protocole CDP, comme `scripts/export-images.mjs`) sur l'application lancée en mode simulé, avec le scénario « Boulangerie artisanale » : éditeur, évaluation, nouvelle version après une demande de changement, historique des versions.
+   - Section 5.4 du rapport rédigée sur le modèle de la 5.1 : objectif et fonctionnalités (tableaux 15 et 16), décision commune M3/M4, prompts utilisés et évolution du prompt système (tableaux 17 et 18), réalisation et captures (figures 34 à 37) comparées aux maquettes 05 et 06, tests, difficultés et apport de l'IA, limites.
+   - Annexe B complétée (captures 16 à 22) ; son tableau renuméroté de 15 à 19.
+   - Trois cadres « Capture à insérer » (figures 32, 33 et 38) pour les captures de la conversation que seul Nadhem peut prendre : prompt, plan, résumé.
+3. **Fichiers créés et modifiés.** `docs/rapport/Rapport_Client_Infernal.docx`, `docs/rapport/captures/README.md`, `docs/rapport/captures/p-m4-001-04` à `-07` (créés) ; `client/src/modules/requirements/` (`requirements.css`, `requirements.constants.js`, `components/RequirementForm.jsx`, `components/VersionHistory.jsx`, `pages/RequirementsEvaluationPage.jsx`) et `server/src/modules/requirements/mocks/evaluate-document.mock.js` (corrections, commit séparé).
+4. **Vérifications effectuées et résultats.** Chaque capture relue avant insertion ; rapport ouvert par Word et exporté en PDF sans erreur (67 pages), pages de la section 5.4 et de l'annexe B relues visuellement ; `npm test` 57/57 et `npm run build` réussis après les corrections.
+5. **Problèmes rencontrés et corrections.**
+   - La relecture des captures a révélé trois défauts de l'interface, corrigés avant l'insertion : liste des priorités qui débordait du formulaire, colonne de droite décalée (`styles.css` est chargé après le CSS du module, sélecteurs renforcés), pluriels incorrects (« 2 exigence non fonctionnelles », « user storys », « exigence(s) »).
+   - Rapport : ligne « Responsable » mal justifiée après un ajout, tableau des endpoints trop serré, figure 37 trop haute → ajout retiré, largeurs rééquilibrées, capture recadrée.
+6. **Limites et ce qui reste à faire.**
+   - Prendre les 3 captures de la conversation (`p-m4-001-01-prompt.png`, `-02-plan.png`, `-03-resume.png`) et les insérer à la place des cadres rouges.
+   - Compléter les 2 encadrés « À compléter » de la section 5.4 (vérifications personnelles, test avec une vraie clé).
+   - Les numéros des figures et tableaux sont du texte : ils devront être décalés quand les sections 5.2 et 5.3 seront ajoutées avant la 5.4.
+   - Pour les figures 36 et 37, la demande de changement a été acceptée directement en base (endpoint du module 3 pas encore livré).
+
+### Modifications de l'équipe
+
+<!-- À remplir par le responsable du module -->

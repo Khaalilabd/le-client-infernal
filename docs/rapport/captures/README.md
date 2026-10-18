@@ -23,6 +23,13 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | 13 | `p005-05-ecran-generateur.png` | Écran réalisé du module 1 : génération et liste | ✅ (générée) |
 | 14 | `p005-06-ecran-detail-scenario.png` | Écran réalisé du module 1 : fiche d'un scénario | ✅ (générée) |
 | 15 | `p005-04-resume-1.png`, `-2.png` | Résumé final de P-005 | ✅ |
+| 16 | `p-m4-001-01-prompt.png` | Prompt P-M4-001 dans Claude Code | 🔲 à prendre (Nadhem) |
+| 17 | `p-m4-001-02-plan.png` | Plan du module 4 et questions de l'IA | 🔲 à prendre (Nadhem) |
+| 18 | `p-m4-001-03-resume.png` | Résumé final de P-M4-001 | 🔲 à prendre (Nadhem) |
+| 19 | `p-m4-001-04-ecran-editeur.png` | Écran réalisé du module 4 : éditeur (brouillon) | ✅ (générée) |
+| 20 | `p-m4-001-05-ecran-evaluation.png` | Écran réalisé du module 4 : évaluation de la version 1 | ✅ (générée) |
+| 21 | `p-m4-001-06-ecran-nouvelle-version.png` | Écran réalisé du module 4 : nouvelle version après une demande | ✅ (générée) |
+| 22 | `p-m4-001-07-ecran-versions.png` | Écran réalisé du module 4 : historique des versions (recadrée) | ✅ (générée) |
 
 Après avoir ajouté une capture manquante, demander la régénération du rapport (ou l'insérer à la main dans Word à la place du cadre rouge correspondant).
 
