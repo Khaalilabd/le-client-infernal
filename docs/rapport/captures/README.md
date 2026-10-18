@@ -23,6 +23,10 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | 13 | `p005-05-ecran-generateur.png` | Écran réalisé du module 1 : génération et liste | ✅ (générée) |
 | 14 | `p005-06-ecran-detail-scenario.png` | Écran réalisé du module 1 : fiche d'un scénario | ✅ (générée) |
 | 15 | `p005-04-resume-1.png`, `-2.png` | Résumé final de P-005 | ✅ |
+| M4 | `p-m4-001-01-prompt-1.png` à `-3.png` | Prompt P-M4-001 (Nadhem) | ✅ (récupérées du Word) |
+| M4 | `p-m4-001-02-plan-1.png` à `-7.png` | Plan du module 4 et questions de l'IA | ✅ (récupérées du Word) |
+| M4 | `p-m4-001-03-resume-1.png`, `-2.png` | Résumé final de P-M4-001 | ✅ (récupérées du Word) |
+| M4 | `p-m4-001-04` à `-07-ecran-*.png` | Écrans réalisés du module 4 | ✅ |
 | 16 | `p-m4-001-01-prompt.png` | Prompt P-M4-001 dans Claude Code | 🔲 à prendre (Nadhem) |
 | 17 | `p-m4-001-02-plan.png` | Plan du module 4 et questions de l'IA | 🔲 à prendre (Nadhem) |
 | 18 | `p-m4-001-03-resume.png` | Résumé final de P-M4-001 | 🔲 à prendre (Nadhem) |
@@ -31,6 +35,6 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | 21 | `p-m4-001-06-ecran-nouvelle-version.png` | Écran réalisé du module 4 : nouvelle version après une demande | ✅ (générée) |
 | 22 | `p-m4-001-07-ecran-versions.png` | Écran réalisé du module 4 : historique des versions (recadrée) | ✅ (générée) |
 
-Après avoir ajouté une capture manquante, demander la régénération du rapport (ou l'insérer à la main dans Word à la place du cadre rouge correspondant).
+Après avoir ajouté une capture, lancez `npm run rapport` : la capture est insérée automatiquement et l'annexe B est mise à jour. Les captures des modules sont référencées dans `docs/rapport/sections/5.x-<module>.md`.
 
 Pour les prochains prompts : `p-m<x>-NNN-NN-description.png` pour un module (ex. `p-m2-001-01-prompt.png`), `pNNN-NN-description.png` pour un prompt commun.
