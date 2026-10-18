@@ -682,3 +682,32 @@ L'IA a répondu que le prompt lance le travail technique, mais que Kenza doit el
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-011 — Prompt court pour le module 2 (Kenza)
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : organisation de l'équipe (module 2)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+je voudrai aidez kenez a envoyer un prompt direct pour que l'ia comprenne ce qu'il doti faire lire les fichier nécéssaire le projet et qu'il travail directe ce qu'elle a comme module a faire tout ssimplement
+```
+
+### Résumé de la production de l'IA
+
+- Ajout d'une **version courte** en tête de `docs/prompts/modeles/prompt-m2-interview.md`. L'IA de Kenza :
+  - lit les fichiers du projet (`CLAUDE.md`, guide, architecture, charte, README du module, module 1 comme exemple) ;
+  - exécute le prompt détaillé du même fichier ;
+  - présente un plan court et ses questions en une seule fois, puis réalise tout le module sans s'arrêter, sauf pour la base commune ;
+  - termine par les tests, le journal P-M2-001, la section 5.2 du rapport, les commits, le push et le résumé en 6 points.
+- Choix argumenté : une étape de validation du plan est conservée. Elle garantit que Kenza dirige l'IA, ce que le rapport et l'oral évaluent.
+- La liste de ce que Kenza fait elle-même (captures, réponses, vérification, « Modifications de l'équipe », pull request) figure sous le prompt.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->

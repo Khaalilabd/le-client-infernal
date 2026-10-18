@@ -1,5 +1,31 @@
 # Prompt de départ — Module 2 « Entretien client » (Kenza Baccar)
 
+## ⭐ Version courte (recommandée)
+
+Copiez ce bloc dans le chat de votre agent IA (Kiro, Claude Code, Cursor…), ouvert sur le projet, depuis la branche `feature/interview`. L'IA lit elle-même les fichiers nécessaires, dont le prompt détaillé plus bas, propose un plan, puis réalise tout le module.
+
+```text
+Tu travailles sur le projet « Le Client Infernal ». Je suis Kenza Baccar, responsable du module 2 « interview » (entretien client avec le client simulé par l'IA).
+
+1. Lis d'abord ces fichiers pour comprendre le projet et ses règles : CLAUDE.md, docs/GUIDE_EQUIPE.md, docs/ARCHITECTURE.md, docs/ui/CHARTE.md, server/src/modules/interview/README.md. Regarde aussi le module 1, terminé, comme exemple de structure, de tests et de documentation : server/src/modules/client-generator/ et client/src/modules/client-generator/.
+2. Lis ensuite docs/prompts/modeles/prompt-m2-interview.md : le bloc « Prompt détaillé » décrit tout ce que je dois réaliser. Considère-le comme ma demande et applique-le entièrement.
+3. Présente-moi un plan court (fichiers, endpoints, choix techniques) et pose-moi toutes tes questions en une seule fois. Dès que j'ai répondu, réalise tout le module sans t'arrêter, sauf si tu dois toucher la base commune, le schéma Prisma ou un autre module : dans ce cas, demande-moi avant.
+4. À la fin :
+   - npm test et npm run build doivent réussir ;
+   - mon journal docs/prompts/interview.md doit contenir l'entrée P-M2-001, avec CE prompt mot pour mot, tes questions et mes réponses ;
+   - rédige ma section du rapport dans docs/rapport/sections/5.2-interview.md, sur le modèle de la 5.4, puis lance npm run rapport ;
+   - fais des commits « feat(interview): … » et pousse la branche feature/interview, sans fusionner ;
+   - termine par le résumé en 6 points (demandé, réalisé, fichiers, vérifications, problèmes, limites).
+```
+
+Ce que vous faites vous-même : les captures (ce prompt, le plan, le résumé final, les écrans dans le navigateur), vos réponses aux questions de l'IA, la vérification dans le navigateur, la rubrique « Modifications de l'équipe » de votre journal, et la pull request vers `develop`.
+
+---
+
+## Prompt détaillé
+
+Le prompt ci-dessous est lu par l'IA quand vous utilisez la version courte. Vous pouvez aussi l'envoyer directement à la place de la version courte.
+
 **Comment l'utiliser :** copiez tout le bloc ci-dessous et envoyez-le **tel quel** comme premier message à votre IA (voir `docs/GUIDE_EQUIPE.md`, section 3, selon l'outil). Faites une capture du prompt envoyé, du plan proposé et du résumé final. Ce prompt sera l'entrée **P-M2-001** de `docs/prompts/interview.md`.
 
 Vous pouvez l'adapter avant l'envoi (ajouter une idée, retirer une fonctionnalité) : notez alors vos modifications dans le journal.
