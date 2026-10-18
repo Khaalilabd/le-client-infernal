@@ -582,3 +582,64 @@ Oui
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-009 — Revue du module 4 et génération du rapport à partir de sections Markdown
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (revue de code, Git, rapport)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+> Note : le journal du module 4 proposait le numéro P-009 pour ses échanges de préparation. Ce numéro est pris ici ; ces échanges, s'ils sont tracés, prendront le numéro P-M4-003 dans `docs/prompts/requirements.md`.
+
+### Prompt
+
+```text
+A ce que je vois mon camarade nadhem m'a dit qu'il a terminer pouvez vous vérifiez ce qu'il a fait du projet et est ce que il a bien réalier son module parfaitement et il a fait comme j'ai fait dans le rapport ?
+```
+
+#### Échanges complémentaires (même demande)
+
+Après la revue, l'IA a posé 6 points. Réponse de l'auteur, mot pour mot :
+
+```text
+1) Corriger oui 
+2) Oui j'ai valider 
+3) Ok 
+4) Faites le 
+5) vous pouvez pas trouver une idée pour esayer de le récupérer les nouvelle donneé pour les mettre dans lel script ? 
+6) On vera
+```
+
+### Résumé de la production de l'IA
+
+1. **Revue du module 4 (Nadhem)** :
+   - tests : 57 sur 57 réussis avec la vraie base, dont 26 du module 4 ; build réussi ;
+   - migration conforme à la décision M3/M4 ;
+   - besoin caché protégé, avec un refus automatique d'une évaluation qui le recopie ; `userId` transmis à l'IA ; validation Zod ; périmètre respecté ;
+   - journal P-M4-001 et P-M4-002 complet ; section 5.4 du rapport sur le modèle de la 5.1 ; 10 commits conventionnels à son nom.
+2. **Points relevés** :
+   - PR #3 fusionnée dans `main` au lieu de `develop` ;
+   - décisions déléguées à l'IA (« faire tout le module ») ;
+   - captures du prompt, du plan et du résumé présentes seulement dans le Word ;
+   - rapport modifié à la main dans Word, donc incompatible avec la génération par script ;
+   - branche `change-requests` créée sans le préfixe `feature/`.
+3. **Corrections** :
+   - `develop` avancé jusqu'à `main` (avance rapide) ;
+   - 12 captures du module 4 extraites du Word vers `docs/rapport/captures/` (reconnaissance par empreinte des images déjà présentes).
+4. **Nouvelle méthode pour le rapport** :
+   - générateur placé dans le dépôt (`scripts/rapport/generer-rapport.cjs`, commande `npm run rapport`, dépendances `docx` et `jszip`) ;
+   - chaque module rédige sa section dans `docs/rapport/sections/5.x-<module>.md` (Markdown simple : titres, tableaux, captures, encadrés) ;
+   - sections 5.1 et 5.4 converties automatiquement depuis le Word ; modèles créés pour 5.2, 5.3 et 5.5 ;
+   - annexe B construite automatiquement à partir des captures utilisées ; chapitre 6 mis à jour (57 tests).
+5. **Vérifications** :
+   - rapport validé par le contrôle XSD de Word ;
+   - comparaison paragraphe par paragraphe avec les originaux : section 5.1 identique ; section 5.4 de Nadhem identique (même texte, mêmes 16 images ; seules les légendes de figures en plusieurs parties ajoutent « (N captures successives) »).
+6. **Documentation mise à jour** : `docs/rapport/README.md`, `docs/GUIDE_EQUIPE.md` (sections 10 à 12), `docs/rapport/captures/README.md`, mémo technique de `CLAUDE.md`, arborescence de `docs/ARCHITECTURE.md`.
+7. **Non fait, car ce contenu appartient à Nadhem** : la rubrique « Modifications de l'équipe » du journal M4 et la traçabilité de ses échanges de préparation.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->

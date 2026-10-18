@@ -54,3 +54,4 @@ Base commune : authentification avec rôles (STUDENT, TEACHER), layout, gestion 
 - Besoin caché : les champs `hiddenNeed` et `implicitConstraints` du scénario sont omis par défaut par Prisma ; pour les lire côté serveur, utiliser `getScenarioSecrets()` de `server/src/shared/db/scenarioSecrets.js`. Le middleware `responseGuard` les retire de toute réponse JSON par sécurité.
 - Le schéma Prisma (`server/prisma/schema.prisma`) est partagé : toute modification passe par une migration (`npm run db:migrate -- --name <nom>`) et doit être signalée à l'équipe.
 - Chaque membre a sa propre base PostgreSQL locale (Docker, port 5434).
+- Rapport : `docs/rapport/Rapport_Client_Infernal.docx` est **généré** par `npm run rapport` (ne jamais le modifier à la main). Chaque module rédige sa section dans `docs/rapport/sections/5.x-<module>.md` ; captures dans `docs/rapport/captures/`.

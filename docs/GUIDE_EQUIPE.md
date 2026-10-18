@@ -154,11 +154,11 @@ git push -u origin feature/<module>
 - Des **commits petits et fréquents**, au format `type(module): description` (`feat`, `fix`, `test`, `docs`, `refactor`).
 - **Pull request** vers `develop` quand une fonctionnalité est terminée et testée. Le chef de projet relit et fusionne.
 - **Conflit** : ne forcez rien (`--force` interdit), et demandez de l'aide.
-- **Rapport Word** : c'est un fichier binaire, donc une seule personne le modifie à la fois. Envoyez plutôt votre texte et vos captures au chef de projet (section 11).
+- **Rapport Word** : il est **généré** (`npm run rapport`) : ne le modifiez jamais à la main et ne le committez pas depuis votre branche. Vous ne modifiez que votre fichier de section (section 11).
 
 ## 11. Votre partie du rapport
 
-Le rapport est dans [`docs/rapport/`](rapport/). Chaque membre fournit **la section 5.x de son module**, avec la même structure que la section 5.1 (module 1, déjà rédigée) :
+Le rapport Word est **généré** à partir de fichiers texte (mode d'emploi : [`docs/rapport/README.md`](rapport/README.md)). Chaque membre rédige **la section 5.x de son module** dans **son** fichier `docs/rapport/sections/5.x-<module>.md` (un modèle est prêt), avec la même structure que les sections 5.1 (module 1) et 5.4 (module 4), déjà rédigées :
 
 1. Objectif et fonctionnalités (avec un tableau des endpoints).
 2. Prompts utilisés : vos P-M<x>-NNN, et l'évolution de votre prompt système (v0.1 → v0.2…).
@@ -167,7 +167,9 @@ Le rapport est dans [`docs/rapport/`](rapport/). Chaque membre fournit **la sect
 5. Difficultés et apport de l'IA : ce que l'IA a bien fait, ce que vous avez dû corriger, vos décisions.
 6. Limites et perspectives.
 
-L'essentiel de ce contenu vient du **résumé en 6 points** de vos prompts. Envoyez votre texte et vos captures (déposées dans `docs/rapport/captures/`) au chef de projet, qui les intègre.
+L'essentiel de ce contenu vient du **résumé en 6 points** de vos prompts. Déposez vos captures dans `docs/rapport/captures/`, vérifiez le rendu avec `npm run rapport`, puis committez votre fichier `.md` et vos captures (pas le `.docx`). Le chef de projet régénère le rapport après chaque fusion dans `develop`.
+
+> ⚠️ Ne modifiez pas le `.docx` dans Word : il est écrasé à chaque génération. Si votre IA vous le propose, demandez-lui plutôt de rédiger votre fichier de section.
 
 ## 12. Quand votre module est-il terminé ?
 
@@ -176,7 +178,7 @@ L'essentiel de ce contenu vient du **résumé en 6 points** de vos prompts. Envo
 - [ ] Les tests de votre module existent et `npm test` affiche `fail 0`.
 - [ ] Le README du module et le tableau des endpoints dans `docs/ARCHITECTURE.md` sont à jour.
 - [ ] Votre journal est complet (prompts mot pour mot, résumés, « Modifications de l'équipe ») et les captures sont prises.
-- [ ] Votre section 5.x du rapport est envoyée.
+- [ ] Votre section `docs/rapport/sections/5.x-<module>.md` est rédigée (plus aucun encadré « À compléter ») et ses captures sont déposées.
 - [ ] Votre pull request vers `develop` est fusionnée.
 
 ## 13. Questions fréquentes
