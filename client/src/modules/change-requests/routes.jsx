@@ -1,4 +1,4 @@
-import ChangeRequestsHomePage from './pages/ChangeRequestsHomePage.jsx';
+import ChangeRequestsPage from './pages/ChangeRequestsPage.jsx';
 
 export default {
   id: 'change-requests',
@@ -6,5 +6,5 @@ export default {
   label: 'Demandes de changement',
   description: 'Répondez aux demandes de changement du client : accepter, négocier ou refuser.',
   roles: ['STUDENT', 'TEACHER'],
-  routes: [{ path: '', element: <ChangeRequestsHomePage /> }],
+  routes: [{ path: '', element: <ChangeRequestsPage /> }],
 };

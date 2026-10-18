@@ -391,7 +391,7 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 |---|---|---|---|---|---|
 | ✅ | GET | `/sessions/:sessionId` | propriétaire ou TEACHER | — | `{ changeRequests: [...] }` |
 | ✅ | POST | `/sessions/:sessionId/generate` | STUDENT propriétaire | — | `201 { changeRequest }` |
-| 🔲 | POST | `/:changeRequestId/respond` | STUDENT propriétaire | `{ decision, justification }` | `{ changeRequest, clientReaction }` |
+| ✅ | POST | `/:changeRequestId/respond` | STUDENT propriétaire | `{ decision, justification }` | `{ changeRequest, clientReaction }` |
 
 ### M4 — requirements (`/api/requirements`)
 
