@@ -3,8 +3,14 @@
 .requirements-toolbar { margin-bottom: var(--space-3); }
 .requirements-unsaved { color: var(--warning-600); font-weight: 600; }
 
-.requirements-list,
-.requirements-side { margin-top: 0; }
+/* styles.css est chargé après les modules : sélecteurs renforcés pour annuler la marge de .stack */
+.stack.requirements-list,
+.stack.requirements-side,
+.requirements-side > .stack:first-child { margin-top: 0; }
+
+/* Les listes déroulantes ne doivent pas élargir le formulaire (libellés MoSCoW longs) */
+.requirements-form .row > label { min-width: 0; }
+.requirements-form select { width: 100%; min-width: 0; }
 
 .requirements-card.is-editing { border-color: var(--primary); box-shadow: var(--focus-ring); }
 .requirements-card-type { margin: 0 0 var(--space-1); }

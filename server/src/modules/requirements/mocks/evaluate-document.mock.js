@@ -25,7 +25,8 @@ function parseRequirements(value) {
 
 const clamp = (value, max) => Math.max(0, Math.min(max, Math.round(value)));
 const ratio = (part, total) => (total === 0 ? 0 : part / total);
-const plural = (count, word) => `${count} ${word}${count > 1 ? 's' : ''}`;
+// Accord en nombre : plural(2, 'exigence non fonctionnelle', 'exigences non fonctionnelles')
+const plural = (count, singular, pluralForm = `${singular}s`) => `${count} ${count > 1 ? pluralForm : singular}`;
 
 function findVagueTerms(requirements) {
   const found = new Set();
@@ -79,13 +80,13 @@ export function buildEvaluation(requirements) {
   const comments = [
     total === 0
       ? 'Le cahier des charges est vide : aucun besoin n\'est couvert.'
-      : `${plural(total, 'exigence')} rédigée${total > 1 ? 's' : ''} : ${plural(functional.length, 'fonctionnelle')}, ${plural(nonFunctional.length, 'non fonctionnelle')}, ${plural(stories.length, 'user story')}. Vérifiez qu'elles répondent au problème de fond du client, pas seulement à sa demande initiale.`,
+      : `${plural(total, 'exigence')} rédigée${total > 1 ? 's' : ''} : ${plural(functional.length, 'fonctionnelle')}, ${plural(nonFunctional.length, 'non fonctionnelle')}, ${plural(stories.length, 'user story', 'user stories')}. Vérifiez qu'elles répondent au problème de fond du client, pas seulement à sa demande initiale.`,
     nonFunctional.length === 0
       ? 'Aucune exigence non fonctionnelle : les contraintes du quotidien du client ne sont pas traduites.'
-      : `${plural(nonFunctional.length, 'exigence non fonctionnelle')} : ${nonFunctional.length >= 3 ? 'bonne attention aux contraintes.' : 'd\'autres contraintes restent sans doute à identifier.'}`,
+      : `${plural(nonFunctional.length, 'exigence non fonctionnelle', 'exigences non fonctionnelles')} : ${nonFunctional.length >= 3 ? 'bonne attention aux contraintes.' : 'd\'autres contraintes restent sans doute à identifier.'}`,
     total === 0
       ? 'Rien à évaluer.'
-      : `${clearCount} exigence(s) sur ${total} sont détaillées et vérifiables. Formulez « Le système doit… » avec un résultat mesurable.`,
+      : `${clearCount} exigence${clearCount > 1 ? 's' : ''} sur ${total} ${clearCount > 1 ? 'sont détaillées et vérifiables' : 'est détaillée et vérifiable'}. Formulez « Le système doit… » avec un résultat mesurable.`,
     vagueTerms.length === 0
       ? (total === 0 ? 'Rien à évaluer.' : 'Pas de terme vague repéré.')
       : `Termes vagues à chiffrer ou préciser : ${vagueTerms.slice(0, 4).map((term) => `« ${term} »`).join(', ')}.`,

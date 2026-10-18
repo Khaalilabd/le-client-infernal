@@ -71,6 +71,7 @@ export default function RequirementForm({ editing, onSubmit, onCancel }) {
               </option>
             ))}
           </select>
+          <span className="field-hint">{PRIORITIES.find((priority) => priority.id === form.priority)?.hint}</span>
         </label>
       </div>
       <label>

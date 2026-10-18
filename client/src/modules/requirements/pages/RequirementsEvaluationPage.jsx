@@ -10,7 +10,7 @@ import EmptyState from '../../../shared/components/EmptyState.jsx';
 import Loader from '../../../shared/components/Loader.jsx';
 import SessionStepper from '../components/SessionStepper.jsx';
 import CriterionBar from '../components/CriterionBar.jsx';
-import { modulePath } from '../requirements.constants.js';
+import { formatCount, modulePath } from '../requirements.constants.js';
 import { requirementsApi } from '../api.js';
 import '../requirements.css';
 
@@ -84,7 +84,7 @@ export default function RequirementsEvaluationPage() {
               <div>
                 <h3>{evaluations.length === 0 ? 'Prêt pour l\'évaluation' : `Nouvelle version à évaluer`}</h3>
                 <p className="muted">
-                  {`La version ${document.currentVersion} de votre cahier des charges (${document.requirements.length} exigence(s)) sera comparée au véritable besoin du client.`}
+                  {`La version ${document.currentVersion} de votre cahier des charges (${formatCount(document.requirements.length)}) sera comparée au véritable besoin du client.`}
                 </p>
               </div>
               <button type="button" className="btn" onClick={handleEvaluate} disabled={evaluating}>

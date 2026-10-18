@@ -4,6 +4,7 @@ import ErrorMessage from '../../../shared/components/ErrorMessage.jsx';
 import Loader from '../../../shared/components/Loader.jsx';
 import RequirementCard from './RequirementCard.jsx';
 import { requirementsApi } from '../api.js';
+import { formatCount } from '../requirements.constants.js';
 
 const DECISION_LABELS = { ACCEPT: 'acceptée', NEGOTIATE: 'négociée' };
 
@@ -45,7 +46,7 @@ export default function VersionHistory({ sessionId, refreshKey }) {
               </div>
               <p className="muted small requirements-version-meta">
                 {new Date(version.createdAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })} ·{' '}
-                {version.requirementsCount} exigence(s)
+                {formatCount(version.requirementsCount)}
               </p>
               <p className="small requirements-version-reason">
                 {version.changeRequest

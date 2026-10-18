@@ -16,10 +16,10 @@ export const TABS = [
 export const CODE_PREFIXES = { FUNCTIONAL: 'EF', NON_FUNCTIONAL: 'ENF', USER_STORY: 'US' };
 
 export const PRIORITIES = [
-  { id: 'MUST', label: 'MUST — indispensable' },
-  { id: 'SHOULD', label: 'SHOULD — important' },
-  { id: 'COULD', label: 'COULD — souhaitable' },
-  { id: 'WONT', label: 'WONT — pas pour cette version' },
+  { id: 'MUST', label: 'MUST', hint: 'indispensable' },
+  { id: 'SHOULD', label: 'SHOULD', hint: 'important' },
+  { id: 'COULD', label: 'COULD', hint: 'souhaitable' },
+  { id: 'WONT', label: 'WONT', hint: 'pas pour cette version' },
 ];
 
 export const STATUS_LABELS = {
@@ -47,6 +47,11 @@ export function nextCode(requirements, type) {
 /** Exigence au format attendu par l'API (sans identifiants techniques). */
 export function toInput({ type, code, title, description, priority, acceptanceCriteria }) {
   return { type, code, title, description, priority, ...(acceptanceCriteria?.length ? { acceptanceCriteria } : {}) };
+}
+
+/** « 1 exigence », « 3 exigences ». */
+export function formatCount(count) {
+  return `${count} exigence${count > 1 ? 's' : ''}`;
 }
 
 /** Lien vers une page du module en gardant la séance dans l'URL. */
