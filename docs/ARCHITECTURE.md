@@ -336,7 +336,7 @@ Conventions :
 - Préfixe `/api`, JSON en entrée et en sortie.
 - Authentification : en-tête `Authorization: Bearer <jwt>`.
 - Format d'erreur unique : `{ "error": { "code": "…", "message": "…", "details"?: [{ "path", "message" }] } }`.
-- Codes d'erreur : `VALIDATION_ERROR` (400), `UNAUTHORIZED` / `INVALID_TOKEN` / `INVALID_CREDENTIALS` (401), `FORBIDDEN` (403), `NOT_FOUND` / `ROUTE_NOT_FOUND` (404), `CONFLICT` (409), `AI_RATE_LIMIT` (429), `INTERNAL_ERROR` / `AI_PROMPT_ERROR` (500), `AI_INVALID_RESPONSE` / `AI_PROVIDER_ERROR` (502), `AI_MISSING_KEY` / `DATABASE_UNAVAILABLE` (503), `AI_TIMEOUT` (504).
+- Codes d'erreur : `VALIDATION_ERROR` (400), `UNAUTHORIZED` / `INVALID_TOKEN` / `INVALID_CREDENTIALS` (401), `FORBIDDEN` (403), `NOT_FOUND` / `ROUTE_NOT_FOUND` (404), `CONFLICT` / `SCENARIO_IN_USE` (409), `AI_RATE_LIMIT` (429), `INTERNAL_ERROR` / `AI_PROMPT_ERROR` (500), `AI_INVALID_RESPONSE` / `AI_PROVIDER_ERROR` (502), `AI_MISSING_KEY` / `DATABASE_UNAVAILABLE` (503), `AI_TIMEOUT` (504).
 
 Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter par le responsable du module).
 
@@ -357,11 +357,11 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 
 | | Méthode | Route | Rôle | Requête | Réponse |
 |---|---|---|---|---|---|
-| ✅ | POST | `/scenarios` | connecté | `{ domain, level }` | `201 { scenario }` (public) |
-| ✅ | GET | `/scenarios?domain=&level=` | connecté | — | `{ scenarios: [...] }` |
+| ✅ | GET | `/options` | connecté | — | `{ domains, levels, personalities }` (domaines suggérés, niveaux, profils de personnalité) |
+| ✅ | POST | `/scenarios` | connecté | `{ domain, level, personality? }` (profil ou `RANDOM`, par défaut) | `201 { scenario }` (public, `personality.profile` renseigné) |
+| ✅ | GET | `/scenarios?domain=&level=&personality=` | connecté | — | `{ scenarios: [...] }` |
 | ✅ | GET | `/scenarios/:scenarioId` | connecté | — | `{ scenario }` |
-| 🔲 | DELETE | `/scenarios/:scenarioId` | TEACHER | — | `204` |
-| 🔲 | GET | `/domains` | connecté | — | `{ domains: [...] }` (domaines suggérés) |
+| ✅ | DELETE | `/scenarios/:scenarioId` | TEACHER | — | `204` ; `409 SCENARIO_IN_USE` si des séances utilisent le scénario |
 
 ### M2 — interview (`/api/interview`)
 
