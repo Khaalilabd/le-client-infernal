@@ -59,4 +59,18 @@ Mode sans clé API
   4. Vérifications effectuées et résultats.
   5. Problèmes rencontrés et corrections.
   6. Limites et ce qui reste à faire.
+
+# 5. Décision commune M3/M4 : versions successives du cahier des charges
+
+Cette décision a été prise avec Ismail (module 3) et validée par le chef de projet. Elle remplace la demande « Propose une solution commune » de la section 1 : applique-la au lieu d'en proposer une autre.
+
+- Nouvelle table RequirementsDocumentVersion (propriété du module 4) : id, documentId (relation vers RequirementsDocument, onDelete Cascade), version (1, 2, 3…), snapshot (JSON : la liste des exigences à ce moment, validée par un schéma Zod), reason (texte), changeRequestId (relation optionnelle vers ChangeRequest, unique, onDelete SetNull), createdAt. Contrainte unique (documentId, version).
+- Ajout d'un champ version Int? dans RequirementsEvaluation, pour savoir quelle version a été évaluée.
+- Seul le module 4 écrit dans cette table. Le module 3 la lit seulement. Le module 4 lit ChangeRequest pour vérifier que la demande appartient à la même séance, qu'elle a le statut ANSWERED et la décision ACCEPT ou NEGOTIATE (ne jamais se fier au paramètre de l'URL sans cette vérification).
+- Version 1 : créée quand l'étudiant soumet son cahier des charges. Version N+1 : quand l'étudiant arrive depuis le module 3 avec une demande acceptée ou négociée, le document est rouvert pour modification ; à l'enregistrement, la nouvelle version liée à la demande est créée et le document repasse au statut SUBMITTED, prêt à être réévalué.
+- Communication : le module 3 ouvre le module 4 avec ?changeRequest=<id> dans l'URL. Endpoints du module 4 :
+  - POST /api/requirements/sessions/:sessionId/document/versions { changeRequestId, reason } (STUDENT propriétaire) ;
+  - GET /api/requirements/sessions/:sessionId/document/versions, avec un filtre optionnel ?changeRequestId= (propriétaire ou TEACHER) ;
+  - GET /api/requirements/sessions/:sessionId/document/versions/:version (propriétaire ou TEACHER).
+- Priorité : commence par la migration (npm run db:migrate -- --name ajout_versions_cahier) et un commit qui ne contient que server/prisma, pour que je puisse ouvrir une pull request « migration seule » vers develop. La modification du modèle ChangeRequest se limite au champ de relation inverse exigé par Prisma (accord du module 3) : ne touche à rien d'autre dans le module 3.
 ```
