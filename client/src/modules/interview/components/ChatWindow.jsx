@@ -1,7 +1,7 @@
 // Fenêtre de chat entre l'étudiant (ingénieur) et le client simulé.
 import { useEffect, useRef, useState } from 'react';
 
-export default function ChatWindow({ messages, onSend, sending, disabled }) {
+export default function ChatWindow({ messages, onSend, sending, disabled, clientName = 'Client' }) {
   const [draft, setDraft] = useState('');
   const endRef = useRef(null);
 
@@ -23,11 +23,15 @@ export default function ChatWindow({ messages, onSend, sending, disabled }) {
         {messages.length === 0 && <p className="muted">Commencez l'entretien en posant votre première question.</p>}
         {messages.map((message) => (
           <div key={message.id} className={`chat-bubble ${message.sender === 'STUDENT' ? 'from-student' : 'from-client'}`}>
-            <span className="chat-author">{message.sender === 'STUDENT' ? 'Vous' : 'Client'}</span>
+            <span className="chat-author">{message.sender === 'STUDENT' ? 'Vous' : clientName}</span>
             {message.content}
           </div>
         ))}
-        {sending && <div className="chat-bubble from-client muted">Le client réfléchit…</div>}
+        {sending && (
+          <div className="chat-bubble from-client chat-typing">
+            {clientName} réfléchit…
+          </div>
+        )}
         <div ref={endRef} />
       </div>
       {!disabled && (
@@ -38,6 +42,7 @@ export default function ChatWindow({ messages, onSend, sending, disabled }) {
             placeholder="Posez une question au client…"
             rows={2}
             maxLength={2000}
+            disabled={sending}
             onKeyDown={(event) => {
               if (event.key === 'Enter' && !event.shiftKey) handleSubmit(event);
             }}
