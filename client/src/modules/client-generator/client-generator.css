@@ -1,0 +1,32 @@
+/* Styles propres au module client-generator (préfixe cg-), basés sur les jetons de la charte. */
+
+.cg-form { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-5); }
+.cg-form-row { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-4); }
+.cg-form-footer { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; }
+
+.cg-suggestions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-1); }
+.cg-suggestion { font: inherit; font-size: var(--text-sm); padding: 3px 10px; border-radius: var(--radius-full); border: 1px solid var(--border); background: var(--surface); color: var(--gray-800); cursor: pointer; }
+.cg-suggestion:hover { border-color: var(--primary); color: var(--primary); }
+.cg-suggestion.is-selected { background: var(--primary-soft); border-color: var(--primary); color: var(--primary); }
+
+.cg-profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: var(--space-2); }
+.cg-profiles .choice { position: relative; padding: var(--space-2) var(--space-3); }
+.cg-profiles input { position: absolute; opacity: 0; pointer-events: none; }
+.cg-profiles .choice:focus-within { box-shadow: var(--focus-ring); }
+
+.cg-fieldset { border: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.cg-fieldset legend { font-size: var(--text-sm); font-weight: 600; color: var(--gray-800); padding: 0; margin-bottom: var(--space-1); }
+
+.cg-toolbar { display: flex; justify-content: space-between; align-items: flex-end; gap: var(--space-4); flex-wrap: wrap; margin: var(--space-6) 0 var(--space-4); }
+.cg-toolbar h2 { margin: 0; }
+.cg-filters { display: flex; gap: var(--space-2); flex-wrap: wrap; align-items: flex-end; }
+.cg-filters label { font-size: var(--text-xs); min-width: 150px; }
+.cg-filters input, .cg-filters select { padding: 6px 10px; font-size: var(--text-sm); }
+
+.cg-card { display: flex; flex-direction: column; }
+.cg-card .card-footer { margin-top: auto; }
+.cg-card-body { flex: 1; }
+
+.cg-detail-need { font-size: var(--text-lg); font-style: italic; border-left: 3px solid var(--accent-500); padding-left: var(--space-3); margin: var(--space-2) 0 0; }
+
+@media (max-width: 760px) { .cg-form-row { grid-template-columns: 1fr; } }
