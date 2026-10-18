@@ -11,6 +11,11 @@ import { generatedScenarioSchema } from '../src/modules/client-generator/client-
 const schema = z.object({ answer: z.string() });
 const noop = async () => {};
 
+// Prompt de test propre à ce fichier : les tests du service IA ne dépendent
+// d'aucun prompt de module (chaque module peut faire évoluer les siens librement).
+const TEST_PROMPT = 'Prompt de test pour le domaine {{domain}} (niveau {{level}}). Réponds en JSON.';
+const testPromptLoader = async (module, prompt, variables) => renderPrompt(TEST_PROMPT, variables);
+
 function fakeProvider(responses) {
   const calls = [];
   return {
@@ -32,6 +37,7 @@ function client(provider, options = {}) {
     sleep: noop,
     logCall: noop,
     loadIdentity: async () => ({ firstName: 'Yassine', lastName: 'Ferchichi', email: 'yassine@demo.tn' }),
+    promptLoader: testPromptLoader,
     ...options,
   });
 }
