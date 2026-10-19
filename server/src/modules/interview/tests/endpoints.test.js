@@ -53,18 +53,20 @@ before(async () => {
   try {
     tokens.student = await login('etudiant1@demo.tn');
     tokens.teacher = await login('enseignant@demo.tn');
-    // Récupère une séance de démonstration existante pour étudiant1
-    const sessions = await prisma.trainingSession.findMany({
-      where: { student: { email: 'etudiant1@demo.tn' }, status: 'IN_PROGRESS' },
-      take: 1,
-    });
-    sessionId = sessions[0]?.id;
+    // Séance dédiée au test (supprimée à la fin) : le test ne modifie pas les séances
+    // de démonstration utilisées par les tests des autres modules, lancés en parallèle.
+    const student = await prisma.user.findUnique({ where: { email: 'etudiant1@demo.tn' } });
+    const scenario = await prisma.scenario.findFirst({ orderBy: { createdAt: 'asc' } });
+    if (student && scenario) {
+      sessionId = (await prisma.trainingSession.create({ data: { studentId: student.id, scenarioId: scenario.id } })).id;
+    }
   } catch {
     skipReason = 'comptes ou séances de démonstration absents (npm run db:seed)';
   }
 });
 
 after(async () => {
+  if (sessionId) await prisma.trainingSession.delete({ where: { id: sessionId } }).catch(() => {});
   server?.close();
   await prisma.$disconnect();
 });
@@ -180,15 +182,32 @@ test('endpoints du module interview', async (t) => {
     assert.ok(json.summary.qualityFeedback.length > 0);
     assertNoSecret(text, secrets);
 
-    // Vérifie que le statut de la séance est passé à COMPLETED
+    // La fin de l'entretien est enregistrée dans InterviewSummary, la séance continue (cahier des charges, changements)
     const updatedSession = await prisma.trainingSession.findUnique({ where: { id: sessionId } });
-    assert.equal(updatedSession.status, 'COMPLETED');
+    assert.equal(updatedSession.status, 'IN_PROGRESS');
+    assert.ok(await prisma.interviewSummary.findUnique({ where: { sessionId } }), 'synthèse enregistrée');
   });
 
-  await t.test('POST /end refuse de terminer une séance déjà terminée', async () => {
+  await t.test('GET /summary indique que l\'entretien est terminé, sans secret', async () => {
+    const { status, json, text } = await api('GET', `/sessions/${sessionId}/summary`, { token: tokens.student });
+    assert.equal(status, 200);
+    assert.equal(json.ended, true);
+    assert.ok(json.summary);
+    assertNoSecret(text, secrets);
+  });
+
+  await t.test('POST /end refuse de terminer un entretien déjà terminé (409)', async () => {
     const { status, json } = await api('POST', `/sessions/${sessionId}/end`, { token: tokens.student });
-    assert.equal(status, 400);
-    assert.ok(json.error.message.includes('terminée'));
+    assert.equal(status, 409);
+    assert.ok(json.error.message.includes('terminé'));
+  });
+
+  await t.test('POST /messages refuse une question après la fin de l\'entretien (409)', async () => {
+    const { status } = await api('POST', `/sessions/${sessionId}/messages`, {
+      token: tokens.student,
+      body: { content: 'Une dernière question ?' },
+    });
+    assert.equal(status, 409);
   });
 
   await t.test('le filet de sécurité responseGuard n\'a jamais eu à intervenir', () => {

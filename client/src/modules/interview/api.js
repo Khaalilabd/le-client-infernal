@@ -5,4 +5,5 @@ export const interviewApi = {
   sendMessage: (sessionId, content) => http.post(`/interview/sessions/${sessionId}/messages`, { content }),
   endInterview: (sessionId) => http.post(`/interview/sessions/${sessionId}/end`).then((data) => data.summary),
   getProgress: (sessionId) => http.get(`/interview/sessions/${sessionId}/progress`),
+  getSummary: (sessionId) => http.get(`/interview/sessions/${sessionId}/summary`),
 };

@@ -47,6 +47,7 @@ export async function sendMessage(sessionId, user, content) {
   if (session.status !== 'IN_PROGRESS') {
     throw AppError.badRequest('Cette séance est terminée');
   }
+  await assertInterviewOpen(sessionId);
 
   const scenario = await getScenarioSecrets(session.scenarioId);
   const allMessages = await prisma.interviewMessage.findMany({
@@ -137,15 +138,26 @@ export async function sendMessage(sessionId, user, content) {
 }
 
 
+/** Refuse toute action si l'entretien de la séance est déjà terminé. */
+async function assertInterviewOpen(sessionId) {
+  const ended = await prisma.interviewSummary.findUnique({ where: { sessionId }, select: { id: true } });
+  if (ended) {
+    throw AppError.conflict("L'entretien est terminé : vous ne pouvez plus poser de questions au client.");
+  }
+}
+
 /**
  * Termine l'entretien et génère une synthèse de ce que l'étudiant a découvert.
- * Change le statut de la séance à COMPLETED.
+ * La synthèse est enregistrée dans InterviewSummary (table du module 2) ; la séance
+ * reste IN_PROGRESS pour que l'étudiant enchaîne avec le cahier des charges et les
+ * demandes de changement (correction P-012 : le module 2 ne modifie plus TrainingSession).
  */
 export async function endInterview(sessionId, user) {
   const session = await getAccessibleSession(sessionId, user, { requireOwner: true });
   if (session.status !== 'IN_PROGRESS') {
-    throw AppError.badRequest('Cette séance est déjà terminée');
+    throw AppError.badRequest('Cette séance est terminée');
   }
+  await assertInterviewOpen(sessionId);
 
   const scenario = await getScenarioSecrets(session.scenarioId);
   const messages = await prisma.interviewMessage.findMany({
@@ -176,13 +188,23 @@ export async function endInterview(sessionId, user) {
     userId: user.id,
   });
 
-  // Met à jour le statut de la séance
-  await prisma.trainingSession.update({
-    where: { id: sessionId },
-    data: { status: 'COMPLETED', completedAt: new Date() },
-  });
+  // Enregistre la fin de l'entretien (la contrainte d'unicité bloque un double envoi)
+  try {
+    await prisma.interviewSummary.create({ data: { sessionId, summary, questionsCount } });
+  } catch (err) {
+    if (err.code === 'P2002') throw AppError.conflict("L'entretien est déjà terminé.");
+    throw err;
+  }
 
   return summary;
+}
+
+/** État de l'entretien : terminé ou non, et synthèse enregistrée le cas échéant. */
+export async function getSummary(sessionId, user) {
+  await getAccessibleSession(sessionId, user);
+  const record = await prisma.interviewSummary.findUnique({ where: { sessionId } });
+  if (!record) return { ended: false };
+  return { ended: true, endedAt: record.endedAt, questionsCount: record.questionsCount, summary: record.summary };
 }
 
 /**

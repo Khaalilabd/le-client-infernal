@@ -23,3 +23,4 @@ interviewRouter.post(
   controller.endInterview,
 );
 interviewRouter.get('/sessions/:sessionId/progress', validate({ params: sessionParamsSchema }), controller.getProgress);
+interviewRouter.get('/sessions/:sessionId/summary', validate({ params: sessionParamsSchema }), controller.getSummary);

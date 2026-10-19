@@ -29,7 +29,8 @@ Chat où le LLM joue le client du scénario. Le client **ne révèle son besoin 
 ## Tables utilisées
 
 - **`InterviewMessage`** (propriétaire, écriture). Le champ `proximity` (de 0 à 1) reste côté serveur.
-- `TrainingSession` (lecture via `getAccessibleSession()`, mise à jour du statut à COMPLETED lors de la fin d'entretien).
+- **`InterviewSummary`** (propriétaire, écriture) : fin de l'entretien et synthèse, une par séance. Terminer l'entretien **ne termine pas la séance** (`TrainingSession` n'est jamais modifiée par le module 2).
+- `TrainingSession` (lecture seule, via `getAccessibleSession()`).
 - `Scenario` (lecture du besoin caché et du profil de personnalité via `getScenarioSecrets()`, **serveur uniquement**).
 
 ## Endpoints
@@ -38,8 +39,9 @@ Chat où le LLM joue le client du scénario. Le client **ne révèle son besoin 
 |---|---|---|---|
 | ✅ | GET | `/api/interview/sessions/:sessionId/messages` | Liste les messages (propriétaire ou TEACHER) |
 | ✅ | POST | `/api/interview/sessions/:sessionId/messages` `{ content }` | Envoie une question (STUDENT propriétaire) |
-| ✅ | POST | `/api/interview/sessions/:sessionId/end` | Termine l'entretien et génère une synthèse (STUDENT propriétaire) |
+| ✅ | POST | `/api/interview/sessions/:sessionId/end` | Termine l'entretien et génère une synthèse, enregistrée dans `InterviewSummary` : la **séance reste en cours** pour enchaîner avec le cahier des charges (STUDENT propriétaire) |
 | ✅ | GET | `/api/interview/sessions/:sessionId/progress` | Progression : questionsCount, discoveryLevel, recommendedQuestions (propriétaire ou TEACHER) |
+| ✅ | GET | `/api/interview/sessions/:sessionId/summary` | État de l'entretien : terminé ou non, synthèse enregistrée (propriétaire ou TEACHER) |
 
 ## Fonctionnalités implémentées
 
@@ -60,7 +62,7 @@ Chat où le LLM joue le client du scénario. Le client **ne révèle son besoin 
 - Nouveau prompt `summary.md` : analyse l'historique et liste ce que l'étudiant a **effectivement** découvert
 - La synthèse ne révèle jamais ce que l'étudiant n'a pas demandé
 - Retour qualitatif sur la démarche (types de questions, exploration du contexte, opportunités manquées)
-- Le statut de la séance passe à `COMPLETED` après la fin de l'entretien
+- La fin de l'entretien est enregistrée dans `InterviewSummary` ; la séance reste `IN_PROGRESS` pour enchaîner avec le cahier des charges (M4) et les demandes de changement (M3)
 
 ### Indicateur de progression
 - **questionsCount** : nombre de questions posées par l'étudiant

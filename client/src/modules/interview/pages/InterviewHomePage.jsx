@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../../shared/auth/AuthContext.jsx';
 import SessionPicker, { useSelectedSessionId } from '../../../shared/components/SessionPicker.jsx';
 import ErrorMessage from '../../../shared/components/ErrorMessage.jsx';
@@ -21,6 +22,7 @@ export default function InterviewHomePage() {
   const [summary, setSummary] = useState(null);
   const [endingInterview, setEndingInterview] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [interviewState, setInterviewState] = useState(null);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -28,12 +30,14 @@ export default function InterviewHomePage() {
     setSession(null);
     setError(null);
     setSummary(null);
+    setInterviewState(null);
 
-    // Charge les messages et les informations de séance
-    Promise.all([interviewApi.listMessages(sessionId), http.get(`/sessions/${sessionId}`)])
-      .then(([msgs, sessionData]) => {
+    // Charge les messages, la séance et l'état de l'entretien (terminé ou non)
+    Promise.all([interviewApi.listMessages(sessionId), http.get(`/sessions/${sessionId}`), interviewApi.getSummary(sessionId)])
+      .then(([msgs, sessionData, state]) => {
         setMessages(msgs);
         setSession(sessionData.session);
+        setInterviewState(state);
       })
       .catch(setError);
   }, [sessionId]);
@@ -60,9 +64,7 @@ export default function InterviewHomePage() {
     try {
       const interviewSummary = await interviewApi.endInterview(sessionId);
       setSummary(interviewSummary);
-      // Recharge la séance pour mettre à jour le statut
-      const sessionData = await http.get(`/sessions/${sessionId}`);
-      setSession(sessionData.session);
+      setInterviewState({ ended: true, summary: interviewSummary });
     } catch (err) {
       setError(err);
     } finally {
@@ -70,7 +72,8 @@ export default function InterviewHomePage() {
     }
   }
 
-  const isCompleted = session?.status === 'COMPLETED';
+  // L'entretien est terminé (synthèse enregistrée) ; la séance, elle, continue avec le cahier des charges.
+  const isCompleted = Boolean(interviewState?.ended) || session?.status === 'COMPLETED';
   const canEnd = user.role === 'STUDENT' && !isCompleted;
 
   return (
@@ -91,7 +94,18 @@ export default function InterviewHomePage() {
       {isCompleted && (
         <div className="alert alert-success" style={{ marginTop: '16px' }}>
           <strong>Entretien terminé</strong>
-          Vous avez terminé cet entretien. Vous pouvez consulter l'historique des messages ci-dessous.
+          Vous avez terminé cet entretien. Vous pouvez consulter l'historique des messages ci-dessous, puis rédiger votre
+          cahier des charges.
+          <div className="alert-actions">
+            {interviewState?.summary && (
+              <button type="button" className="btn btn-secondary btn-sm" onClick={() => setSummary(interviewState.summary)}>
+                Revoir la synthèse
+              </button>
+            )}
+            <Link to={`/requirements?session=${sessionId}`} className="btn btn-sm">
+              Passer au cahier des charges
+            </Link>
+          </div>
         </div>
       )}
 
