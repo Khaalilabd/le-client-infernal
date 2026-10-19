@@ -80,18 +80,18 @@ test('endpoints du module change-requests', async (t) => {
     };
     t.after(() => { console.error = originalError; });
 
-    // Trouver la séance en cours de etudiant1
-    const sessionInProgress = await prisma.trainingSession.findFirst({
-        where: { status: 'IN_PROGRESS' },
-        orderBy: { startedAt: 'desc' },
-    });
-    if (!sessionInProgress) return t.skip('Aucune séance IN_PROGRESS (npm run db:seed)');
+    // Séances dédiées au test (supprimées à la fin) : etudiant1 travaille, etudiant2 sert au contrôle d'accès.
+    // Le test ne dépend ainsi ni des séances de démonstration ni des tests des autres modules lancés en parallèle.
+    const [student1, student2, scenario] = await Promise.all([
+        prisma.user.findUnique({ where: { email: 'etudiant1@demo.tn' } }),
+        prisma.user.findUnique({ where: { email: 'etudiant2@demo.tn' } }),
+        prisma.scenario.findFirst({ orderBy: { createdAt: 'asc' } }),
+    ]);
+    if (!student1 || !student2 || !scenario) return t.skip('Données de démonstration absentes (npm run db:seed)');
+    const sessionInProgress = await prisma.trainingSession.create({ data: { studentId: student1.id, scenarioId: scenario.id } });
+    const otherSession = await prisma.trainingSession.create({ data: { studentId: student2.id, scenarioId: scenario.id } });
+    t.after(() => prisma.trainingSession.deleteMany({ where: { id: { in: [sessionInProgress.id, otherSession.id] } } }));
     const sessionId = sessionInProgress.id;
-
-    // Trouver une séance d'un autre étudiant pour les tests de contrôle d'accès
-    const otherSession = await prisma.trainingSession.findFirst({
-        where: { status: 'IN_PROGRESS', id: { not: sessionId } },
-    });
 
     // ── Authentification ──────────────────────────────────────────────────────
 
