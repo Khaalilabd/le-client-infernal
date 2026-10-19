@@ -206,3 +206,35 @@ Faire passer le module 2 (interview) du squelette actuel à une version complèt
 - Respect des contraintes de sécurité (besoin caché protégé, aucune donnée personnelle au LLM)
 
 ---
+## P-M2-002 — Correction à l'intégration : la fin d'entretien ne termine plus la séance
+
+- **Date** : 2026-10-19
+- **Auteur** : Khalil Abdelmoumen (chef de projet), lors de la fusion des modules 2 et 3 — voir P-012 dans [JOURNAL.md](JOURNAL.md)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `develop`
+
+### Prompt
+
+Correction faite à la demande du chef de projet pendant la revue d'intégration (prompt complet dans P-012 du journal commun).
+
+### Résumé de la production de l'IA
+
+1. **Problème** : `endInterview()` passait `TrainingSession.status` à `COMPLETED`. C'était le choix fait en réponse à la question 4 de P-M2-001. Une fois les modules réunis :
+   - le module 3 refusait de générer une demande de changement (« séance terminée ») ;
+   - les tests des modules 2 et 3, lancés en parallèle, se bloquaient mutuellement ;
+   - le module 2 modifiait une table de la base commune.
+2. **Correction** :
+   - nouvelle table `InterviewSummary` propriété du module 2 (migration `ajout_synthese_entretien`) : synthèse, nombre de questions, date de fin ; une seule par séance ;
+   - `endInterview()` enregistre la synthèse et ne modifie plus la séance ; `sendMessage()` et `endInterview()` renvoient 409 si l'entretien est déjà terminé ;
+   - nouvel endpoint `GET /api/interview/sessions/:sessionId/summary` ;
+   - interface : l'état « terminé » vient de ce nouvel endpoint ; boutons « Revoir la synthèse » et « Passer au cahier des charges ».
+3. **Fichiers** :
+   - `server/prisma/schema.prisma` et la migration ;
+   - `interview.service.js`, `interview.controller.js`, `interview.routes.js`, `tests/endpoints.test.js` (séance de test dédiée, supprimée à la fin) ;
+   - `client/src/modules/interview/api.js`, `pages/InterviewHomePage.jsx` ;
+   - `README.md` du module, section 5.2 du rapport, `docs/ARCHITECTURE.md`.
+4. **Vérifications** : 117 tests sur 117 réussis, deux fois de suite (26 pour le module 2) ; build réussi ; séances de démonstration intactes après les tests.
+
+### Modifications de l'équipe
+
+<!-- À remplir par Kenza Baccar : relecture de la correction -->

@@ -711,3 +711,52 @@ je voudrai aidez kenez a envoyer un prompt direct pour que l'ia comprenne ce qu'
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-012 — Revue et fusion des modules 2 (Kenza) et 3 (Ismail)
+
+- **Date** : 2026-10-19
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (revue, intégration, schéma)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Rebonsoir , vérifiez grace au github a ce qui parrait nadhem a terminé , kenza , issmail aussi j'aimerai que vous vérifiez si il ont terminer leur module parfaitemenet et d'avoir un merge complet dans main et develop pour continuer a travailler car j'ai des nouveauté a vous donner c'est pour ce la
+```
+
+#### Échanges complémentaires (même demande)
+
+Après la revue, l'IA a proposé trois options de fusion. Choix de l'auteur : « Je corrige puis je fusionne tout (Recommandé) ».
+
+### Résumé de la production de l'IA
+
+1. **État GitHub** :
+   - Nadhem (M4) : rien de nouveau, déjà fusionné ;
+   - Kenza : `feature/interview`, 5 commits ;
+   - Ismail : branche `change-requests` (sans `feature/`), 1 commit « change-requests done » parti d'une ancienne version de `develop` ;
+   - Aziz (M5) : rien.
+2. **Revue de Kenza (M2)** :
+   - fonctionnalités du tableau officiel réalisées ; protection forte du besoin caché ; journal complet avec « Modifications de l'équipe » ; section 5.2 et 17 captures ; 81 tests sur 81 sur sa branche ;
+   - styles ajoutés dans `client/src/styles.css` (base commune, ajouts sans modification de l'existant), alors que le journal affirme « aucune modification de la base commune » ;
+   - **défaut bloquant** : la fin d'entretien passait la séance à `COMPLETED`.
+3. **Revue d'Ismail (M3)** :
+   - endpoint `respond` correct (propriétaire, une seule réponse, Zod, `userId`) ; limite de 3 demandes ; lecture du cahier des charges du M4 ; badge des demandes en attente ;
+   - **manques** : tests jamais lancés par lui ; pas de lien vers les versions du M4 (bouton « Mettre à jour le cahier des charges ») ; protection du besoin caché superficielle (recherche des seuls mots « besoin caché ») ; pas de section 5.3 ni de captures ; « Modifications de l'équipe » vide ; ancienne page `ChangeRequestsHomePage.jsx` laissée en place ; un seul commit non conventionnel.
+4. **Intégration** (branche locale) : avance rapide sur Kenza, fusion d'Ismail sans conflit. Résultat : 2 tests en échec, qui révélaient en pratique le blocage de séance.
+5. **Corrections** :
+   - module 2 : table `InterviewSummary` et migration `ajout_synthese_entretien`, la séance reste en cours, endpoint `/summary`, interface (voir P-M2-002) ;
+   - tests des modules 2 et 3 isolés sur des séances dédiées, supprimées à la fin (exécution parallèle de `node --test`) ;
+   - documentation : `docs/ARCHITECTURE.md` (modèle de données, propriétaires, endpoints), README M2, section 5.2 (passages devenus inexacts + paragraphe sur la correction), chapitre 6 du rapport (117 tests) ;
+   - diagramme du modèle de données régénéré, rapport régénéré.
+6. **Vérifications** : 117 tests sur 117 réussis deux fois de suite (base 13, M1 18, M2 26, M3 34, M4 26) ; build réussi ; diagrammes Mermaid valides ; rapport validé par le contrôle XSD de Word (54 figures).
+7. **Reste à faire** :
+   - Ismail : lien M3 → M4, vraie protection du besoin caché, captures, section 5.3, « Modifications de l'équipe », suppression de l'ancienne page ;
+   - Kenza : relire la correction (P-M2-002) ;
+   - Aziz : tout le module 5.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->

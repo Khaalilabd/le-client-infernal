@@ -17,11 +17,14 @@ erDiagram
     User ||--o{ TeacherFeedback : "rédige (enseignant)"
     Scenario ||--o{ TrainingSession : "est joué dans"
     TrainingSession ||--o{ InterviewMessage : "contient"
+    TrainingSession ||--o| InterviewSummary : "clôt l'entretien"
     TrainingSession ||--o{ ChangeRequest : "reçoit"
     TrainingSession ||--o| RequirementsDocument : "produit"
     TrainingSession ||--o{ TeacherFeedback : "est commentée par"
     RequirementsDocument ||--o{ Requirement : "contient"
     RequirementsDocument ||--o{ RequirementsEvaluation : "est évalué par"
+    RequirementsDocument ||--o{ RequirementsDocumentVersion : "est figé en"
+    ChangeRequest |o--o| RequirementsDocumentVersion : "provoque"
 
     User {
         string id PK
@@ -72,6 +75,13 @@ erDiagram
         text content
         float proximity "serveur uniquement"
     }
+    InterviewSummary {
+        string id PK
+        string sessionId FK,UK
+        json summary
+        int questionsCount
+        datetime endedAt
+    }
     ChangeRequest {
         string id PK
         string sessionId FK
@@ -108,6 +118,15 @@ erDiagram
         json criteria
         text feedback
         json missingPoints
+        int version "version évaluée"
+    }
+    RequirementsDocumentVersion {
+        string id PK
+        string documentId FK
+        int version "1, 2, 3… UK avec documentId"
+        json snapshot "exigences figées"
+        text reason
+        string changeRequestId FK,UK "vide pour la V1"
     }
     TeacherFeedback {
         string id PK

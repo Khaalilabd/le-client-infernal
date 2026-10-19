@@ -189,6 +189,7 @@ erDiagram
     User ||--o{ TeacherFeedback : "rédige (enseignant)"
     Scenario ||--o{ TrainingSession : "est joué dans"
     TrainingSession ||--o{ InterviewMessage : "contient"
+    TrainingSession ||--o| InterviewSummary : "clôt l'entretien"
     TrainingSession ||--o{ ChangeRequest : "reçoit"
     TrainingSession ||--o| RequirementsDocument : "produit"
     TrainingSession ||--o{ TeacherFeedback : "est commentée par"
@@ -245,6 +246,13 @@ erDiagram
         MessageSender sender "STUDENT | CLIENT"
         text content
         float proximity "serveur uniquement"
+    }
+    InterviewSummary {
+        string id PK
+        string sessionId FK,UK
+        json summary
+        int questionsCount
+        datetime endedAt
     }
     ChangeRequest {
         string id PK
@@ -309,7 +317,7 @@ erDiagram
 | `TrainingSession` | Base commune | sessions (commun) | M2, M3, M4, M5 |
 | `AiCallLog` | Base commune (service IA) | service IA | M5 |
 | `Scenario` | **M1** client-generator | M1, seed | M2, M3, M4 (via `getScenarioSecrets`), M5 |
-| `InterviewMessage` | **M2** interview | M2 | M4 (contexte d'évaluation, optionnel), M5 |
+| `InterviewMessage`, `InterviewSummary` | **M2** interview | M2 | M4 (contexte d'évaluation, optionnel), M5 |
 | `ChangeRequest` | **M3** change-requests | M3 | M4 (vérifie la demande avant une nouvelle version), M5 |
 | `RequirementsDocument`, `Requirement`, `RequirementsEvaluation` | **M4** requirements | M4 | M3 (contexte, optionnel), M5 |
 | `RequirementsDocumentVersion` | **M4** requirements | M4 | M3 (versions créées suite à ses demandes), M5 |
@@ -383,8 +391,9 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 |---|---|---|---|---|---|
 | ✅ | GET | `/sessions/:sessionId/messages` | propriétaire ou TEACHER | — | `{ messages: [{ id, sender, content, createdAt }] }` |
 | ✅ | POST | `/sessions/:sessionId/messages` | STUDENT propriétaire | `{ content }` | `201 { studentMessage, clientMessage }` |
-| ✅ | POST | `/sessions/:sessionId/end` | STUDENT propriétaire | — | `{ summary: { discoveredPoints, questionsAsked, qualityFeedback } }` |
+| ✅ | POST | `/sessions/:sessionId/end` | STUDENT propriétaire | — | `{ summary: { discoveredPoints, questionsAsked, qualityFeedback } }` ; enregistre `InterviewSummary`, la séance reste en cours ; 409 si l'entretien est déjà terminé |
 | ✅ | GET | `/sessions/:sessionId/progress` | propriétaire ou TEACHER | — | `{ questionsCount, discoveryLevel, recommendedQuestions }` |
+| ✅ | GET | `/sessions/:sessionId/summary` | propriétaire ou TEACHER | — | `{ ended: false }` ou `{ ended: true, endedAt, questionsCount, summary }` |
 
 ### M3 — change-requests (`/api/change-requests`)
 

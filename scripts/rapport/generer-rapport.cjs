@@ -627,14 +627,14 @@ function markdownSection(markdown) {
 children.push(
   h1('6. Tests et validation'),
   h2('6.1 Tests automatisés'),
-  p('Le projet compte à ce stade **57 tests automatisés**, tous réussis (`npm test`) : 13 pour la base commune, 18 pour le module 1 et 26 pour le module 4. Ceux de la base commune vérifient en priorité les contraintes obligatoires :'),
+  p('Le projet compte à ce stade **117 tests automatisés**, tous réussis (`npm test`) : 13 pour la base commune, 18 pour le module 1, 26 pour le module 2, 34 pour le module 3 et 26 pour le module 4. Ceux de la base commune vérifient en priorité les contraintes obligatoires :'),
   bullet('validation Zod des réponses, extraction du JSON, nouvelles tentatives sur erreur 429, absence de nouvelle tentative sur clé absente, délai dépassé ;'),
   bullet('absence du nom, du prénom et de l\'email de l\'étudiant dans tout ce qui est envoyé au fournisseur IA ;'),
   bullet('absence du besoin caché et des contraintes implicites dans les réponses de l\'API, y compris dans des objets imbriqués.'),
   h2('6.2 Tests d\'intégration'),
   p('Lors de la génération de l\'architecture (P-001), tous les endpoints d\'exemple ont été appelés sur une base réelle avec les comptes de démonstration : connexion, contrôle des rôles (un étudiant ne peut pas accéder à l\'espace enseignant, un enseignant ne peut pas envoyer de message à la place d\'un étudiant), validation des entrées et format des erreurs.'),
-  p('Les modules 1 et 4 ajoutent leurs propres tests d\'intégration, qui démarrent l\'application, s\'exécutent sur la base de démonstration et sont ignorés automatiquement si la base n\'est pas lancée (détail en sections 5.1 et 5.4).'),
-  todo('ajouter les tests des modules 2, 3 et 5 et la campagne de tests finale avant la démonstration.'),
+  p('Chaque module ajoute ses propres tests d\'intégration, qui démarrent l\'application et s\'exécutent sur la base de démonstration (ignorés automatiquement si la base n\'est pas lancée). Les fichiers de test étant exécutés en parallèle, les tests des modules 2 et 3 créent leurs propres séances et les suppriment à la fin : aucun module ne modifie les données utilisées par un autre.'),
+  todo('ajouter les tests du module 5 et la campagne de tests finale avant la démonstration.'),
 );
 
 // Conclusion
