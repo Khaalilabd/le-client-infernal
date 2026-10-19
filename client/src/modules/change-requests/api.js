@@ -9,6 +9,13 @@ export const changeRequestsApi = {
   generate: (sessionId) =>
     http.post(`/change-requests/sessions/${sessionId}/generate`).then((data) => data.changeRequest),
 
+  /**
+   * Versions du cahier des charges (lecture seule de l'API du module 4) : permet d'afficher
+   * « Version N créée suite à cette demande ». Liste vide si le cahier des charges n'existe pas encore.
+   */
+  listRequirementsVersions: (sessionId) =>
+    http.get(`/requirements/sessions/${sessionId}/document/versions`).then((data) => data.versions),
+
   /** Répond à une demande de changement */
   respond: (changeRequestId, { decision, justification }) =>
     http

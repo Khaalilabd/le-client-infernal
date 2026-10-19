@@ -1,4 +1,35 @@
+import { Link } from 'react-router-dom';
+
 const EFFORT_LABELS = { LOW: 'faible', MEDIUM: 'moyen', HIGH: 'élevé' };
+
+/**
+ * Lien avec le cahier des charges (module 4) après une demande acceptée ou négociée :
+ * soit la version créée suite à cette demande, soit le bouton pour la créer.
+ */
+function RequirementsUpdate({ changeRequest, sessionId, version, canUpdate, compact }) {
+  if (!sessionId || !['ACCEPT', 'NEGOTIATE'].includes(changeRequest.decision)) return null;
+  const requirementsUrl = `/requirements?session=${sessionId}`;
+
+  if (version) {
+    return (
+      <div className={`cr-requirements-update ${compact ? 'small' : ''}`}>
+        ✓ <strong>Version {version.version}</strong> du cahier des charges créée suite à cette demande.{' '}
+        <Link to={requirementsUrl}>Voir le cahier des charges</Link>
+      </div>
+    );
+  }
+  if (!canUpdate) {
+    return <p className="muted small cr-requirements-update">Cahier des charges pas encore mis à jour pour cette demande.</p>;
+  }
+  return (
+    <div className={`cr-requirements-update ${compact ? 'small' : ''}`}>
+      <span>Le client attend que le cahier des charges intègre ce changement.</span>
+      <Link to={`${requirementsUrl}&changeRequest=${changeRequest.id}`} className="btn btn-sm">
+        Mettre à jour le cahier des charges
+      </Link>
+    </div>
+  );
+}
 const DECISION_LABELS = { ACCEPT: 'Acceptée', NEGOTIATE: 'Négociée', REFUSE: 'Refusée' };
 const DECISION_BADGES = { ACCEPT: 'badge-success', NEGOTIATE: 'badge-info', REFUSE: 'badge-danger' };
 
@@ -7,7 +38,10 @@ const DECISION_BADGES = { ACCEPT: 'badge-success', NEGOTIATE: 'badge-info', REFU
  * En mode compact (historique latéral) : affiche juste le titre, la note et le feedback.
  * En mode normal (liste principale) : affiche tous les détails.
  */
-export default function ChangeRequestCard({ changeRequest, compact = false, index }) {
+export default function ChangeRequestCard({ changeRequest, compact = false, index, sessionId, version, canUpdate = false }) {
+  const requirementsUpdate = (
+    <RequirementsUpdate changeRequest={changeRequest} sessionId={sessionId} version={version} canUpdate={canUpdate} compact={compact} />
+  );
   const { title, description, reason, impact, status, decision, score, feedback, clientReaction, createdAt } =
     changeRequest;
 
@@ -32,6 +66,7 @@ export default function ChangeRequestCard({ changeRequest, compact = false, inde
             <em>Client : « {clientReaction} »</em>
           </p>
         )}
+        {requirementsUpdate}
       </article>
     );
   }
@@ -74,6 +109,7 @@ export default function ChangeRequestCard({ changeRequest, compact = false, inde
               <strong>Réaction du client :</strong> « {clientReaction} »
             </div>
           )}
+          {requirementsUpdate}
         </div>
       )}
     </article>

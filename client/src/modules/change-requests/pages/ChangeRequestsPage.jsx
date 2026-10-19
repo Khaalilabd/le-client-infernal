@@ -33,6 +33,8 @@ export default function ChangeRequestsPage() {
 
     // Identifiant de la demande dont le formulaire est ouvert
     const [activeId, setActiveId] = useState(null);
+    // Versions du cahier des charges (module 4), indexées par demande de changement
+    const [versionsByRequest, setVersionsByRequest] = useState({});
 
     const isStudent = user?.role === 'STUDENT';
 
@@ -42,6 +44,16 @@ export default function ChangeRequestsPage() {
         setChangeRequests(null);
         setError(null);
         setActiveId(null);
+        setVersionsByRequest({});
+        // Lecture seule des versions du module 4 : une erreur ici ne bloque pas la page
+        changeRequestsApi
+            .listRequirementsVersions(sessionId)
+            .then((versions) =>
+                setVersionsByRequest(
+                    Object.fromEntries(versions.filter((v) => v.changeRequestId).map((v) => [v.changeRequestId, v])),
+                ),
+            )
+            .catch(() => {});
         changeRequestsApi
             .list(sessionId)
             .then((list) => {
@@ -192,7 +204,14 @@ export default function ChangeRequestsPage() {
                             {pending.length === 0 &&
                                 history.length > 0 &&
                                 history.map((cr) => (
-                                    <ChangeRequestCard key={cr.id} changeRequest={cr} index={(changeRequests ?? []).indexOf(cr)} />
+                                    <ChangeRequestCard
+                                        key={cr.id}
+                                        changeRequest={cr}
+                                        index={(changeRequests ?? []).indexOf(cr)}
+                                        sessionId={sessionId}
+                                        version={versionsByRequest[cr.id]}
+                                        canUpdate={isStudent}
+                                    />
                                 ))}
                         </div>
 
@@ -209,7 +228,16 @@ export default function ChangeRequestsPage() {
                             {history.length === 0 ? (
                                 <p className="muted small">Aucune réponse soumise pour l&apos;instant.</p>
                             ) : (
-                                history.map((cr) => <ChangeRequestCard key={cr.id} changeRequest={cr} compact />)
+                                history.map((cr) => (
+                                    <ChangeRequestCard
+                                        key={cr.id}
+                                        changeRequest={cr}
+                                        compact
+                                        sessionId={sessionId}
+                                        version={versionsByRequest[cr.id]}
+                                        canUpdate={isStudent}
+                                    />
+                                ))
                             )}
                         </aside>
                     </div>
