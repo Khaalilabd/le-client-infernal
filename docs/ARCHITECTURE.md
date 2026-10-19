@@ -266,6 +266,7 @@ erDiagram
         text justification
         int score
         text feedback
+        text clientReaction
     }
     RequirementsDocument {
         string id PK
@@ -401,7 +402,7 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 |---|---|---|---|---|---|
 | ✅ | GET | `/sessions/:sessionId` | propriétaire ou TEACHER | — | `{ changeRequests: [...] }` |
 | ✅ | POST | `/sessions/:sessionId/generate` | STUDENT propriétaire | — | `201 { changeRequest }` |
-| ✅ | POST | `/:changeRequestId/respond` | STUDENT propriétaire | `{ decision, justification }` | `{ changeRequest, clientReaction }` |
+| ✅ | POST | `/:changeRequestId/respond` | STUDENT propriétaire | `{ decision, justification }` | `{ changeRequest, clientReaction }` ; réaction enregistrée ; 409 si déjà traitée ; retour refusé par Zod s'il recopie le besoin caché |
 
 ### M4 — requirements (`/api/requirements`)
 

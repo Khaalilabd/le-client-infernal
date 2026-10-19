@@ -27,6 +27,8 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | M4 | `p-m4-001-02-plan-1.png` à `-7.png` | Plan du module 4 et questions de l'IA | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-03-resume-1.png`, `-2.png` | Résumé final de P-M4-001 | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-04` à `-07-ecran-*.png` | Écrans réalisés du module 4 | ✅ |
+| M3 | `p-m3-001-01-prompt.png`, `-02-plan.png`, `-03-resume.png` | Prompt, plan et résumé de P-M3-001 | ❌ à fournir (Ismail) |
+| M3 | `p-m3-001-04` à `-07-*.png` | Écrans réalisés du module 3 et lien avec le module 4 | ✅ (générées) |
 | 16 | `p-m4-001-01-prompt.png` | Prompt P-M4-001 dans Claude Code | 🔲 à prendre (Nadhem) |
 | 17 | `p-m4-001-02-plan.png` | Plan du module 4 et questions de l'IA | 🔲 à prendre (Nadhem) |
 | 18 | `p-m4-001-03-resume.png` | Résumé final de P-M4-001 | 🔲 à prendre (Nadhem) |

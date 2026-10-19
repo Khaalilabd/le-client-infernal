@@ -587,11 +587,14 @@ function markdownSection(markdown) {
         if (!/^\|(\s*:?-+:?\s*\|)+$/.test(lines[i].trim())) rows.push(cells(lines[i]));
         i += 1;
       }
+      // Légende « Tableau : … » juste après le tableau (lignes vides tolérées)
       let caption;
-      const next = (lines[i] ?? '').trim();
+      let look = i;
+      while (look < lines.length && lines[look].trim() === '') look += 1;
+      const next = (lines[look] ?? '').trim();
       if (next.startsWith('Tableau :')) {
         caption = next.replace(/^Tableau :\s*/, '');
-        i += 1;
+        i = look + 1;
       }
       const [header, ...body] = rows;
       const widths = header.map((_, column) => {
@@ -627,7 +630,7 @@ function markdownSection(markdown) {
 children.push(
   h1('6. Tests et validation'),
   h2('6.1 Tests automatisés'),
-  p('Le projet compte à ce stade **117 tests automatisés**, tous réussis (`npm test`) : 13 pour la base commune, 18 pour le module 1, 26 pour le module 2, 34 pour le module 3 et 26 pour le module 4. Ceux de la base commune vérifient en priorité les contraintes obligatoires :'),
+  p('Le projet compte à ce stade **121 tests automatisés**, tous réussis (`npm test`) : 13 pour la base commune, 18 pour le module 1, 26 pour le module 2, 38 pour le module 3 et 26 pour le module 4. Ceux de la base commune vérifient en priorité les contraintes obligatoires :'),
   bullet('validation Zod des réponses, extraction du JSON, nouvelles tentatives sur erreur 429, absence de nouvelle tentative sur clé absente, délai dépassé ;'),
   bullet('absence du nom, du prénom et de l\'email de l\'étudiant dans tout ce qui est envoyé au fournisseur IA ;'),
   bullet('absence du besoin caché et des contraintes implicites dans les réponses de l\'API, y compris dans des objets imbriqués.'),
