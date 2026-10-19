@@ -30,16 +30,54 @@ export const generatedChangeRequestSchema = z.object({
   }),
 });
 
-/** Prompt evaluate-response v0.2 */
-export const responseEvaluationSchema = z
-  .object({
-    score: z.number().int().min(0).max(100),
-    expectedDecision: z.enum(['ACCEPT', 'NEGOTIATE', 'REFUSE']),
-    feedback: z.string().min(10),
-    clientReaction: z.string().min(3),
-  })
-  // Sécurité : le retour pédagogique ne doit pas citer le besoin caché
-  .refine(
-    (val) => !val.feedback.toLowerCase().includes('besoin caché') && !val.clientReaction.toLowerCase().includes('besoin caché'),
-    { message: 'Le retour ne doit pas révéler le besoin caché' },
-  );
+/** Prompt evaluate-response v0.2 : forme de la réponse */
+export const responseEvaluationSchema = z.object({
+  score: z.number().int().min(0).max(100),
+  expectedDecision: z.enum(['ACCEPT', 'NEGOTIATE', 'REFUSE']),
+  feedback: z.string().min(10),
+  clientReaction: z.string().min(3),
+});
+
+// ---------- Protection du besoin caché ----------
+
+/** Nombre de mots consécutifs d'un secret à partir duquel un texte est considéré comme une recopie. */
+const LEAK_WINDOW = 6;
+
+const normalize = (text) =>
+  ` ${String(text)
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/\p{M}/gu, '')
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim()} `;
+
+/** Vrai si le texte recopie un secret en entier ou une suite de LEAK_WINDOW mots consécutifs. */
+export function revealsSecret(text, secrets) {
+  const haystack = normalize(text);
+  return secrets.some((secret) => {
+    const words = normalize(secret).trim().split(' ').filter(Boolean);
+    if (words.length === 0) return false;
+    const size = Math.min(LEAK_WINDOW, words.length);
+    if (size < 3) return false;
+    for (let start = 0; start + size <= words.length; start += 1) {
+      if (haystack.includes(` ${words.slice(start, start + size).join(' ')} `)) return true;
+    }
+    return false;
+  });
+}
+
+/**
+ * Schéma de l'évaluation pour un scénario donné : la réponse est refusée si le retour
+ * pédagogique ou la réaction du client recopie le besoin caché ou une contrainte implicite
+ * (callLLM redemande alors une évaluation).
+ */
+export function createResponseEvaluationSchema({ hiddenNeed = '', implicitConstraints = [] } = {}) {
+  const secrets = [hiddenNeed, ...(Array.isArray(implicitConstraints) ? implicitConstraints : [])].filter(Boolean);
+  return responseEvaluationSchema.superRefine((evaluation, ctx) => {
+    for (const field of ['feedback', 'clientReaction']) {
+      if (revealsSecret(evaluation[field], secrets)) {
+        ctx.addIssue({ code: 'custom', path: [field], message: 'Le retour révèle le besoin caché' });
+      }
+    }
+  });
+}

@@ -167,6 +167,11 @@ test('endpoints du module change-requests', async (t) => {
         assert.ok(json.changeRequest.feedback, 'feedback présent');
         assert.ok(json.clientReaction, 'clientReaction présente');
         assertNoSecret(text);
+
+        // La réaction du client est enregistrée : elle reste visible après un rechargement de la liste
+        const list = await api('GET', `/sessions/${sessionId}`, { token: tokens.student1 });
+        const saved = list.json.changeRequests.find((cr) => cr.id === generatedId);
+        assert.equal(saved.clientReaction, json.clientReaction);
     });
 
     await t.test('POST respond refuse une demande déjà traitée (409)', async () => {

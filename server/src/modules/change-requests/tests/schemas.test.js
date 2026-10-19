@@ -88,9 +88,11 @@ test('responseEvaluationSchema refuse un score hors [0, 100]', () => {
     assert.equal(responseEvaluationSchema.safeParse({ ...validEvaluation, score: -1 }).success, false);
 });
 
-test('responseEvaluationSchema refuse si feedback mentionne le besoin caché', () => {
-    const bad = { ...validEvaluation, feedback: 'Le besoin caché est de réduire les rendez-vous non honorés.' };
-    assert.equal(responseEvaluationSchema.safeParse(bad).success, false);
+test('la protection refuse un retour qui révèle le contenu du besoin caché (remplace la recherche des mots « besoin caché »)', async () => {
+    const { createResponseEvaluationSchema } = await import('../change-requests.schemas.js');
+    const secrets = { hiddenNeed: 'Réduire les rendez-vous non honorés qui font perdre du temps et de l\'argent', implicitConstraints: [] };
+    const bad = { ...validEvaluation, feedback: 'Le vrai problème : réduire les rendez-vous non honorés qui font perdre du temps.' };
+    assert.equal(createResponseEvaluationSchema(secrets).safeParse(bad).success, false);
 });
 
 // ---------- Mocks ----------
@@ -163,4 +165,46 @@ test('le prompt evaluate-response v0.2 se construit avec toutes ses variables', 
     });
     assert.ok(!prompt.includes('{{'), 'variable non remplacée');
     assert.ok(!prompt.includes('<!--'), 'commentaire non retiré');
+});
+
+// ---------- Protection du besoin caché (P-M3-002) ----------
+
+const SCENARIO_SECRETS = {
+    hiddenNeed: 'Réduire les rendez-vous non honorés qui font perdre du temps et de l\'argent au cabinet',
+    implicitConstraints: ['Les données de santé doivent rester confidentielles et hébergées de manière conforme'],
+};
+const safeEvaluation = {
+    score: 70,
+    expectedDecision: 'NEGOTIATE',
+    feedback: 'Bonne analyse de l\'impact. Proposez un calendrier de livraison précis pour rassurer le client.',
+    clientReaction: 'D\'accord, si c\'est livré le mois prochain, ça me convient.',
+};
+
+test('createResponseEvaluationSchema accepte un retour qui ne révèle rien', async () => {
+    const { createResponseEvaluationSchema } = await import('../change-requests.schemas.js');
+    assert.equal(createResponseEvaluationSchema(SCENARIO_SECRETS).safeParse(safeEvaluation).success, true);
+});
+
+test('createResponseEvaluationSchema refuse un retour qui recopie le besoin caché (accents et majuscules ignorés)', async () => {
+    const { createResponseEvaluationSchema } = await import('../change-requests.schemas.js');
+    const leaked = { ...safeEvaluation, feedback: 'Pensez au vrai objectif : REDUIRE LES RENDEZ-VOUS NON HONORES qui font perdre du temps.' };
+    const result = createResponseEvaluationSchema(SCENARIO_SECRETS).safeParse(leaked);
+    assert.equal(result.success, false);
+    assert.equal(result.error.issues[0].path[0], 'feedback');
+});
+
+test('createResponseEvaluationSchema refuse une réaction du client qui recopie une contrainte implicite', async () => {
+    const { createResponseEvaluationSchema } = await import('../change-requests.schemas.js');
+    const leaked = { ...safeEvaluation, clientReaction: 'Attention, les données de santé doivent rester confidentielles et hébergées chez nous.' };
+    const result = createResponseEvaluationSchema(SCENARIO_SECRETS).safeParse(leaked);
+    assert.equal(result.success, false);
+    assert.equal(result.error.issues[0].path[0], 'clientReaction');
+});
+
+test('les réponses simulées passent la protection du besoin caché', async () => {
+    const { createResponseEvaluationSchema } = await import('../change-requests.schemas.js');
+    for (const decision of ['ACCEPT', 'NEGOTIATE', 'REFUSE']) {
+        const mock = evaluateResponseMock({ variables: { decision } });
+        assert.equal(createResponseEvaluationSchema(SCENARIO_SECRETS).safeParse(mock).success, true, decision);
+    }
 });

@@ -3,7 +3,7 @@ import { callLLM } from '../../shared/ai/index.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { getAccessibleSession } from '../../shared/sessions/sessions.service.js';
 import { getScenarioSecrets } from '../../shared/db/scenarioSecrets.js';
-import { generatedChangeRequestSchema, responseEvaluationSchema } from './change-requests.schemas.js';
+import { generatedChangeRequestSchema, createResponseEvaluationSchema } from './change-requests.schemas.js';
 
 /** Nombre maximum de demandes de changement par séance */
 const MAX_CHANGE_REQUESTS = 3;
@@ -130,22 +130,28 @@ export async function respondToChangeRequest(changeRequestId, user, { decision, 
       decision,
       justification,
     },
-    schema: responseEvaluationSchema,
+    schema: createResponseEvaluationSchema(scenario),
     userId: user.id,
   });
 
-  // Enregistrer la décision, la justification, la note et le feedback
-  const updated = await prisma.changeRequest.update({
-    where: { id: changeRequestId },
+  // Enregistrer la décision, la justification, la note, le feedback et la réaction du client.
+  // Mise à jour conditionnelle : si deux réponses arrivent en même temps, seule la première est enregistrée.
+  const { count } = await prisma.changeRequest.updateMany({
+    where: { id: changeRequestId, status: 'PENDING' },
     data: {
       status: 'ANSWERED',
       decision,
       justification,
       score: evaluation.score,
       feedback: evaluation.feedback,
+      clientReaction: evaluation.clientReaction,
       answeredAt: new Date(),
     },
   });
+  if (count === 0) {
+    throw AppError.conflict('Cette demande a déjà reçu une réponse.');
+  }
+  const updated = await prisma.changeRequest.findUnique({ where: { id: changeRequestId } });
 
-  return { changeRequest: updated, clientReaction: evaluation.clientReaction };
+  return { changeRequest: updated, clientReaction: updated.clientReaction };
 }

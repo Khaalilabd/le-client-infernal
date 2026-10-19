@@ -217,6 +217,8 @@ model ChangeRequest {
   /// Note de la réponse de l'étudiant (0 à 100)
   score         Int?
   feedback      String?             @db.Text
+  /// Réaction du client à la réponse de l'étudiant (générée par le LLM)
+  clientReaction String?            @db.Text
   createdAt     DateTime            @default(now())
   answeredAt    DateTime?
 
