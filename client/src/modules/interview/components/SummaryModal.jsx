@@ -3,7 +3,7 @@ export default function SummaryModal({ summary, onClose }) {
   if (!summary) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-overlay" onClick={onClose}>
       <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Synthèse de votre entretien</h2>

@@ -72,7 +72,30 @@ export async function sendMessage(sessionId, user, content) {
   ];
 
   // Récupère les informations de personnalité
-  const personalityData = personalities.find((p) => p.id === scenario.personality.profile) || personalities[0];
+  const personality = typeof scenario.personality === 'string' 
+    ? JSON.parse(scenario.personality) 
+    : scenario.personality;
+  
+  // Si le scénario n'a pas de profile (anciens scénarios), on le devine depuis les traits
+  let personalityProfile = personality.profile;
+  if (!personalityProfile && personality.traits && Array.isArray(personality.traits)) {
+    const traitsLower = personality.traits.map(t => t.toLowerCase());
+    if (traitsLower.some(t => t.includes('pressé') || t.includes('pressée'))) {
+      personalityProfile = 'RUSHED';
+    } else if (traitsLower.some(t => t.includes('méfiant') || t.includes('sceptique'))) {
+      personalityProfile = 'SKEPTICAL';
+    } else if (traitsLower.some(t => t.includes('bavard') || t.includes('talkative'))) {
+      personalityProfile = 'TALKATIVE';
+    } else if (traitsLower.some(t => t.includes('contradictoire') || t.includes('contradictory'))) {
+      personalityProfile = 'CONTRADICTORY';
+    } else if (traitsLower.some(t => t.includes('indécis') || t.includes('hésitant'))) {
+      personalityProfile = 'INDECISIVE';
+    } else {
+      personalityProfile = 'COOPERATIVE'; // par défaut
+    }
+  }
+  
+  const personalityData = personalities.find((p) => p.id === personalityProfile) || personalities[0];
   const levelLabels = { BEGINNER: 'débutant', INTERMEDIATE: 'intermédiaire', ADVANCED: 'avancé' };
 
   const result = await callLLM({
@@ -82,7 +105,7 @@ export async function sendMessage(sessionId, user, content) {
       clientName: scenario.clientName,
       clientRole: scenario.clientRole,
       companyName: scenario.companyName,
-      personality: scenario.personality.profile,
+      personality: personalityProfile || 'COOPERATIVE',
       personalityDescription: personalityData.description,
       personalityBehavior: personalityData.behavior,
       context: scenario.context,

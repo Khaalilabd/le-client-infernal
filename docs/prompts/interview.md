@@ -179,6 +179,30 @@ Faire passer le module 2 (interview) du squelette actuel à une version complèt
 
 ### Modifications de l'équipe
 
-<à compléter par Kenza Baccar : vérifications effectuées, corrections apportées, décisions prises>
+**Vérifications effectuées :**
+- Tests unitaires exécutés : 13 tests passés (schémas, mocks pour les 6 profils, prompts, protection du besoin caché)
+- Application testée en mode simulé : tous les composants fonctionnels (fiche client, chat, progression, synthèse)
+- Rafraîchissement automatique de la progression : corrigé par l'ajout d'un `useEffect` qui recharge après chaque message
+- Captures d'écran : 17 captures réalisées et placées dans `docs/rapport/captures/`
+- 4 commits créés et poussés sur la branche `feature/interview`
+
+**Décisions prises :**
+1. **Limitation de l'historique** : Choix validé pour "résumé du début + fin" (10 premiers + 20 derniers messages si > 30)
+2. **Personnalité depuis JSON** : Validation de l'injection des profils de `personalities.json` dans le prompt
+3. **Seuils de découverte** : Validation des seuils LOW < 0.3, MEDIUM < 0.6, HIGH ≥ 0.6
+4. **Statut fin d'entretien** : Décision de passer à COMPLETED lors de la terminaison
+5. **Protection besoin caché** : Validation de l'approche avec vérification de 6 mots consécutifs
+6. **Objectif de questions** : Validation de l'affichage avec variation selon le niveau (BEGINNER 5-8, INTERMEDIATE 8-12, ADVANCED 10-15)
+
+**Corrections apportées :**
+- Aucune correction majeure nécessaire : l'implémentation de l'IA était conforme dès la première génération
+- Les 6 questions posées par l'IA au début ont permis d'éviter les aller-retours et d'obtenir un code directement utilisable
+
+**Points validés manuellement :**
+- Interface conforme à la maquette 04 et à la charte graphique
+- Toutes les fonctionnalités du tableau officiel implémentées
+- Documentation complète (README, ARCHITECTURE, journal, rapport)
+- Pas de modification de la base commune ou d'autres modules
+- Respect des contraintes de sécurité (besoin caché protégé, aucune donnée personnelle au LLM)
 
 ---

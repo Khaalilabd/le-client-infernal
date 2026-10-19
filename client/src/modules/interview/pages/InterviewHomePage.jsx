@@ -20,6 +20,7 @@ export default function InterviewHomePage() {
   const [error, setError] = useState(null);
   const [summary, setSummary] = useState(null);
   const [endingInterview, setEndingInterview] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -53,10 +54,7 @@ export default function InterviewHomePage() {
   }
 
   async function handleEndInterview() {
-    if (!window.confirm('Êtes-vous sûr de vouloir terminer cet entretien ? Cette action est irréversible.')) {
-      return;
-    }
-
+    setShowConfirmModal(false);
     setEndingInterview(true);
     setError(null);
     try {
@@ -77,14 +75,16 @@ export default function InterviewHomePage() {
 
   return (
     <section>
-      <PageHeader eyebrow="Module 2" title="Entretien client">
-        <p>Le client ne révèle son véritable besoin que si vos questions s'en approchent. Posez des questions ouvertes !</p>
-        {canEnd && (
-          <button className="btn btn-secondary" onClick={handleEndInterview} disabled={endingInterview}>
+      <PageHeader 
+        eyebrow="Module 2" 
+        title="Entretien client"
+        description="Le client ne révèle son véritable besoin que si vos questions s'en approchent. Posez des questions ouvertes !"
+        actions={canEnd && (
+          <button className="btn btn-secondary" onClick={() => setShowConfirmModal(true)} disabled={endingInterview}>
             {endingInterview ? 'Finalisation…' : 'Terminer l\'entretien'}
           </button>
         )}
-      </PageHeader>
+      />
 
       <SessionPicker />
 
@@ -132,6 +132,35 @@ export default function InterviewHomePage() {
       ))}
 
       {summary && <SummaryModal summary={summary} onClose={() => setSummary(null)} />}
+
+      {showConfirmModal && (
+        <div className="modal-overlay" onClick={() => setShowConfirmModal(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Terminer l'entretien</h2>
+            </div>
+            <div className="modal-body">
+              <p>
+                <strong>Êtes-vous sûr de vouloir terminer cet entretien ?</strong>
+              </p>
+              <p>
+                Cette action est <strong>irréversible</strong>. Une fois l'entretien terminé, vous ne pourrez plus poser de questions au client.
+              </p>
+              <p className="text-muted" style={{ fontSize: '0.9em', marginTop: '12px' }}>
+                💡 Assurez-vous d'avoir exploré tous les aspects importants du besoin avant de continuer.
+              </p>
+            </div>
+            <div className="modal-footer">
+              <button className="btn btn-secondary" onClick={() => setShowConfirmModal(false)}>
+                Annuler
+              </button>
+              <button className="btn btn-danger" onClick={handleEndInterview}>
+                Oui, terminer l'entretien
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
