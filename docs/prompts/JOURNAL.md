@@ -760,3 +760,61 @@ Après la revue, l'IA a proposé trois options de fusion. Choix de l'auteur : «
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+## P-013 — Fournisseur IA compatible OpenAI (Gemini gratuit) : variable OPENAI_BASE_URL
+
+- **Date** : 2026-10-24
+- **Auteur** : Nadhem Hmida (module 4)
+- **Module** : base commune (service IA partagé) — **modification signalée à l'équipe**
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : feature/requirements
+
+### Prompt
+
+```text
+est ce que je doit avoir une cle api?
+```
+
+#### Échanges complémentaires (même demande)
+
+```text
+j ai pas la capacite de installer ollama on peux avec geminiai?
+```
+
+```text
+note bien que je doit des cle api gratuite sans installer des model dans le pc car il eest faible a supporter ceci
+```
+
+```text
+voici l cle que j ai
+```
+
+(Capture d'écran de Google AI Studio jointe. Elle n'est pas reproduite ici car elle montrait la clé en clair.)
+
+```text
+j ai fait ceci verifier
+j ai fait verifier ceci
+```
+
+### Résumé de la production de l'IA
+
+1. **Ce qui était demandé.** Tester le projet avec un vrai LLM, avec une clé API gratuite et sans modèle installé sur le PC : Gemini (Google AI Studio).
+2. **Ce qui a été réalisé.**
+   - Variable facultative `OPENAI_BASE_URL` : le fournisseur `openai` peut parler à toute API compatible OpenAI (Gemini, Groq, OpenRouter). Si la variable est vide, il garde l'adresse d'OpenAI : **aucun changement pour le reste de l'équipe**.
+   - Réglage Gemini documenté dans `server/.env.example` (commentaire). La clé reste dans `server/.env`, ignoré par git, et a été collée par l'auteur lui-même : l'IA ne l'a ni recopiée ni affichée.
+3. **Fichiers modifiés (base commune).** `server/src/shared/ai/providers/openai.js`, `server/src/shared/ai/providers/index.js`, `server/src/config/env.js`, `server/.env.example`, `server/tests/ai.test.js` (nouveau test de l'adresse utilisée).
+4. **Vérifications effectuées et résultats.**
+   - `npm test` : 69 tests sur 69 avant la fusion de `develop`.
+   - Appels réels à Gemini, sur des données fictives, avec les prompts `match-requirements` et `evaluate-document` du module 4 : réponses conformes aux schémas Zod, aucune réponse refusée par le contrôle de fuite. Le matching reconnaît les synonymes (« téléphone portable » couvre « smartphone »), ce que le mock ne sait pas faire.
+   - Temps de réponse : `gemini-3.8-flash` de 13 s à plus de 60 s (dépasse `AI_TIMEOUT_MS=30000`) ; `gemini-flash-lite-latest` environ 2 s par appel, avec le même matching. **Modèle conseillé : `gemini-flash-lite-latest`.**
+5. **Problèmes rencontrés et corrections.**
+   - `gemini-2.5-flash` : erreur 404, le modèle n'est plus proposé aux nouveaux comptes → liste des modèles disponibles consultée avec la clé, puis choix du modèle lite.
+   - Erreur passagère 401/403 après plusieurs appels rapprochés (probablement le quota de l'offre gratuite) : le projet l'affiche « clé refusée » alors que la clé est valide (elle a refonctionné aussitôt après).
+6. **Limites et ce qui reste à faire.**
+   - L'offre gratuite de Gemini a un quota par minute et par jour ; Google peut utiliser les requêtes pour améliorer ses modèles (les données envoyées sont fictives et le nom et l'email de l'étudiant sont déjà masqués).
+   - Avec le modèle lite, un commentaire d'évaluation a donné un indice sur le besoin caché sans le recopier : renforcement du prompt `evaluate-document` à prévoir (module 4).
+   - L'auteur a montré sa clé dans une capture : la renouveler dans Google AI Studio après les tests.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
