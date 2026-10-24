@@ -278,7 +278,7 @@ erDiagram
         string id PK
         string documentId FK
         int globalScore
-        json criteria
+        json criteria "critères ; matching joint aux 2 critères de couverture"
         text feedback
         json missingPoints
         int version "version évaluée"
@@ -332,7 +332,7 @@ flowchart TD
     SC -. "getScenarioSecrets()" .-> M4
     M2 -->|"hiddenNeed injecté dans le prompt<br/>client-reply"| LLM["LLM"]
     M3 -->|"prompts generate-change / evaluate-response"| LLM
-    M4 -->|"prompt evaluate-document<br/>(comparaison au besoin caché)"| LLM
+    M4 -->|"prompts match-requirements puis evaluate-document<br/>(comparaison au besoin caché)"| LLM
 ```
 
 1. **M1** génère le scénario. La sortie du LLM est validée par `generatedScenarioSchema`, puis enregistrée. L'API ne renvoie que `toPublicScenario(scenario)`.
@@ -400,7 +400,7 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 | ✅ | GET | `/sessions/:sessionId/document` | propriétaire ou TEACHER | — | `{ document: { status, currentVersion, requirements, evaluations (la dernière) } }` |
 | ✅ | PUT | `/sessions/:sessionId/document` | STUDENT propriétaire | `{ requirements: [{ type, code, title, description, priority, acceptanceCriteria? }] }` | `{ document }` ; `409` si le document n'est plus un brouillon |
 | ✅ | POST | `/sessions/:sessionId/document/submit` | STUDENT propriétaire | — | `{ document }` (statut SUBMITTED, version 1) ; `409` si déjà soumis |
-| ✅ | POST | `/sessions/:sessionId/document/evaluate` | STUDENT propriétaire | — | `201 { evaluation }` (version courante) ; `409` si brouillon ou version déjà évaluée |
+| ✅ | POST | `/sessions/:sessionId/document/evaluate` | STUDENT propriétaire | — | `201 { evaluation }` (version courante ; les critères de couverture contiennent `matching` : identifiants, statuts et codes, sans texte secret) ; `409` si brouillon ou version déjà évaluée |
 | ✅ | GET | `/sessions/:sessionId/document/evaluations` | propriétaire ou TEACHER | — | `{ evaluations: [...] }` (la plus récente d'abord) |
 | ✅ | POST | `/sessions/:sessionId/document/versions` | STUDENT propriétaire | `{ changeRequestId, reason, requirements }` | `201 { version }` (V N+1, document SUBMITTED) ; `404` demande d'une autre séance ; `409` demande non acceptée/négociée ou déjà utilisée |
 | ✅ | GET | `/sessions/:sessionId/document/versions?changeRequestId=` | propriétaire ou TEACHER | — | `{ versions: [{ version, reason, changeRequest, requirementsCount, globalScore, createdAt }] }` |

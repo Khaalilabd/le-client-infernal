@@ -212,3 +212,88 @@ si mon module est terminer en doit terminer le rapport avec des capture de ma pa
 ### Modifications de l'équipe
 
 <!-- À remplir par le responsable du module -->
+
+## P-M4-003 — Matching par le LLM entre le besoin caché et les exigences
+
+- **Date** : 2026-10-24
+- **Auteur** : Nadhem Hmida
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : feature/requirements
+- **Captures** : `p-m4-003-01-prompt.png`, `p-m4-003-02-plan.png`, `p-m4-003-03-resume.png`, `p-m4-003-04-ecran-matching.png` (textes capturés : `docs/rapport/captures/sources/p-m4-003/`)
+
+### Prompt
+
+```text
+je vous presente je suis "nadhem hmida" mon collegue m envoyer ceci
+Salut l'équipe 👋
+La base du projet et le module 1 sont prêts sur la branche develop.
+Avant de commencer :
+1. git pull, puis lisez docs/GUIDE_EQUIPE.md (15 min) : démarrage, règles, méthode avec votre IA.
+2. Votre prompt de départ est prêt dans docs/prompts/modeles/ :
+   Kenza → prompt-m2-interview.md · Ismail → prompt-m3-change-requests.md
+   Nadhem → prompt-m4-requirements.md · Aziz → prompt-m5-dashboard.md
+3. Configurez git avec VOTRE nom et VOTRE email GitHub (sinon vos commits ne comptent pas).
+4. Travaillez sur feature/<votre-module>, tracez chaque prompt dans docs/prompts/<votre-module>.md et faites les captures (prompt, plan, résumé).
+5. Ismail et Nadhem : mettez-vous d'accord sur les versions du cahier des charges avant de toucher la base de données.
+Nouvelle règle : un journal de prompts par module (P-M2-001…), pour éviter les conflits.
+Questions → moi.
+verifier ce que je doit faire dans le dossier docs
+
+ce travaille est deja devellopper ,ce que je veux faire maintenant est dans la partie de l evalution de mon travaille je veux faire un systeme ai de matching
+avant de modifier le code donne moi comment
+```
+
+#### Échanges complémentaires
+
+L'IA a listé ce qui reste à faire d'après `docs/` (captures, encadrés « À compléter » du rapport, rubriques « Modifications de l'équipe », test avec Ismail, `finalScore` avec Aziz), puis a proposé un plan de matching avec trois options (A : matching par le LLM via `callLLM()` ; B : embeddings, refusée car elle touche la base commune ; C : présélection lexicale locale).
+
+Réponse de Nadhem :
+
+```text
+je veux faire l option a de matching avec llm
+```
+
+Questions de l'IA et réponses de Nadhem :
+
+```text
+Où enregistrer le résultat du matching ? → Sans migration (Recommandé)
+Le matching doit-il calculer les notes de couverture ? → Oui, calcul serveur (Recommandé)
+Comment découper le besoin caché en points de référence ? → Par phrase (Recommandé)
+```
+
+L'IA a voulu lancer Docker Desktop pour les tests d'intégration ; Nadhem a refusé :
+
+```text
+sans docker pour le moment en local en travaille
+```
+
+### Résumé de la production de l'IA
+
+1. **Ce qui était demandé.** Ajouter à l'évaluation un système de matching par l'IA (option A) entre le besoin caché et les exigences de l'étudiant, sans migration, avec les notes de couverture calculées à partir du matching et un découpage du besoin caché par phrase.
+2. **Ce qui a été réalisé.**
+   - Nouveau prompt `match-requirements` v0.1 : le besoin caché est découpé en points `N1…` (une phrase = un point) et chaque contrainte implicite devient un point `C1…`. Le LLM renvoie pour chaque point un statut (`COVERED`, `PARTIAL`, `MISSING`), les codes des exigences qui le traitent et une confiance, **sans aucun texte**, donc rien de secret ne peut sortir.
+   - Schéma `createMatchingSchema()` : un résultat par point, pas de point inconnu ni en double, codes existants dans le document, statuts cohérents ; une réponse invalide est relancée par `callLLM`.
+   - `evaluateDocument` fait deux appels (matching, puis évaluation) ; le prompt `evaluate-document` passe en v0.3 et reçoit le matching. Le serveur calcule « Couverture du besoin réel » (30 × (couverts + ½ partiels) / points N) et « Contraintes implicites identifiées » (même calcul sur 15) ; la note du LLM est gardée s'il n'y a aucune contrainte.
+   - Stockage sans migration : le matching est joint aux deux critères concernés dans `criteria` (format `[{ name, score, maxScore, comment }]` inchangé pour le module 5), avec la liste des exigences sans lien avec le besoin réel.
+   - Mock du matching (mots communs entre points et exigences) pour la démo sans clé API.
+   - Interface : panneau « Correspondance avec le besoin réel » sur la page d'évaluation (Point clé 1 : Couvert — EF-01…), masqué pour les anciennes évaluations.
+3. **Fichiers créés et modifiés.**
+   - Créés : `server/src/modules/requirements/requirements.matching.js`, `prompts/match-requirements.md`, `mocks/match-requirements.mock.js`, `tests/matching.test.js` ; `client/src/modules/requirements/components/MatchingPanel.jsx`.
+   - Modifiés : `server/src/modules/requirements/requirements.service.js`, `prompts/evaluate-document.md` (v0.3), `tests/schemas.test.js`, `tests/endpoints.test.js`, `README.md` ; `client/src/modules/requirements/pages/RequirementsEvaluationPage.jsx`, `requirements.css` ; `docs/ARCHITECTURE.md` (ligne de l'endpoint evaluate du module 4, modèle de données, schéma du service IA) ; ce journal.
+4. **Vérifications effectuées et résultats.**
+   - `npm test` sans base : 47 tests, 45 réussis, 0 échec, 2 ignorés (tests d'intégration). Puis, base lancée : **68 tests, 68 réussis, 0 échec**, dont 11 nouveaux tests de matching et les assertions du matching dans `endpoints.test.js`.
+   - `npm run build` : réussi.
+   - Chaîne complète vérifiée sans base, avec un script temporaire hors du dépôt : vrai client `callLLM` + fournisseur mock + deux prompts + schémas Zod sur un scénario « Boulangerie » ; résultat conforme, aucun texte du besoin caché ni des contraintes dans l'évaluation.
+5. **Problèmes rencontrés et corrections.**
+   - Transformer `criteria` en objet aurait cassé la page d'évaluation et la future lecture du module 5 → matching joint aux deux critères concernés, format du tableau inchangé.
+   - Un test du mock attendait `MISSING` pour une contrainte dont un mot (« patients ») apparaît dans une exigence → test corrigé (« pas COVERED »), car le mock compare des mots, pas le sens.
+   - Colonne de gauche décalée vers le bas (marge de `.stack`) → réutilisation de la classe `requirements-side`.
+6. **Limites et ce qui reste à faire.**
+   - Interface pas encore vérifiée dans le navigateur ; matching réel à tester avec une vraie clé API (le mock ne reconnaît pas les synonymes).
+   - L'étudiant voit le nombre de points clés et de contraintes (« 1 / 2 couverts ») sans leur contenu : choix pédagogique à valider en équipe.
+   - Deux appels au LLM par évaluation ; le découpage par phrase dépend de la rédaction du besoin caché par le module 1.
+   - Modification de `docs/ARCHITECTURE.md` (partie M4) à signaler à l'équipe.
+
+### Modifications de l'équipe
+
+<!-- À remplir par le responsable du module -->
