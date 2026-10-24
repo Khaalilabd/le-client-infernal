@@ -107,6 +107,7 @@ model TrainingSession {
   student              User                  @relation(fields: [studentId], references: [id], onDelete: Cascade)
   scenario             Scenario              @relation(fields: [scenarioId], references: [id], onDelete: Cascade)
   messages             InterviewMessage[]
+  interviewSummary     InterviewSummary?
   changeRequests       ChangeRequest[]
   requirementsDocument RequirementsDocument?
   feedbacks            TeacherFeedback[]
@@ -183,6 +184,20 @@ model InterviewMessage {
   @@index([sessionId, createdAt])
 }
 
+/// Fin de l'entretien et synthèse de ce que l'étudiant a découvert (une par séance).
+/// Terminer l'entretien ne termine PAS la séance : l'étudiant enchaîne avec le cahier
+/// des charges (M4) et les demandes de changement (M3).
+model InterviewSummary {
+  id             String   @id @default(cuid())
+  sessionId      String   @unique
+  /// Synthèse validée par interviewSummarySchema (interview.schemas.js)
+  summary        Json
+  questionsCount Int
+  endedAt        DateTime @default(now())
+
+  session TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+}
+
 // ============================================================
 // MODULE 3 — change-requests (Ismail Ismail)
 // ============================================================
@@ -202,6 +217,8 @@ model ChangeRequest {
   /// Note de la réponse de l'étudiant (0 à 100)
   score         Int?
   feedback      String?             @db.Text
+  /// Réaction du client à la réponse de l'étudiant (générée par le LLM)
+  clientReaction String?            @db.Text
   createdAt     DateTime            @default(now())
   answeredAt    DateTime?
 

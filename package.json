@@ -23,9 +23,12 @@
     "db:deploy": "npm run db:deploy -w server",
     "db:seed": "npm run db:seed -w server",
     "db:reset": "npm run db:reset -w server",
-    "db:studio": "npm run db:studio -w server"
+    "db:studio": "npm run db:studio -w server",
+    "rapport": "node scripts/rapport/generer-rapport.cjs"
   },
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.1.0",
+    "docx": "9.5.1",
+    "jszip": "3.10.2"
   }
 }

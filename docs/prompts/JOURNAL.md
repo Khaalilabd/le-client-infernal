@@ -582,3 +582,181 @@ Oui
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-009 — Revue du module 4 et génération du rapport à partir de sections Markdown
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (revue de code, Git, rapport)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+> Note : le journal du module 4 proposait le numéro P-009 pour ses échanges de préparation. Ce numéro est pris ici ; ces échanges, s'ils sont tracés, prendront le numéro P-M4-003 dans `docs/prompts/requirements.md`.
+
+### Prompt
+
+```text
+A ce que je vois mon camarade nadhem m'a dit qu'il a terminer pouvez vous vérifiez ce qu'il a fait du projet et est ce que il a bien réalier son module parfaitement et il a fait comme j'ai fait dans le rapport ?
+```
+
+#### Échanges complémentaires (même demande)
+
+Après la revue, l'IA a posé 6 points. Réponse de l'auteur, mot pour mot :
+
+```text
+1) Corriger oui 
+2) Oui j'ai valider 
+3) Ok 
+4) Faites le 
+5) vous pouvez pas trouver une idée pour esayer de le récupérer les nouvelle donneé pour les mettre dans lel script ? 
+6) On vera
+```
+
+### Résumé de la production de l'IA
+
+1. **Revue du module 4 (Nadhem)** :
+   - tests : 57 sur 57 réussis avec la vraie base, dont 26 du module 4 ; build réussi ;
+   - migration conforme à la décision M3/M4 ;
+   - besoin caché protégé, avec un refus automatique d'une évaluation qui le recopie ; `userId` transmis à l'IA ; validation Zod ; périmètre respecté ;
+   - journal P-M4-001 et P-M4-002 complet ; section 5.4 du rapport sur le modèle de la 5.1 ; 10 commits conventionnels à son nom.
+2. **Points relevés** :
+   - PR #3 fusionnée dans `main` au lieu de `develop` ;
+   - décisions déléguées à l'IA (« faire tout le module ») ;
+   - captures du prompt, du plan et du résumé présentes seulement dans le Word ;
+   - rapport modifié à la main dans Word, donc incompatible avec la génération par script ;
+   - branche `change-requests` créée sans le préfixe `feature/`.
+3. **Corrections** :
+   - `develop` avancé jusqu'à `main` (avance rapide) ;
+   - 12 captures du module 4 extraites du Word vers `docs/rapport/captures/` (reconnaissance par empreinte des images déjà présentes).
+4. **Nouvelle méthode pour le rapport** :
+   - générateur placé dans le dépôt (`scripts/rapport/generer-rapport.cjs`, commande `npm run rapport`, dépendances `docx` et `jszip`) ;
+   - chaque module rédige sa section dans `docs/rapport/sections/5.x-<module>.md` (Markdown simple : titres, tableaux, captures, encadrés) ;
+   - sections 5.1 et 5.4 converties automatiquement depuis le Word ; modèles créés pour 5.2, 5.3 et 5.5 ;
+   - annexe B construite automatiquement à partir des captures utilisées ; chapitre 6 mis à jour (57 tests).
+5. **Vérifications** :
+   - rapport validé par le contrôle XSD de Word ;
+   - comparaison paragraphe par paragraphe avec les originaux : section 5.1 identique ; section 5.4 de Nadhem identique (même texte, mêmes 16 images ; seules les légendes de figures en plusieurs parties ajoutent « (N captures successives) »).
+6. **Documentation mise à jour** : `docs/rapport/README.md`, `docs/GUIDE_EQUIPE.md` (sections 10 à 12), `docs/rapport/captures/README.md`, mémo technique de `CLAUDE.md`, arborescence de `docs/ARCHITECTURE.md`.
+7. **Non fait, car ce contenu appartient à Nadhem** : la rubrique « Modifications de l'équipe » du journal M4 et la traçabilité de ses échanges de préparation.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
+
+---
+
+## P-010 — Accompagnement de Kenza (module 2) et configuration de Kiro
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (organisation de l'équipe)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Elle utilise Kiro qui utilise claude sonnet
+```
+
+#### Échanges précédents (même sujet, sans production de fichiers)
+
+```text
+Alors maintenant il reste le travail de kenza et ismail c'"est ca ?
+```
+
+L'IA a vérifié GitHub : il reste trois modules (Kenza M2, Ismail M3, Aziz M5), sans aucun travail poussé. La branche `change-requests` est vide et mal nommée. L'IA a rédigé un message de point d'avancement pour l'équipe.
+
+```text
+Kenza va traaviller elle a juste a coller ce prompt  c'est tout et sa lui fera ton travail ?
+```
+
+L'IA a répondu que le prompt lance le travail technique, mais que Kenza doit elle-même valider le plan, prendre les décisions, vérifier, faire les captures, écrire sa rubrique « Modifications de l'équipe » et rédiger sa section du rapport. Elle a donné une liste de 9 étapes.
+
+### Résumé de la production de l'IA
+
+- `.kiro/steering/projet.md` : fichier de règles chargé automatiquement par Kiro (`inclusion: always`). Il inclut `CLAUDE.md` (`#[[file:CLAUDE.md]]`) et rappelle les règles principales, dont la nouvelle règle du rapport.
+- `docs/GUIDE_EQUIPE.md` (section 3) : ligne Kiro avec le mode agent, Autopilot désactivé pour relire chaque modification, et le nom de l'outil à noter dans le journal.
+- Point d'attention : la syntaxe des fichiers de règles de Kiro peut évoluer selon sa version. Kenza doit vérifier dans Kiro (panneau « Steering ») que le fichier est bien chargé.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
+
+---
+
+## P-011 — Prompt court pour le module 2 (Kenza)
+
+- **Date** : 2026-10-18
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : organisation de l'équipe (module 2)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+je voudrai aidez kenez a envoyer un prompt direct pour que l'ia comprenne ce qu'il doti faire lire les fichier nécéssaire le projet et qu'il travail directe ce qu'elle a comme module a faire tout ssimplement
+```
+
+### Résumé de la production de l'IA
+
+- Ajout d'une **version courte** en tête de `docs/prompts/modeles/prompt-m2-interview.md`. L'IA de Kenza :
+  - lit les fichiers du projet (`CLAUDE.md`, guide, architecture, charte, README du module, module 1 comme exemple) ;
+  - exécute le prompt détaillé du même fichier ;
+  - présente un plan court et ses questions en une seule fois, puis réalise tout le module sans s'arrêter, sauf pour la base commune ;
+  - termine par les tests, le journal P-M2-001, la section 5.2 du rapport, les commits, le push et le résumé en 6 points.
+- Choix argumenté : une étape de validation du plan est conservée. Elle garantit que Kenza dirige l'IA, ce que le rapport et l'oral évaluent.
+- La liste de ce que Kenza fait elle-même (captures, réponses, vérification, « Modifications de l'équipe », pull request) figure sous le prompt.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
+
+---
+
+## P-012 — Revue et fusion des modules 2 (Kenza) et 3 (Ismail)
+
+- **Date** : 2026-10-19
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : base commune (revue, intégration, schéma)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Rebonsoir , vérifiez grace au github a ce qui parrait nadhem a terminé , kenza , issmail aussi j'aimerai que vous vérifiez si il ont terminer leur module parfaitemenet et d'avoir un merge complet dans main et develop pour continuer a travailler car j'ai des nouveauté a vous donner c'est pour ce la
+```
+
+#### Échanges complémentaires (même demande)
+
+Après la revue, l'IA a proposé trois options de fusion. Choix de l'auteur : « Je corrige puis je fusionne tout (Recommandé) ».
+
+### Résumé de la production de l'IA
+
+1. **État GitHub** :
+   - Nadhem (M4) : rien de nouveau, déjà fusionné ;
+   - Kenza : `feature/interview`, 5 commits ;
+   - Ismail : branche `change-requests` (sans `feature/`), 1 commit « change-requests done » parti d'une ancienne version de `develop` ;
+   - Aziz (M5) : rien.
+2. **Revue de Kenza (M2)** :
+   - fonctionnalités du tableau officiel réalisées ; protection forte du besoin caché ; journal complet avec « Modifications de l'équipe » ; section 5.2 et 17 captures ; 81 tests sur 81 sur sa branche ;
+   - styles ajoutés dans `client/src/styles.css` (base commune, ajouts sans modification de l'existant), alors que le journal affirme « aucune modification de la base commune » ;
+   - **défaut bloquant** : la fin d'entretien passait la séance à `COMPLETED`.
+3. **Revue d'Ismail (M3)** :
+   - endpoint `respond` correct (propriétaire, une seule réponse, Zod, `userId`) ; limite de 3 demandes ; lecture du cahier des charges du M4 ; badge des demandes en attente ;
+   - **manques** : tests jamais lancés par lui ; pas de lien vers les versions du M4 (bouton « Mettre à jour le cahier des charges ») ; protection du besoin caché superficielle (recherche des seuls mots « besoin caché ») ; pas de section 5.3 ni de captures ; « Modifications de l'équipe » vide ; ancienne page `ChangeRequestsHomePage.jsx` laissée en place ; un seul commit non conventionnel.
+4. **Intégration** (branche locale) : avance rapide sur Kenza, fusion d'Ismail sans conflit. Résultat : 2 tests en échec, qui révélaient en pratique le blocage de séance.
+5. **Corrections** :
+   - module 2 : table `InterviewSummary` et migration `ajout_synthese_entretien`, la séance reste en cours, endpoint `/summary`, interface (voir P-M2-002) ;
+   - tests des modules 2 et 3 isolés sur des séances dédiées, supprimées à la fin (exécution parallèle de `node --test`) ;
+   - documentation : `docs/ARCHITECTURE.md` (modèle de données, propriétaires, endpoints), README M2, section 5.2 (passages devenus inexacts + paragraphe sur la correction), chapitre 6 du rapport (117 tests) ;
+   - diagramme du modèle de données régénéré, rapport régénéré.
+6. **Vérifications** : 117 tests sur 117 réussis deux fois de suite (base 13, M1 18, M2 26, M3 34, M4 26) ; build réussi ; diagrammes Mermaid valides ; rapport validé par le contrôle XSD de Word (54 figures).
+7. **Reste à faire** :
+   - Ismail : lien M3 → M4, vraie protection du besoin caché, captures, section 5.3, « Modifications de l'équipe », suppression de l'ancienne page ;
+   - Kenza : relire la correction (P-M2-002) ;
+   - Aziz : tout le module 5.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->

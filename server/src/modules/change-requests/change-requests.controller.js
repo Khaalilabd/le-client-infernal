@@ -9,3 +9,12 @@ export async function generate(req, res) {
   const changeRequest = await service.generateChangeRequest(req.valid.params.sessionId, req.user);
   res.status(201).json({ changeRequest });
 }
+
+export async function respond(req, res) {
+  const { changeRequest, clientReaction } = await service.respondToChangeRequest(
+    req.valid.params.changeRequestId,
+    req.user,
+    req.valid.body,
+  );
+  res.json({ changeRequest, clientReaction });
+}
