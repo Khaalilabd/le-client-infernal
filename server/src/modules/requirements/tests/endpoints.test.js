@@ -179,6 +179,12 @@ test('endpoints du module requirements', async (t) => {
     assert.equal(json.evaluation.version, 1);
     assert.equal(json.evaluation.criteria.length, 6);
     assert.equal(json.evaluation.globalScore, json.evaluation.criteria.reduce((sum, criterion) => sum + criterion.score, 0));
+    const [coverage, constraints] = json.evaluation.criteria;
+    assert.ok(coverage.matching.points.length > 0, 'matching du besoin caché joint au critère de couverture');
+    assert.ok(Array.isArray(constraints.matching.points));
+    for (const point of [...coverage.matching.points, ...constraints.matching.points]) {
+      assert.deepEqual(Object.keys(point).sort(), ['confidence', 'id', 'requirementCodes', 'status'], 'aucun texte de point');
+    }
     assertNoSecret(text, secrets);
 
     const document = await api('GET', doc, { token: tokens.student });
