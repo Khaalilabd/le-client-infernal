@@ -26,6 +26,7 @@ const envSchema = z.object({
   AI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(2),
   ANTHROPIC_API_KEY: optionalString,
   OPENAI_API_KEY: optionalString,
+  OPENAI_BASE_URL: optionalString,
   OLLAMA_BASE_URL: z.string().default('http://localhost:11434'),
 });
 
