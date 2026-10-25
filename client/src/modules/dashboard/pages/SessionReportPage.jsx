@@ -63,8 +63,8 @@ export default function SessionReportPage() {
       <div className="card">
         <h3 className="db-card-title">Notes de la séance</h3>
         <ScoreBreakdown breakdown={breakdown} finalScore={session.finalScore} completed={completed} />
-        <p className="muted small" style={{ marginBottom: 0 }}>
-          Entretien : moyenne de vos 3 meilleures questions ({breakdown.details.questionsCount} posée(s)) · cahier des charges : dernière
+        <p className="muted small" style={{ margin: 'var(--space-4) 0 0' }}>
+          Entretien : moyenne des 3 meilleures questions ({breakdown.details.questionsCount} posée(s)) · cahier des charges : dernière
           évaluation{breakdown.details.evaluatedVersion ? ` (version ${breakdown.details.evaluatedVersion})` : ''} · changements :{' '}
           {breakdown.details.answeredChangeRequests} demande(s) traitée(s). Les pondérations portent sur les étapes déjà notées.
         </p>

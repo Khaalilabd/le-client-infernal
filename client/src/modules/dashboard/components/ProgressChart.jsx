@@ -4,6 +4,8 @@ import { formatDate, formatScore } from '../format.js';
 const WIDTH = 600;
 const HEIGHT = 220;
 const PADDING = { top: 24, right: 24, bottom: 32, left: 40 };
+// Marge entre l'axe et le premier / dernier point, pour que les étiquettes ne chevauchent pas l'axe
+const INSET = 36;
 const GRID = [0, 25, 50, 75, 100];
 
 export function ProgressChart({ points }) {
@@ -13,7 +15,8 @@ export function ProgressChart({ points }) {
 
   const innerWidth = WIDTH - PADDING.left - PADDING.right;
   const innerHeight = HEIGHT - PADDING.top - PADDING.bottom;
-  const x = (index) => PADDING.left + (points.length === 1 ? innerWidth / 2 : (index * innerWidth) / (points.length - 1));
+  const x = (index) =>
+    PADDING.left + (points.length === 1 ? innerWidth / 2 : INSET + (index * (innerWidth - 2 * INSET)) / (points.length - 1));
   const y = (score) => PADDING.top + innerHeight - (score / 100) * innerHeight;
   const path = points.map((point, index) => `${x(index)},${y(point.finalScore)}`).join(' ');
 
