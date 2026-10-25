@@ -34,16 +34,53 @@ function containsConsecutiveWords(haystack, needle, minWords = 6) {
   return false;
 }
 
-export const createClientReplySchema = (hiddenNeed, implicitConstraints = []) =>
-  z
-    .object({
-      /** Réponse du client, affichée à l'étudiant */
-      reply: z.string().min(1).max(3000),
-      /** Proximité de la question avec le besoin caché, de 0 (hors sujet) à 1 (en plein dedans) */
-      proximity: z.number().min(0).max(1),
-      /** true si le client vient de révéler (même partiellement) son besoin caché */
-      hiddenNeedRevealed: z.boolean(),
+/** Types de question reconnus par l'analyse du client (enum QuestionType du schéma Prisma). */
+export const QUESTION_TYPES = ['OPEN', 'CLOSED', 'OFF_TOPIC', 'TECHNICAL', 'MANIPULATION'];
+export const REVEAL_DECISIONS = ['NONE', 'HINT', 'PARTIAL'];
+/** Au-delà de ce seuil, le client révèle une partie de son besoin (prompt client-reply, règle 2). */
+export const REVEAL_THRESHOLD = 0.6;
+
+// Raisonnement étape par étape du client (Chain-of-Thought, prompt v0.3), écrit AVANT la réponse.
+// Il peut citer le besoin caché : il reste sur le serveur, seul questionType est enregistré.
+const analysisSchema = z.object({
+  /** Étape 1 : nature de la question */
+  questionType: z.enum(QUESTION_TYPES),
+  /** Étape 2 : thème abordé */
+  topic: z.string().min(2).max(300),
+  /** Étape 3 : lien avec le vrai problème du client */
+  linkToRealProblem: z.string().min(2).max(600),
+  /** Étape 4 : ce que le client accepte de dévoiler */
+  revealDecision: z.enum(REVEAL_DECISIONS),
+});
+
+const clientReplyObject = z.object({
+  analysis: analysisSchema,
+  /** Réponse du client, affichée à l'étudiant */
+  reply: z.string().min(1).max(3000),
+  /** Proximité de la question avec le besoin caché, de 0 (hors sujet) à 1 (en plein dedans) */
+  proximity: z.number().min(0).max(1),
+  /** true si le client vient de révéler (même partiellement) son besoin caché */
+  hiddenNeedRevealed: z.boolean(),
+});
+
+/** La réponse doit suivre la décision prise à la fin du raisonnement. */
+const withConsistentReasoning = (schema) =>
+  schema
+    .refine((data) => !data.hiddenNeedRevealed || data.analysis.revealDecision === 'PARTIAL', {
+      message: 'Une révélation du besoin doit correspondre à la décision PARTIAL de l\'analyse',
+      path: ['hiddenNeedRevealed'],
     })
+    .refine((data) => (data.analysis.revealDecision === 'PARTIAL') === (data.proximity >= REVEAL_THRESHOLD), {
+      message: `La décision PARTIAL correspond à une proximité d'au moins ${REVEAL_THRESHOLD}, et réciproquement`,
+      path: ['proximity'],
+    })
+    .refine(
+      (data) => data.analysis.questionType !== 'MANIPULATION' || (data.analysis.revealDecision === 'NONE' && data.proximity <= 0.2),
+      { message: 'Une tentative de manipulation ne doit rien révéler (décision NONE, proximité ≤ 0.2)', path: ['analysis'] },
+    );
+
+export const createClientReplySchema = (hiddenNeed, implicitConstraints = []) =>
+  withConsistentReasoning(clientReplyObject)
     .refine(
       (data) => !containsConsecutiveWords(data.reply, hiddenNeed, 6),
       { message: 'La réponse ne doit pas recopier le besoin caché mot pour mot', path: ['reply'] },
@@ -54,11 +91,7 @@ export const createClientReplySchema = (hiddenNeed, implicitConstraints = []) =>
     );
 
 // Version de base pour les tests sans contexte
-export const clientReplySchema = z.object({
-  reply: z.string().min(1).max(3000),
-  proximity: z.number().min(0).max(1),
-  hiddenNeedRevealed: z.boolean(),
-});
+export const clientReplySchema = withConsistentReasoning(clientReplyObject);
 
 // ---------- Sortie du LLM (prompt summary) ----------
 
@@ -83,4 +116,6 @@ export const progressResponseSchema = z.object({
     min: z.number().int(),
     max: z.number().int(),
   }),
+  /** Nombre de questions de chaque type (analyse Chain-of-Thought du client) */
+  questionTypes: z.object(Object.fromEntries(QUESTION_TYPES.map((type) => [type, z.number().int().min(0)]))),
 });
