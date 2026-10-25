@@ -23,7 +23,8 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | 13 | `p005-05-ecran-generateur.png` | Écran réalisé du module 1 : génération et liste | ✅ (générée) |
 | 14 | `p005-06-ecran-detail-scenario.png` | Écran réalisé du module 1 : fiche d'un scénario | ✅ (générée) |
 | 15 | `p005-04-resume-1.png`, `-2.png` | Résumé final de P-005 | ✅ |
-| M1 | `p-m1-001-01-prompt.png` | Prompt P-M1-001 et résumé final de l'IA | 🔲 à prendre (Khalil) |
+| M1 | `p-m1-001-01-prompt.png` | Prompt P-M1-001 et résumé final de l'IA | ✅ (générée à partir du journal) |
+| M1 | `p-m1-002-01-generateur-pre-rempli.png` | Générateur pré-rempli par la recommandation du module 5 | ✅ (générée) |
 | M1 | `p-m1-001-02-ecran-rag.png` | Écran du module 1 v0.3 : encadré du RAG après une génération (Tourisme) | ✅ (générée) |
 | M1 | `p-m1-001-03-prompt-fiches.png` | Extrait réel du prompt v0.3 : fiches retrouvées par le RAG | ✅ (générée à partir du prompt) |
 | M2 | `p-m2-003-01-ecran-analyse.png` | Écran du module 2 v0.3 : injection déjouée, répartition des questions | ✅ (générée) |
@@ -32,7 +33,11 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | M4 | `p-m4-001-02-plan-1.png` à `-7.png` | Plan du module 4 et questions de l'IA | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-03-resume-1.png`, `-2.png` | Résumé final de P-M4-001 | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-04` à `-07-ecran-*.png` | Écrans réalisés du module 4 | ✅ |
-| M3 | `p-m3-001-01-prompt.png`, `-02-plan.png`, `-03-resume.png` | Prompt, plan et résumé de P-M3-001 | ❌ à fournir (Ismail) |
+| M3 | `p-m3-001-01-prompt-1.png`, `-2.png`, `p-m3-001-03-resume.png` | Prompt et résumé de P-M3-001 | ✅ (générées à partir du journal ; le plan n'a pas été conservé) |
+| M3 | `p-m3-003-01-ecran-consensus.png` | Décision attendue et accord des 3 évaluations (Self-consistency) | ✅ (générée) |
+| M3 | `p-m3-003-02-prompt-raisonnement.png` | Extrait du prompt evaluate-response v0.3 | ✅ (générée à partir du prompt) |
+| M5 | `p-m5-003-01` à `-05-*.png` | Tableau de bord, bilans de séance, espace enseignant, fiche étudiant | ✅ (générées, campagne finale) |
+| M5 | `p-m5-003-06-prompt-fewshot.png` | Extrait du prompt recommend-scenario v0.3 | ✅ (générée à partir du prompt) |
 | M3 | `p-m3-001-04` à `-07-*.png` | Écrans réalisés du module 3 et lien avec le module 4 | ✅ (générées) |
 | 16 | `p-m4-001-01-prompt.png` | Prompt P-M4-001 dans Claude Code | 🔲 à prendre (Nadhem) |
 | 17 | `p-m4-001-02-plan.png` | Plan du module 4 et questions de l'IA | 🔲 à prendre (Nadhem) |

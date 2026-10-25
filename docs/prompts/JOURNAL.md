@@ -863,3 +863,82 @@ Pièces jointes : le cours « Prompt Engineering » (PDF), et une capture des tr
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-015 — Finalisation : tous les modules avec leur partie IA, fin de séance et rapport complet
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : tout le projet (modules 3, 4 et 5, base commune, rapport) — **modifications de la base commune et du schéma signalées à l'équipe**
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+On est presque a la derniére étape non ? Je dois avoir tout les modules ready et parfaitement fait et surtout avec leur partie AI qu'on a parler hier  , avec le rapport complet on peut terminer ceci ?
+```
+
+#### Échanges complémentaires
+
+Message précédent du chef de projet, qui a déclenché la revue du module 5 :
+
+```text
+Regardez ce qu'il y'a de nouveau fait dans le projet
+```
+
+L'IA a constaté qu'Aziz avait poussé `feature/dashboard` (5 commits). Elle a lancé ses tests avec la base de données et relevé plusieurs problèmes :
+- les tests d'intégration étaient ignorés en silence ;
+- 12 tests sur 34 échouaient une fois exécutés ;
+- erreurs 404 transformées en 500 ;
+- personnalités et domaines inexistants dans la recommandation ;
+- classes CSS absentes de la charte ;
+- graphiques et écrans enseignant manquants.
+
+Elle a recommandé de fusionner la branche telle quelle, pour conserver les commits d'Aziz, puis de corriger par-dessus.
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : terminer tous les modules avec leur partie IA (P-014) et un rapport complet.
+2. **Réalisé** :
+   - **Module 5** : branche d'Aziz fusionnée telle quelle, puis corrigée (P-M5-003) :
+     - erreurs 404 ;
+     - domaines et profils du module 1 ;
+     - recommandation chargée séparément ;
+     - interface selon les maquettes 08 et 09 (graphique de progression, compétences, bilan de séance, fiche étudiant, commentaires) ;
+     - tests d'intégration réécrits et réellement exécutés ;
+     - fichier personnel `Aziz_Louati_Work.md` retiré de la racine.
+   - **Base commune** : fin de séance et note finale. `sessionScore.js` pondère l'entretien à 30 % (3 meilleures proximités), le cahier des charges à 50 % et les changements à 20 %. `PATCH /api/sessions/:id/status` exige un cahier évalué et refuse une séance déjà terminée.
+   - **Module 1** : formulaire pré-rempli par la recommandation (P-M1-002).
+   - **Module 3** : partie IA d'Ismail, Self-consistency (P-M3-003). L'IA évalue chaque réponse 3 fois, procède à un vote majoritaire et retient la note médiane. La décision attendue et les votes sont enregistrés (migration `ajout_auto_coherence_evaluation`) et affichés.
+   - **Module 4** : lien « Bilan de la séance » après l'évaluation, et section 5.4 complétée avec P-M4-003, Least-to-most et le test Gemini (P-M4-004).
+   - **Campagne finale** : parcours complet joué par l'API (3 séances, dont 2 terminées), puis vérifié dans le navigateur. Les captures ont été prises automatiquement.
+   - **Rapport** :
+     - sections 5.1 à 5.5 complétées ;
+     - nouvelle section 2.9, qui présente les techniques du cours par module ;
+     - nouvelle section 3.9, sur la note finale ;
+     - chapitre 6 (répartition des tests, campagne finale) et conclusion rédigés ;
+     - liste complète des prompts communs ;
+     - captures « prompt et résumé » générées à partir du texte exact des journaux, et légendées comme telles.
+3. **Fichiers** : voir les entrées P-M1-002, P-M3-003, P-M4-004 et P-M5-003. Également :
+   - base commune : `server/src/shared/sessions/sessionScore.js` (créé), `sessions.service.js`, `server/tests/sessions.test.js` (créé) ;
+   - schéma : `server/prisma/schema.prisma` et migration ;
+   - documentation : `docs/ARCHITECTURE.md`, `docs/PARTIE_IA.md`, `docs/rapport/diagrammes/03-modele-de-donnees.html` et l'image associée, `scripts/rapport/generer-rapport.cjs`, `docs/rapport/captures/README.md`.
+4. **Vérifications** :
+   - `npm test` : **237 tests sur 237, aucun ignoré**, base lancée (base commune 30, M1 35, M2 35, M3 45, M4 37, M5 55) ;
+   - `npm run build` réussi ;
+   - rapport régénéré et validé : aucune capture manquante, aucun Markdown brut.
+5. **Problèmes et corrections** :
+   - les tests originaux du module 5, exécutés pour le diagnostic, avaient écrit 8 commentaires d'enseignant dans les séances de démonstration ; ils ont été supprimés de la base locale ;
+   - une capture trop haute pour le Word a été coupée en deux ;
+   - le graphique de progression faisait se chevaucher une étiquette et l'axe ; c'est corrigé.
+6. **Limites et suite** :
+   - en dehors du test Gemini du module 4, les prompts n'ont été vérifiés qu'en mode simulé ;
+   - l'export CSV et les filtres de l'espace enseignant restent à faire ;
+   - les rubriques « Modifications de l'équipe » restent à remplir par chaque membre ;
+   - après le pull, chaque membre doit lancer `npm install && npm run db:deploy` ;
+   - les données de la campagne finale (3 séances de l'étudiant de démonstration) sont conservées dans la base locale pour la démonstration.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->

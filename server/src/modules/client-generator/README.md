@@ -18,6 +18,7 @@ Depuis la v0.3, la génération s'appuie sur une **base de connaissances métier
 | Génération par le LLM avec le prompt v0.3 (fiches métier, sources citées, personnalité imposée, difficulté graduée, anti-doublons) | ✅ |
 | Validation Zod renforcée : besoin caché ≠ besoin exprimé, nombre de contraintes conforme au niveau, sources parmi les fiches fournies | ✅ |
 | Encadré « apport du RAG » après chaque génération (nombre de fiches, mode de vectorisation, jamais leur contenu) | ✅ |
+| Formulaire pré-rempli par l'adresse (`?domain=&level=&personality=`), utilisé par la recommandation du module 5 (P-M1-002) | ✅ |
 | Liste filtrable (domaine, niveau, personnalité) avec état vide | ✅ |
 | Page de détail publique avec « Démarrer une séance » | ✅ |
 | Suppression réservée à l'enseignant, refusée si le scénario est utilisé (409) | ✅ |

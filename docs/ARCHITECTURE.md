@@ -268,6 +268,8 @@ erDiagram
         int score
         text feedback
         text clientReaction
+        ChangeDecision expectedDecision "vote des évaluations"
+        json evaluationVotes "Self-consistency"
     }
     RequirementsDocument {
         string id PK
@@ -375,7 +377,7 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 | ✅ | GET | `/api/sessions` | connecté | — | `{ sessions: [...] }` (étudiant : les siennes ; enseignant : toutes) |
 | ✅ | POST | `/api/sessions` | STUDENT | `{ scenarioId }` | `201 { session }` |
 | ✅ | GET | `/api/sessions/:sessionId` | propriétaire ou TEACHER | — | `{ session }` (avec scénario public) |
-| ✅ | PATCH | `/api/sessions/:sessionId/status` | STUDENT propriétaire | `{ status: "COMPLETED" \| "ABANDONED" }` | `{ session }` |
+| ✅ | PATCH | `/api/sessions/:sessionId/status` | STUDENT propriétaire | `{ status: "COMPLETED" \| "ABANDONED" }` | `{ session }` ; COMPLETED calcule `finalScore` (30 % entretien, 50 % cahier des charges, 20 % changements, `shared/sessions/sessionScore.js`) et exige un cahier évalué (`409 REQUIREMENTS_NOT_EVALUATED`) ; `409` si la séance n'est plus en cours |
 
 ### M1 — client-generator (`/api/client-generator`)
 
@@ -403,7 +405,7 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 |---|---|---|---|---|---|
 | ✅ | GET | `/sessions/:sessionId` | propriétaire ou TEACHER | — | `{ changeRequests: [...] }` |
 | ✅ | POST | `/sessions/:sessionId/generate` | STUDENT propriétaire | — | `201 { changeRequest }` |
-| ✅ | POST | `/:changeRequestId/respond` | STUDENT propriétaire | `{ decision, justification }` | `{ changeRequest, clientReaction }` ; réaction enregistrée ; 409 si déjà traitée ; retour refusé par Zod s'il recopie le besoin caché |
+| ✅ | POST | `/:changeRequestId/respond` | STUDENT propriétaire | `{ decision, justification }` | `{ changeRequest, clientReaction }` ; 3 évaluations par le LLM (Self-consistency) : note médiane de la majorité, `expectedDecision` et `evaluationVotes` enregistrés, raisonnement jamais renvoyé ; réaction enregistrée ; 409 si déjà traitée ; retour refusé par Zod s'il recopie le besoin caché |
 
 ### M4 — requirements (`/api/requirements`)
 
@@ -424,11 +426,12 @@ Cycle de vie : `DRAFT` → submit → `SUBMITTED` (V1) → evaluate → `EVALUAT
 
 | | Méthode | Route | Rôle | Requête | Réponse |
 |---|---|---|---|---|---|
-| ✅ | GET | `/me/stats` | STUDENT | — | `{ stats }` |
-| ✅ | GET | `/teacher/overview` | TEACHER | — | `{ overview: { counts, aiCalls, recentSessions } }` |
-| ✅ | GET | `/me/history` | STUDENT | — | `{ sessions: [...] }` (avec notes et feedback) |
-| ✅ | GET | `/me/recommendation` | STUDENT | — | `{ recommendation: { weaknesses, domain, level, personality?, focusSkill, rationale } }` |
-| ✅ | GET | `/teacher/students/:studentId` | TEACHER | — | `{ student, sessions }` |
+| ✅ | GET | `/me/stats` | STUDENT | — | `{ stats: { sessions, averageFinalScore, interviewMessages, changeRequests, requirements, skills, progression } }` |
+| ✅ | GET | `/me/history` | STUDENT | — | `{ sessions: [{ id, status, finalScore, scenario, scores, feedbacks }] }` |
+| ✅ | GET | `/me/recommendation` | STUDENT | — | `{ recommendation: { weaknesses, domain, level, personality?, personalityLabel, focusSkill, rationale, source: "AI" \| "RULE" } }` (domaine et personnalité du module 1) |
+| ✅ | GET | `/sessions/:sessionId/report` | propriétaire ou TEACHER | — | `{ session, breakdown: { components, details, weights, finalScore } }` (bilan de séance) |
+| ✅ | GET | `/teacher/overview` | TEACHER | — | `{ overview: { counts, averageFinalScore, aiCalls, recentSessions, students } }` |
+| ✅ | GET | `/teacher/students/:studentId` | TEACHER | — | `{ student, averageFinalScore, sessions }` (avec `breakdown` par séance) ; `404` si l'étudiant est inconnu |
 | ✅ | POST | `/teacher/sessions/:sessionId/feedback` | TEACHER | `{ comment, grade? }` | `201 { feedback }` |
 
 ---

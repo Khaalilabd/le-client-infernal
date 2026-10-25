@@ -192,3 +192,53 @@ Sans faire e module de Aziz
 ### Modifications de l'équipe
 
 <!-- À remplir par Ismail Ismail -->
+
+---
+
+## P-M3-003 — Partie IA du module 3 : Self-consistency (auto-cohérence)
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen (chef de projet), pour le module d'Ismail Ismail — voir P-014 et P-015 dans [JOURNAL.md](JOURNAL.md)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `feature/change-requests`
+
+### Prompt
+
+```text
+On est presque a la derniére étape non ? Je dois avoir tout les modules ready et parfaitement fait et surtout avec leur partie AI qu'on a parler hier  , avec le rapport complet on peut terminer ceci ?
+```
+
+#### Échanges complémentaires
+
+Le prompt prévu pour Ismail dans `docs/PARTIE_IA.md` (section 5) a servi de cahier des charges.
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : appliquer au module 3 la technique Self-consistency du cours (PDF p. 16-17).
+2. **Réalisé** :
+   - `change-requests.consistency.js` :
+     - 3 évaluations en parallèle, température 0,7 ;
+     - vote majoritaire sur `expectedDecision` ;
+     - note médiane des évaluations majoritaires ;
+     - retour et réaction de l'évaluation la plus proche de la médiane ;
+     - évaluation incertaine sans majorité ;
+     - tolérance aux échecs partiels.
+   - Prompt `evaluate-response` v0.3 : raisonnement en 4 étapes (`reasoning`) avant la note. Il n'est jamais enregistré ni renvoyé.
+   - Migration `ajout_auto_coherence_evaluation` : `expectedDecision` et `evaluationVotes` sur `ChangeRequest`, enregistrés par le service.
+   - Interface : « Décision attendue : négocier · 3 évaluations de l'IA sur 3 concordantes », ou « évaluation incertaine ».
+3. **Fichiers** :
+   - serveur : `change-requests.consistency.js` (créé), `change-requests.schemas.js`, `change-requests.service.js`, `prompts/evaluate-response.md`, `mocks/evaluate-response.mock.js`, `tests/consistency.test.js` (créé), `tests/schemas.test.js`, `tests/endpoints.test.js`, README ;
+   - schéma : `server/prisma/schema.prisma` et migration ;
+   - client : `components/ChangeRequestCard.jsx`, `change-requests.css` ;
+   - documentation : section 5.3 du rapport et captures `p-m3-003-01`, `-02`. Les captures `p-m3-001-01-prompt-1` et `-2` et `p-m3-001-03-resume` sont générées à partir du texte de P-M3-001 ; le plan n'avait pas été conservé.
+4. **Vérifications** :
+   - 45 tests du module réussis (38 auparavant) ;
+   - campagne finale : 3 réponses évaluées, votes unanimes en mode simulé.
+5. **Problèmes et corrections** : la « décision attendue » produite par l'évaluation n'était ni enregistrée ni affichée ; elle l'est désormais, élue par le vote.
+6. **Limites** :
+   - 3 appels au LLM par réponse ;
+   - en mode simulé, le vote est toujours unanime : les désaccords sont testés avec un faux fournisseur.
+
+### Modifications de l'équipe
+
+<!-- À remplir par Ismail Ismail : relecture de la partie IA -->

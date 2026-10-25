@@ -166,3 +166,61 @@ User: lets start phase by phase first thing is Journal des prompts did u do that
 - Confirmation que les 3 phases précédentes sont terminées
 - Début de la Phase 4 : documentation complète du module
 
+
+---
+
+## P-M5-003 — Corrections à l'intégration et interface complète du tableau de bord
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen (chef de projet), pour le module d'Aziz Louati — voir P-015 dans [JOURNAL.md](JOURNAL.md)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `develop`, après la fusion de `feature/dashboard`
+
+### Prompt
+
+```text
+On est presque a la derniére étape non ? Je dois avoir tout les modules ready et parfaitement fait et surtout avec leur partie AI qu'on a parler hier  , avec le rapport complet on peut terminer ceci ?
+```
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : un module 5 prêt et complet, avec sa partie IA (Few-shot), pour la démonstration et le rapport.
+2. **Réalisé** (la branche d'Aziz a d'abord été fusionnée telle quelle) :
+   - **Erreurs 404** : `new AppError('NOT_FOUND', message, 404)` inversait les arguments et produisait une page 500 ; remplacé par `AppError.notFound()`.
+   - **Recommandation** :
+     - `recommendationSchema` limite le domaine et la personnalité aux valeurs du module 1 ;
+     - prompt `recommend-scenario` v0.3 : exemples corrigés (profils et domaines existants), listes des valeurs autorisées, vouvoiement ;
+     - mock déterministe ;
+     - règle sans IA sous 2 séances terminées (`source: RULE`) ;
+     - libellé de la personnalité renvoyé.
+   - **Service** :
+     - compétences (dont la couverture du besoin réel du module 4) et progression ;
+     - historique avec tous les commentaires ;
+     - bilan de séance (`GET /sessions/:id/report`) ;
+     - liste des étudiants et note moyenne pour l'enseignant ;
+     - `buildAnonymizedHistory()` exportée et testée.
+   - **Interface** :
+     - page d'accueil selon les maquettes 08 et 09 : chronologie, graphique SVG, compétences, carte de recommandation chargée séparément avec « Réessayer » ;
+     - pages « Bilan de la séance », avec « Terminer la séance », et « Fiche étudiant », avec le formulaire de commentaire ;
+     - styles `db-` conformes à la charte, émojis retirés ;
+     - `HistoryTable.jsx` remplacé par `HistoryTimeline.jsx`.
+   - **Tests** :
+     - `endpoints.test.js` et `security.test.js` réécrits : ils ne s'exécutaient jamais (`createdAt` au lieu de `startedAt`) et attendaient une autre forme de réponse ;
+     - les tests créent leurs propres séances et les suppriment ;
+     - le test des données personnelles vérifie maintenant directement l'historique anonymisé.
+3. **Fichiers** :
+   - serveur : `server/src/modules/dashboard/` (service, contrôleur, routes, schémas, prompt, mock, tests, README) ;
+   - client : `client/src/modules/dashboard/` (pages, composants, `format.js`, `dashboard.css`, routes, api) ;
+   - suppression de `Aziz_Louati_Work.md` (feuille de route personnelle à la racine) ;
+   - rapport : section 5.5 réécrite, avec les captures `p-m5-003-01` à `-06`.
+4. **Vérifications** :
+   - 55 tests du module réussis, aucun ignoré ;
+   - parcours complet et captures dans le navigateur.
+5. **Problèmes et corrections** : chevauchement de l'étiquette et de l'axe dans le graphique, et libellés du bilan, tous deux corrigés.
+6. **Limites** :
+   - export CSV et filtres enseignant non réalisés ;
+   - recommandation non testée avec un vrai fournisseur.
+
+### Modifications de l'équipe
+
+<!-- À remplir par Aziz Louati : relecture des corrections -->

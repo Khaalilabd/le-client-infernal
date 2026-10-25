@@ -1,8 +1,8 @@
 # Module 5 — dashboard
 
-**Responsable : Aziz Louati** · Branche : `feature/dashboard`
+**Responsable : Aziz Louati** · Branche : `feature/dashboard` · Version : **0.3** (P-M5-001, P-M5-002 par Aziz ; P-M5-003 corrections à l'intégration)
 
-Historique, statistiques, **recommandation du prochain scénario** et **espace enseignant**.
+Historique, statistiques, progression, **recommandation du prochain scénario** par l'IA (technique Few-shot), **bilan de séance** avec la note finale, et **espace enseignant** (vue d'ensemble, fiche étudiant, commentaires).
 
 ## Fichiers
 
@@ -10,59 +10,60 @@ Historique, statistiques, **recommandation du prochain scénario** et **espace e
 |---|---|---|
 | Serveur | `dashboard.routes.js` | routes `/api/dashboard/*` |
 | | `dashboard.controller.js` | lecture de la requête / réponse |
-| | `dashboard.service.js` | statistiques, historique anonymisé, recommandation IA |
-| | `dashboard.schemas.js` | Zod : `teacherFeedbackBodySchema`, `recommendationSchema`, `studentIdParamsSchema` |
-| | `prompts/recommend-scenario.md` | prompt v0.2 Few-shot avec 3 exemples |
-| | `mocks/recommend-scenario.mock.js` | réponse simulée intelligente |
-| | `tests/schemas.test.js` | tests unitaires des schémas et mocks (24 tests) |
-| | `tests/endpoints.test.js` | tests d'intégration des 6 endpoints (17 tests) |
-| | `tests/security.test.js` | tests de sécurité et contrôle d'accès (12 tests) |
-| Client | `client/src/modules/dashboard/routes.jsx` | menu + routes |
+| | `dashboard.service.js` | statistiques, compétences, progression, historique, historique anonymisé (`buildAnonymizedHistory`), recommandation, bilan, espace enseignant |
+| | `dashboard.schemas.js` | Zod : paramètres, `teacherFeedbackBodySchema`, `recommendationSchema` (domaine et personnalité du module 1) |
+| | `prompts/recommend-scenario.md` | prompt v0.3 : 3 exemples Few-shot, valeurs autorisées, points faibles avant la recommandation |
+| | `mocks/recommend-scenario.mock.js` | réponse simulée qui analyse réellement l'historique |
+| | `tests/schemas.test.js` | 25 tests unitaires (schémas, mock, prompt) |
+| | `tests/endpoints.test.js` | 21 tests d'intégration (données de test créées puis supprimées) |
+| | `tests/security.test.js` | 9 tests de sécurité (anonymisation, besoin caché, rôles, isolation) |
+| Client | `routes.jsx` | routes `/dashboard`, `/dashboard/sessions/:sessionId`, `/dashboard/students/:studentId` |
 | | `api.js` | appels HTTP |
-| | `pages/DashboardHomePage.jsx` | tableau de bord étudiant (stats, recommandation, historique) |
-| | `components/StatCard.jsx` | carte de statistique |
-| | `components/RecommendationCard.jsx` | carte de recommandation IA |
-| | `components/HistoryTable.jsx` | tableau historique des séances |
+| | `pages/DashboardHomePage.jsx` | tableau de bord étudiant (maquette 08) ou espace enseignant (maquette 09) |
+| | `pages/SessionReportPage.jsx` | bilan d'une séance, fin de séance, commentaires |
+| | `pages/StudentDetailPage.jsx` | fiche d'un étudiant (enseignant) |
+| | `components/` | `StatCard`, `HistoryTimeline`, `ProgressChart` (SVG), `SkillsCard`, `RecommendationCard`, `ScoreBreakdown`, `Feedbacks` |
+| | `format.js`, `dashboard.css` | libellés communs, styles propres au module (préfixe `db-`) |
 
 ## Tables utilisées
 
 - **`TeacherFeedback`** (propriétaire, écriture).
-- Lecture seule de toutes les autres tables : `User`, `TrainingSession`, `Scenario`, `InterviewMessage`, `ChangeRequest`, `RequirementsDocument`, `RequirementsEvaluation`, `AiCallLog`.
+- Lecture seule : `User`, `TrainingSession`, `Scenario`, `InterviewMessage`, `InterviewSummary`, `ChangeRequest`, `RequirementsDocument`, `RequirementsEvaluation`, `AiCallLog`.
+- Lecture du catalogue du module 1 (`client-generator.catalog.js`) : domaines suggérés et profils de personnalité.
 
-Le dashboard **n'écrit jamais** dans les tables des autres modules.
+Le dashboard **n'écrit jamais** dans les tables des autres modules. La fin de séance et la note finale sont dans la base commune (`server/src/shared/sessions/sessionScore.js`, endpoint `PATCH /api/sessions/:sessionId/status`).
 
 ## Endpoints
 
 | | Méthode | Route | Rôle |
 |---|---|---|---|
 | ✅ | GET | `/api/dashboard/me/stats` | STUDENT |
-| ✅ | GET | `/api/dashboard/teacher/overview` | TEACHER |
 | ✅ | GET | `/api/dashboard/me/history` | STUDENT |
 | ✅ | GET | `/api/dashboard/me/recommendation` | STUDENT |
+| ✅ | GET | `/api/dashboard/sessions/:sessionId/report` | propriétaire ou TEACHER |
+| ✅ | GET | `/api/dashboard/teacher/overview` | TEACHER |
 | ✅ | GET | `/api/dashboard/teacher/students/:studentId` | TEACHER |
 | ✅ | POST | `/api/dashboard/teacher/sessions/:sessionId/feedback` `{ comment, grade? }` | TEACHER |
 
+## Partie IA : Few-shot (cours Prompt Engineering, p. 20)
+
+- 3 exemples « historique anonymisé → recommandation attendue » dans le prompt.
+- Le modèle repère d'abord les points faibles (`weaknesses`), puis recommande.
+- Domaines et personnalités limités à ceux du module 1 : listés dans le prompt et imposés par Zod, pour que « Lancer ce scénario » pré-remplisse le générateur.
+- Historique anonymisé côté serveur (`buildAnonymizedHistory`) : domaines, niveaux, notes, décisions ; ni nom, ni email, ni identifiant.
+- Moins de 2 séances terminées : règle simple, sans appel au LLM (`source: RULE`).
+
 ## Règles à respecter
 
-- **Recommandation** : envoyer au LLM uniquement un historique **anonymisé** (domaines, niveaux, scores), jamais de nom ni d'email.
-- L'enseignant peut voir les noms des étudiants dans l'interface, mais pas le besoin caché (le `responseGuard` le retire de toute façon).
+- Envoyer au LLM uniquement un historique **anonymisé**.
+- L'enseignant voit les noms des étudiants, jamais le besoin caché ; seules des notes agrégées sortent (aucune proximité individuelle).
 
 ## Tâches
 
-- [x] Historique des séances de l'étudiant avec les notes de chaque module.
-- [x] Recommandation : d'abord une règle simple (niveau supérieur si moyenne > 75), puis le prompt `recommend-scenario` v0.2 (Few-shot).
-- [x] Espace enseignant : fiche étudiant, commentaire et note sur une séance (`TeacherFeedback`).
-- [x] Tests complets : 53 tests (schémas, mocks, sécurité, intégration).
-- [ ] Graphiques de progression (une bibliothèque comme Recharts peut être ajoutée à `client/package.json` ; à signaler à l'équipe).
+- [x] Historique, statistiques, compétences et graphique de progression.
+- [x] Recommandation par l'IA (Few-shot) et bouton « Lancer ce scénario ».
+- [x] Bilan de séance et fin de séance avec note finale (règle commune, P-015).
+- [x] Espace enseignant : vue d'ensemble, liste des étudiants, fiche étudiant, commentaire et note.
+- [x] Tests : 55 tests, tous exécutés (aucun ignoré, base lancée).
 - [ ] Filtres et export CSV pour l'espace enseignant.
-- [ ] Définir avec l'équipe le calcul de `TrainingSession.finalScore` (pondération entretien / cahier des charges / demandes de changement).
-
-## État actuel
-
-✅ **Module complet et fonctionnel** (Phases 1, 2, 3, 4 terminées)
-
-- Backend : 6 endpoints opérationnels
-- Frontend : Dashboard étudiant complet (stats, recommandation Few-shot, historique)
-- Tests : 53 tests (100% de réussite)
-- Sécurité : historique anonymisé, besoin caché protégé, contrôle des rôles
-- Documentation : journal, rapport, captures
+- [ ] Tester la recommandation avec un vrai fournisseur.

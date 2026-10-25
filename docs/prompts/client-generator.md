@@ -112,3 +112,38 @@ Cette demande fait suite à P-014 (JOURNAL.md) : la technique du cours retenue p
 ### Modifications de l'équipe
 
 <!-- À remplir par le responsable du module -->
+
+---
+
+## P-M1-002 — Formulaire pré-rempli par la recommandation du tableau de bord
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `develop` (dans le cadre de P-015, voir [JOURNAL.md](JOURNAL.md))
+
+### Prompt
+
+```text
+On est presque a la derniére étape non ? Je dois avoir tout les modules ready et parfaitement fait et surtout avec leur partie AI qu'on a parler hier  , avec le rapport complet on peut terminer ceci ?
+```
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : relier la recommandation du module 5 au générateur (le bouton « Lancer ce scénario » ne pré-remplissait rien).
+2. **Réalisé** :
+   - `GenerateScenarioForm.jsx` lit `?domain=&level=&personality=` ; le niveau et la personnalité ne sont retenus que s'ils existent dans les options ;
+   - un encadré signale « Scénario recommandé par votre tableau de bord ».
+3. **Fichiers** :
+   - `client/src/modules/client-generator/components/GenerateScenarioForm.jsx` ;
+   - README ;
+   - section 5.1 du rapport (capture `p-m1-002-01`, capture `p-m1-001-01-prompt` générée à partir du journal).
+4. **Vérifications** :
+   - build réussi ;
+   - capture dans le navigateur avec « Éducation · débutant · client méfiant ».
+5. **Problèmes** : aucun.
+6. **Limites** : aucune.
+
+### Modifications de l'équipe
+
+<!-- À remplir par le responsable du module -->

@@ -297,3 +297,38 @@ sans docker pour le moment en local en travaille
 ### Modifications de l'équipe
 
 <!-- À remplir par le responsable du module -->
+
+---
+
+## P-M4-004 — Section 5.4 (Least-to-most) et lien vers le bilan de la séance
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen (chef de projet), pour le module de Nadhem Hmida — voir P-015 dans [JOURNAL.md](JOURNAL.md)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `develop`
+
+### Prompt
+
+```text
+On est presque a la derniére étape non ? Je dois avoir tout les modules ready et parfaitement fait et surtout avec leur partie AI qu'on a parler hier  , avec le rapport complet on peut terminer ceci ?
+```
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : présenter dans le rapport la technique déjà réalisée par Nadhem (P-M4-003) et relier l'évaluation à la fin du parcours.
+2. **Réalisé** :
+   - section 5.4 complétée : P-M4-003 et P-013 dans les prompts, v0.3 d'evaluate-document, sous-section « Technique d'IA du cours appliquée » (Least-to-most et Few-shot), captures p-m4-003 de Nadhem, test Gemini, 37 tests, limites mises à jour ;
+   - page d'évaluation : bouton « Bilan de la séance » dès qu'une évaluation existe (étape suivante du parcours, module 5).
+3. **Fichiers** :
+   - `docs/rapport/sections/5.4-requirements.md` ;
+   - `client/src/modules/requirements/pages/RequirementsEvaluationPage.jsx` (signalé : modification dans le module 4).
+4. **Vérifications** :
+   - build réussi ;
+   - parcours complet de la campagne finale ;
+   - rapport régénéré.
+5. **Problèmes** : aucun.
+6. **Limites** : à Nadhem de remplir « Modifications de l'équipe » et de renouveler sa clé Gemini (P-013).
+
+### Modifications de l'équipe
+
+<!-- À remplir par Nadhem Hmida -->

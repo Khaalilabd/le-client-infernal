@@ -20,9 +20,9 @@ Le fine-tuning, LoRA, QLoRA, RAFT et le pruning demandent un GPU et un jeu de do
 |---|---|---|---|---|
 | Khalil Abdelmoumen | M1 client-generator | **RAG** (Séance 4) = Knowledge generation (PDF p. 18) | génération du scénario appuyée sur une base de fiches métier | ✅ réalisé (P-M1-001) |
 | Kenza Baccar | M2 interview | **Chain-of-Thought** + Few-shot (PDF p. 20-22), défense contre le prompt injection (p. 32) | réponse du client : analyse de la question avant le score de proximité | ✅ réalisé par Khalil (P-M2-003) |
-| Ismail Ismail | M3 change-requests | **Self-consistency** (PDF p. 16) | évaluation de la réponse de l'étudiant : 3 évaluations, vote majoritaire | à faire |
-| Nadhem Hmida | M4 requirements | **Least-to-most** (PDF p. 14) + Few-shot | matching entre le besoin caché et les exigences (P-M4-003) | code déjà réalisé, à présenter |
-| Aziz Louati | M5 dashboard | **Few-shot** + données anonymisées (PDF p. 20, 34-35) | recommandation du prochain scénario | intégré à son prompt de départ |
+| Ismail Ismail | M3 change-requests | **Self-consistency** (PDF p. 16) | évaluation de la réponse de l'étudiant : 3 évaluations, vote majoritaire | ✅ réalisé par Khalil (P-M3-003) |
+| Nadhem Hmida | M4 requirements | **Least-to-most** (PDF p. 14) + Few-shot | matching entre le besoin caché et les exigences (P-M4-003) | ✅ réalisé par Nadhem, présenté en section 5.4 (P-M4-004) |
+| Aziz Louati | M5 dashboard | **Few-shot** + données anonymisées (PDF p. 20, 34-35) | recommandation du prochain scénario | ✅ réalisé par Aziz (P-M5-001), corrigé à l'intégration (P-M5-003) |
 
 Tout le monde applique déjà, dans ses prompts, des éléments du cours qu'il peut citer en plus : rôle et Priming, sortie JSON validée par Zod, itération v0.1 → v0.2, checklist « safe » (aucune donnée personnelle envoyée, besoin caché protégé).
 
@@ -72,7 +72,9 @@ Dans « Difficultés et apport de l'IA », chacun présente aussi l'usage de l'I
   - tests : `analysis` n'est jamais renvoyé au front ; le message piège ne révèle rien ;
   - capture de la même question avant et après.
 
-### M3 — Ismail : Self-consistency (auto-cohérence)
+### M3 — Ismail : Self-consistency (auto-cohérence) — ✅ réalisé (P-M3-003)
+
+> Réalisé par Khalil Abdelmoumen pour le module d'Ismail (P-015). Ismail n'a pas à envoyer le prompt de la section 5. Il lui reste à relire P-M3-003 dans `docs/prompts/change-requests.md` et à remplir « Modifications de l'équipe ». La migration `ajout_auto_coherence_evaluation` s'applique après le pull avec `npm install && npm run db:deploy`.
 
 - **Problème** : une seule évaluation par le LLM varie d'un appel à l'autre. La même réponse d'étudiant peut obtenir 55 puis 80.
 - **Application** :
@@ -83,7 +85,7 @@ Dans « Difficultés et apport de l'IA », chacun présente aussi l'usage de l'I
 - **Preuve** : test avec un faux fournisseur (2 NEGOTIATE + 1 ACCEPT → NEGOTIATE), et capture.
 - **Limite** : 3 appels, donc un coût multiplié par 3.
 
-### M4 — Nadhem : Least-to-most (du facile au difficile)
+### M4 — Nadhem : Least-to-most (du facile au difficile) — ✅ réalisé (P-M4-003), présenté en section 5.4
 
 - **Déjà réalisé** dans P-M4-003. La question complexe « ce cahier des charges couvre-t-il le vrai besoin ? » est décomposée en questions simples, une par point (N1…, C1…). Le LLM traite chaque point séparément, puis le serveur fusionne les réponses en note (COVERED = 1, PARTIAL = 0,5, MISSING = 0). C'est exactement la définition du cours (PDF p. 14).
 - **Few-shot** : les exemples « Interdit / Autorisé » du prompt `evaluate-document`.
@@ -92,7 +94,9 @@ Dans « Difficultés et apport de l'IA », chacun présente aussi l'usage de l'I
   - un extrait du prompt ;
   - l'avant/après : note de couverture donnée globalement par le LLM, puis calculée par le matching.
 
-### M5 — Aziz : Few-shot + données anonymisées
+### M5 — Aziz : Few-shot + données anonymisées — ✅ réalisé (P-M5-001), corrigé (P-M5-003)
+
+> Aziz a appliqué la technique. À l'intégration, les exemples du prompt utilisaient des profils et des domaines inexistants, et les tests d'intégration ne s'exécutaient jamais (voir la section 5.5 du rapport) : c'est corrigé dans P-M5-003.
 
 - **Application** :
   - le prompt `recommend-scenario` (v0.2) contient 2 ou 3 exemples « historique anonymisé → recommandation attendue » ;
@@ -131,7 +135,9 @@ FORMAT
 3. Commits « feat(interview): … » sur feature/interview, entrée P-M2-003 dans docs/prompts/interview.md, sous-section « ### Technique d'IA du cours appliquée » dans docs/rapport/sections/5.2-interview.md (voir docs/PARTIE_IA.md, section 3).
 ```
 
-### Ismail — module 3 (entrée P-M3-003)
+### Ismail — module 3 (entrée P-M3-003) — déjà réalisé, ne pas renvoyer
+
+Ce prompt a servi de cahier des charges : la partie a été réalisée par Khalil (voir P-M3-003). Il est conservé pour mémoire.
 
 ```text
 CONTEXTE
@@ -155,7 +161,9 @@ FORMAT
 3. Commits « feat(change-requests): … » sur feature/change-requests, entrée P-M3-003 dans docs/prompts/change-requests.md, sous-section « ### Technique d'IA du cours appliquée » dans docs/rapport/sections/5.3-change-requests.md (voir docs/PARTIE_IA.md, section 3).
 ```
 
-### Nadhem — module 4 (entrée P-M4-004)
+### Nadhem — module 4 (entrée P-M4-004) — déjà fait, ne pas renvoyer
+
+La section 5.4 a été mise à jour par Khalil (P-M4-004). Il reste à Nadhem à remplir « Modifications de l'équipe » et à renouveler sa clé Gemini.
 
 ```text
 CONTEXTE
