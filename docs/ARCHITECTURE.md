@@ -359,7 +359,7 @@ Conventions :
 - Préfixe `/api`, JSON en entrée et en sortie.
 - Authentification : en-tête `Authorization: Bearer <jwt>`.
 - Format d'erreur unique : `{ "error": { "code": "…", "message": "…", "details"?: [{ "path", "message" }] } }`.
-- Codes d'erreur : `VALIDATION_ERROR` (400), `UNAUTHORIZED` / `INVALID_TOKEN` / `INVALID_CREDENTIALS` (401), `FORBIDDEN` (403), `NOT_FOUND` / `ROUTE_NOT_FOUND` (404), `CONFLICT` / `SCENARIO_IN_USE` (409), `AI_RATE_LIMIT` (429), `INTERNAL_ERROR` / `AI_PROMPT_ERROR` (500), `AI_INVALID_RESPONSE` / `AI_PROVIDER_ERROR` (502), `AI_MISSING_KEY` / `DATABASE_UNAVAILABLE` (503), `AI_TIMEOUT` (504).
+- Codes d'erreur : `VALIDATION_ERROR` (400), `UNAUTHORIZED` / `INVALID_TOKEN` / `INVALID_CREDENTIALS` (401), `FORBIDDEN` (403), `NOT_FOUND` / `ROUTE_NOT_FOUND` (404), `CONFLICT` / `SCENARIO_IN_USE` (409), `AI_RATE_LIMIT` (429), `INTERNAL_ERROR` / `AI_PROMPT_ERROR` (500), `AI_INVALID_RESPONSE` / `AI_PROVIDER_ERROR` (502), `AI_MISSING_KEY` / `AI_EMBEDDINGS_UNAVAILABLE` / `DATABASE_UNAVAILABLE` (503), `AI_TIMEOUT` (504).
 
 Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter par le responsable du module).
 
@@ -381,7 +381,7 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 | | Méthode | Route | Rôle | Requête | Réponse |
 |---|---|---|---|---|---|
 | ✅ | GET | `/options` | connecté | — | `{ domains, levels, personalities }` (domaines suggérés, niveaux, profils de personnalité) |
-| ✅ | POST | `/scenarios` | connecté | `{ domain, level, personality? }` (profil ou `RANDOM`, par défaut) | `201 { scenario }` (public, `personality.profile` renseigné) |
+| ✅ | POST | `/scenarios` | connecté | `{ domain, level, personality? }` (profil ou `RANDOM`, par défaut) | `201 { scenario, knowledge }` : scénario public (`personality.profile` renseigné) et résumé du RAG `{ mode, engine, retrieved, used, domains }`, sans contenu ni identifiant de fiche |
 | ✅ | GET | `/scenarios?domain=&level=&personality=` | connecté | — | `{ scenarios: [...] }` |
 | ✅ | GET | `/scenarios/:scenarioId` | connecté | — | `{ scenario }` |
 | ✅ | DELETE | `/scenarios/:scenarioId` | TEACHER | — | `204` ; `409 SCENARIO_IN_USE` si des séances utilisent le scénario |
@@ -439,6 +439,7 @@ Emplacement : `server/src/shared/ai/`.
 ```
 ai/
 ├── index.js          callLLM(), createAiClient(), getAiInfo()
+├── embeddings.js     embedTexts(), createEmbeddingClient() : vecteurs pour le RAG (OpenAI, Ollama)
 ├── errors.js         AiError + table des codes / statuts HTTP / messages
 ├── promptLoader.js   lecture de modules/<module>/prompts/<nom>.md, variables {{x}}
 ├── sanitize.js       masquage du nom, du prénom et de l'email de l'étudiant
@@ -501,6 +502,24 @@ flowchart TD
 
 Autres réglages : `AI_TIMEOUT_MS` (30 000 par défaut) et `AI_MAX_RETRIES` (2 par défaut, donc 3 essais au maximum).
 
+### Embeddings (`embedTexts`)
+
+Ajouté par P-M1-001 pour le RAG du module 1 ; utilisable par tout module qui a besoin de comparer des textes (similarité cosinus).
+
+```js
+import { embedTexts } from '../../shared/ai/embeddings.js';
+const { vectors, provider, model } = await embedTexts(['texte 1', 'texte 2'], { module: 'client-generator' });
+```
+
+| `AI_EMBEDDING_PROVIDER` | Comportement |
+|---|---|
+| `auto` (défaut) | `ollama` si `AI_PROVIDER` vaut `ollama`, sinon `openai` si `OPENAI_API_KEY` est définie, sinon aucun. Le mode `mock` n'appelle jamais de fournisseur. |
+| `openai` | `POST /embeddings`, modèle `AI_EMBEDDING_MODEL` (par défaut `text-embedding-3-small`) |
+| `ollama` | `POST /api/embed`, modèle `AI_EMBEDDING_MODEL` (par défaut `nomic-embed-text`) |
+| `none` | Aucun fournisseur |
+
+Mêmes garanties que `callLLM` : timeout, nouvelles tentatives, validation Zod (un vecteur par texte, même dimension), journalisation dans `AiCallLog` (`promptName = embeddings`) sans contenu. Sans fournisseur, l'appel lève `AI_EMBEDDINGS_UNAVAILABLE` (503) : le module utilise alors sa solution de repli (le module 1 a une vectorisation locale TF-IDF). Ne vectoriser que des textes métier ou fictifs, jamais de données personnelles.
+
 ### Erreurs gérées
 
 | Code | HTTP | Cas | Nouvelle tentative |
@@ -511,6 +530,7 @@ Autres réglages : `AI_TIMEOUT_MS` (30 000 par défaut) et `AI_MAX_RETRIES` (2 p
 | `AI_INVALID_RESPONSE` | 502 | réponse vide, pas du JSON, ou JSON non conforme au schéma | oui |
 | `AI_PROVIDER_ERROR` | 502 | fournisseur injoignable (oui), erreur 5xx (oui), erreur 4xx (non), mock manquant (non) | selon le cas |
 | `AI_PROMPT_ERROR` | 500 | fichier de prompt introuvable ou variable `{{x}}` manquante | non |
+| `AI_EMBEDDINGS_UNAVAILABLE` | 503 | aucun fournisseur d'embeddings configuré (le module bascule sur sa solution de repli) | non |
 
 ### Prompts et mocks
 

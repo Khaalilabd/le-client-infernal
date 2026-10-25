@@ -23,6 +23,9 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | 13 | `p005-05-ecran-generateur.png` | Écran réalisé du module 1 : génération et liste | ✅ (générée) |
 | 14 | `p005-06-ecran-detail-scenario.png` | Écran réalisé du module 1 : fiche d'un scénario | ✅ (générée) |
 | 15 | `p005-04-resume-1.png`, `-2.png` | Résumé final de P-005 | ✅ |
+| M1 | `p-m1-001-01-prompt.png` | Prompt P-M1-001 et résumé final de l'IA | 🔲 à prendre (Khalil) |
+| M1 | `p-m1-001-02-ecran-rag.png` | Écran du module 1 v0.3 : encadré du RAG après une génération (Tourisme) | ✅ (générée) |
+| M1 | `p-m1-001-03-prompt-fiches.png` | Extrait réel du prompt v0.3 : fiches retrouvées par le RAG | ✅ (générée à partir du prompt) |
 | M4 | `p-m4-001-01-prompt-1.png` à `-3.png` | Prompt P-M4-001 (Nadhem) | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-02-plan-1.png` à `-7.png` | Plan du module 4 et questions de l'IA | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-03-resume-1.png`, `-2.png` | Résumé final de P-M4-001 | ✅ (récupérées du Word) |

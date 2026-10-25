@@ -50,7 +50,7 @@ Base commune : authentification avec rôles (STUDENT, TEACHER), layout, gestion 
 - Langage : JavaScript ESM (Node ≥ 20.19), monorepo npm workspaces (`client/`, `server/`).
 - Base commune serveur : `server/src/shared/` — base commune client : `client/src/shared/`.
 - Modules : `server/src/modules/<module>/` et `client/src/modules/<module>/`, chacun avec son `README.md`.
-- Appel au LLM : **toujours** via `callLLM()` de `server/src/shared/ai/` (jamais d'appel direct à un fournisseur). Prompts dans `server/src/modules/<module>/prompts/*.md`, réponses simulées dans `server/src/modules/<module>/mocks/*.mock.js`.
+- Appel au LLM : **toujours** via `callLLM()` de `server/src/shared/ai/` (jamais d'appel direct à un fournisseur). Embeddings (RAG, similarité de textes) : via `embedTexts()` de `server/src/shared/ai/embeddings.js`. Prompts dans `server/src/modules/<module>/prompts/*.md`, réponses simulées dans `server/src/modules/<module>/mocks/*.mock.js`.
 - Besoin caché : les champs `hiddenNeed` et `implicitConstraints` du scénario sont omis par défaut par Prisma ; pour les lire côté serveur, utiliser `getScenarioSecrets()` de `server/src/shared/db/scenarioSecrets.js`. Le middleware `responseGuard` les retire de toute réponse JSON par sécurité.
 - Le schéma Prisma (`server/prisma/schema.prisma`) est partagé : toute modification passe par une migration (`npm run db:migrate -- --name <nom>`) et doit être signalée à l'équipe.
 - Chaque membre a sa propre base PostgreSQL locale (Docker, port 5434).

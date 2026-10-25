@@ -18,7 +18,7 @@ Le fine-tuning, LoRA, QLoRA, RAFT et le pruning demandent un GPU et un jeu de do
 
 | Membre | Module | Technique principale (cours) | Où dans l'application | État |
 |---|---|---|---|---|
-| Khalil Abdelmoumen | M1 client-generator | **RAG** (Séance 4) = Knowledge generation (PDF p. 18) | génération du scénario appuyée sur une base de fiches métier | à faire |
+| Khalil Abdelmoumen | M1 client-generator | **RAG** (Séance 4) = Knowledge generation (PDF p. 18) | génération du scénario appuyée sur une base de fiches métier | ✅ réalisé (P-M1-001) |
 | Kenza Baccar | M2 interview | **Chain-of-Thought** + Few-shot (PDF p. 20-22), défense contre le prompt injection (p. 32) | réponse du client : analyse de la question avant le score de proximité | à faire |
 | Ismail Ismail | M3 change-requests | **Self-consistency** (PDF p. 16) | évaluation de la réponse de l'étudiant : 3 évaluations, vote majoritaire | à faire |
 | Nadhem Hmida | M4 requirements | **Least-to-most** (PDF p. 14) + Few-shot | matching entre le besoin caché et les exigences (P-M4-003) | code déjà réalisé, à présenter |
@@ -46,16 +46,15 @@ Dans « Difficultés et apport de l'IA », chacun présente aussi l'usage de l'I
 
 ## 4. Détail par membre
 
-### M1 — Khalil : RAG (génération augmentée par recherche)
+### M1 — Khalil : RAG (génération augmentée par recherche) — ✅ réalisé (P-M1-001)
 
 - **Problème** : sans connaissance du métier, le LLM produit des scénarios génériques et peut inventer des faits (une réglementation qui n'existe pas). Il peut aussi produire deux scénarios presque identiques.
 - **Application** (le pipeline en 4 étapes de la Séance 4) :
-  1. **Découpage** : une base de fiches métier par domaine (acteurs, processus, problèmes fréquents, réglementation, outils existants) dans `server/src/modules/client-generator/knowledge/`, découpée en blocs ;
-  2. **Vectorisation** : chaque bloc devient un vecteur ;
-  3. **Recherche** : la requête (domaine, niveau, personnalité) est comparée aux blocs par **similarité cosinus**, et les k meilleurs blocs sont retenus ;
-  4. **Génération** : les blocs sont insérés dans le prompt `generate-scenario` avec la consigne de s'appuyer sur ces fiches pour les faits métier.
-- **En plus** : la similarité cosinus sert aussi à refuser un scénario trop proche d'un scénario existant.
-- **Preuve** : tests (cosinus, top-k, construction du prompt) et capture d'un scénario généré sans puis avec RAG.
+  1. **Découpage** : 12 fiches métier, une par domaine suggéré, soit 36 situations (organisation, interlocuteur, situation actuelle, demande typique, besoin réel, contraintes, outils), dans `server/src/modules/client-generator/knowledge/`, découpées en blocs ;
+  2. **Vectorisation** : embeddings du fournisseur IA par le service partagé `embedTexts()`, ou vectorisation locale TF-IDF sans clé API ;
+  3. **Recherche** : le domaine demandé est comparé aux blocs par **similarité cosinus** ; parmi les blocs pertinents, les 2 retenus sont ceux qui ressemblent le moins aux scénarios existants (sélection MMR) ;
+  4. **Génération** : les blocs sont insérés dans le prompt `generate-scenario` (v0.3) avec la consigne de s'appuyer uniquement sur ces fiches pour les faits du secteur ; le LLM cite ses sources, vérifiées par Zod.
+- **Preuve** : 17 nouveaux tests du module et 10 tests du service d'embeddings ; capture de l'écran avec l'encadré du RAG ; extrait réel du prompt ; tableau avant/après dans la section 5.1.
 
 ### M2 — Kenza : Chain-of-Thought + Few-shot
 

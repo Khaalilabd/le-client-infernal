@@ -45,3 +45,70 @@ Les premiers prompts du module 1 sont dans [JOURNAL.md](JOURNAL.md) :
 - **P-006** : captures et section 5.1 du rapport.
 
 Les prochains prompts du module 1 sont numérotés à partir de **P-M1-001** dans ce fichier.
+
+---
+
+## P-M1-001 — Partie IA du module 1 : RAG (génération augmentée par recherche)
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : feature/client-generator
+
+### Prompt
+
+```text
+J'aimerai que vous commencez a travailler mon module et désque vous avez complter et réussi dîtes le moi
+```
+
+#### Échanges complémentaires
+
+Cette demande fait suite à P-014 (JOURNAL.md) : la technique du cours retenue pour le module 1 est le RAG (Séance 4), et l'IA avait proposé de vectoriser par l'API du fournisseur quand une clé est configurée, et localement en mode mock.
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : appliquer au module 1 la technique du cours attribuée dans `docs/PARTIE_IA.md` (RAG), jusqu'à une version vérifiée, documentée et prête pour le rapport.
+2. **Réalisé** :
+   - **base de connaissances** : 12 fiches métier Markdown (une par domaine suggéré), 36 situations au même format (organisation, interlocuteur, sujet, situation actuelle, demande typique, besoin réel, 5 contraintes, outils existants), sans organisation ni loi inventée ;
+   - **pipeline RAG du cours** :
+     - découpage en blocs avec chevauchement ;
+     - vectorisation par embeddings (service partagé) ou TF-IDF local ;
+     - similarité cosinus, seuil de pertinence et sélection MMR, qui écarte les situations déjà exploitées par les scénarios existants du domaine ;
+     - injection des blocs dans le prompt ;
+   - **prompt système v0.3** : section « Fiches métier » (`{{knowledge}}`), faits du secteur pris uniquement dans les fiches, sources citées (`knowledgeSources`) ;
+   - **Zod** : les sources doivent faire partie des fiches fournies, au moins une si des fiches existent ;
+   - **API** : `POST /scenarios` renvoie `{ scenario, knowledge }`. `knowledge` donne le mode, le nombre de fiches retrouvées et utilisées, et leur domaine, mais jamais leur contenu ni leur identifiant ;
+   - **interface** : encadré « Client généré à partir de la base de connaissances (RAG) » après chaque génération ;
+   - **mock** : il lit les fiches injectées dans le prompt, comme le LLM, et accorde le nom du client à sa fonction ;
+   - **base commune (signalée)** : service d'embeddings partagé (`embedTexts`, fournisseurs OpenAI et Ollama, mêmes garanties que `callLLM`), code `AI_EMBEDDINGS_UNAVAILABLE`, variables `AI_EMBEDDING_PROVIDER` et `AI_EMBEDDING_MODEL`. Si les embeddings échouent, le module bascule sur la vectorisation locale pendant 5 minutes.
+3. **Fichiers** :
+   - créés :
+     - `server/src/modules/client-generator/knowledge/` (README + 12 fiches) ;
+     - `rag/knowledgeBase.js`, `rag/vectorizer.js`, `rag/similarity.js`, `rag/retriever.js` ;
+     - `tests/rag.test.js` ;
+     - `server/src/shared/ai/embeddings.js`, `server/tests/embeddings.test.js` ;
+     - captures `p-m1-001-02-ecran-rag.png` et `p-m1-001-03-prompt-fiches.png` ;
+   - modifiés :
+     - module : `client-generator.service.js`, `.controller.js`, `.schemas.js`, `prompts/generate-scenario.md`, `mocks/generate-scenario.mock.js`, `tests/schemas.test.js`, `tests/endpoints.test.js`, README ;
+     - client : `api.js`, `GenerateScenarioForm.jsx`, `client-generator.css` ;
+     - base commune : `shared/ai/index.js` (exports), `shared/ai/errors.js`, `config/env.js`, `server/.env.example` ;
+     - documentation : `CLAUDE.md` (mémo technique), `docs/ARCHITECTURE.md`, `docs/PARTIE_IA.md`, section 5.1 et chapitres 3.6 et 6 du rapport (`scripts/rapport/generer-rapport.cjs`), `docs/rapport/captures/README.md`.
+4. **Vérifications** :
+   - `npm test` : 148 tests sur 148 réussis (base commune 23, M1 35, M2 26, M3 38, M4 26) ;
+   - `npm run build` réussi ;
+   - calibrage des scores de similarité sur les 12 domaines et sur des domaines inconnus ;
+   - parcours réel dans l'application : deux générations « Santé » successives ont exploité deux situations différentes, car celle du scénario de démonstration était déjà prise. Un domaine inconnu (« Aéronautique ») ne retrouve aucune fiche. Aucun contenu de fiche n'apparaît dans les réponses. Les scénarios de test ont été supprimés ensuite ;
+   - captures réalisées dans Chrome sans interface ;
+   - rapport régénéré et validé (63 figures, 29 tableaux).
+5. **Problèmes et corrections** :
+   - la vérification visuelle a révélé des guillemets imbriqués dans l'encadré et des noms mal accordés à la fonction dans le mock ; les deux ont été corrigés ;
+   - le test du prompt v0.2 échouait sans la nouvelle variable `{{knowledge}}` ; il a été mis à jour pour la v0.3.
+6. **Limites** :
+   - pas de test avec un vrai fournisseur (aucune clé API) : les seuils des embeddings sont à recalibrer ;
+   - la vectorisation TF-IDF est lexicale : « Transport aérien » retrouve aussi une fiche du commerce ;
+   - 36 situations seulement, qui se répètent après trois générations dans un même domaine ;
+   - à faire par l'auteur : capture `p-m1-001-01-prompt.png` (prompt et résumé final).
+
+### Modifications de l'équipe
+
+<!-- À remplir par le responsable du module -->
