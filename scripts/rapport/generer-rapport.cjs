@@ -633,7 +633,7 @@ function markdownSection(markdown) {
 children.push(
   h1('6. Tests et validation'),
   h2('6.1 Tests automatisés'),
-  p('Le projet compte à ce stade **160 tests automatisés**, tous réussis (`npm test`) : 24 pour la base commune, 35 pour le module 1, 26 pour le module 2, 38 pour le module 3 et 37 pour le module 4. Ceux de la base commune vérifient en priorité les contraintes obligatoires :'),
+  p('Le projet compte à ce stade **169 tests automatisés**, tous réussis (`npm test`) : 24 pour la base commune, 35 pour le module 1, 35 pour le module 2, 38 pour le module 3 et 37 pour le module 4. Ceux de la base commune vérifient en priorité les contraintes obligatoires :'),
   bullet('validation Zod des réponses, extraction du JSON, nouvelles tentatives sur erreur 429, absence de nouvelle tentative sur clé absente, délai dépassé ;'),
   bullet('mêmes garanties pour le service d\'embeddings : un vecteur par texte, de même dimension, nouvelles tentatives, délai dépassé, format des requêtes OpenAI et Ollama ;'),
   bullet('absence du nom, du prénom et de l\'email de l\'étudiant dans tout ce qui est envoyé au fournisseur IA ;'),

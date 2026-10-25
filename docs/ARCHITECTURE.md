@@ -246,6 +246,7 @@ erDiagram
         MessageSender sender "STUDENT | CLIENT"
         text content
         float proximity "serveur uniquement"
+        QuestionType questionType "analyse du LLM, serveur"
     }
     InterviewSummary {
         string id PK
@@ -393,7 +394,7 @@ Statut : ✅ implémenté (exemple fonctionnel), 🔲 prévu (à implémenter pa
 | ✅ | GET | `/sessions/:sessionId/messages` | propriétaire ou TEACHER | — | `{ messages: [{ id, sender, content, createdAt }] }` |
 | ✅ | POST | `/sessions/:sessionId/messages` | STUDENT propriétaire | `{ content }` | `201 { studentMessage, clientMessage }` |
 | ✅ | POST | `/sessions/:sessionId/end` | STUDENT propriétaire | — | `{ summary: { discoveredPoints, questionsAsked, qualityFeedback } }` ; enregistre `InterviewSummary`, la séance reste en cours ; 409 si l'entretien est déjà terminé |
-| ✅ | GET | `/sessions/:sessionId/progress` | propriétaire ou TEACHER | — | `{ questionsCount, discoveryLevel, recommendedQuestions }` |
+| ✅ | GET | `/sessions/:sessionId/progress` | propriétaire ou TEACHER | — | `{ questionsCount, discoveryLevel, recommendedQuestions, questionTypes: { OPEN, CLOSED, OFF_TOPIC, TECHNICAL, MANIPULATION } }` (nombre de questions par type, issu de l'analyse du LLM) |
 | ✅ | GET | `/sessions/:sessionId/summary` | propriétaire ou TEACHER | — | `{ ended: false }` ou `{ ended: true, endedAt, questionsCount, summary }` |
 
 ### M3 — change-requests (`/api/change-requests`)

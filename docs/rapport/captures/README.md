@@ -26,6 +26,8 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | M1 | `p-m1-001-01-prompt.png` | Prompt P-M1-001 et résumé final de l'IA | 🔲 à prendre (Khalil) |
 | M1 | `p-m1-001-02-ecran-rag.png` | Écran du module 1 v0.3 : encadré du RAG après une génération (Tourisme) | ✅ (générée) |
 | M1 | `p-m1-001-03-prompt-fiches.png` | Extrait réel du prompt v0.3 : fiches retrouvées par le RAG | ✅ (générée à partir du prompt) |
+| M2 | `p-m2-003-01-ecran-analyse.png` | Écran du module 2 v0.3 : injection déjouée, répartition des questions | ✅ (générée) |
+| M2 | `p-m2-003-02-prompt-cot-fewshot.png` | Extrait réel du prompt client-reply v0.3 : anti-injection, Chain-of-Thought, Few-shot | ✅ (générée à partir du prompt) |
 | M4 | `p-m4-001-01-prompt-1.png` à `-3.png` | Prompt P-M4-001 (Nadhem) | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-02-plan-1.png` à `-7.png` | Plan du module 4 et questions de l'IA | ✅ (récupérées du Word) |
 | M4 | `p-m4-001-03-resume-1.png`, `-2.png` | Résumé final de P-M4-001 | ✅ (récupérées du Word) |

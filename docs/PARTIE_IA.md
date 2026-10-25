@@ -19,7 +19,7 @@ Le fine-tuning, LoRA, QLoRA, RAFT et le pruning demandent un GPU et un jeu de do
 | Membre | Module | Technique principale (cours) | Où dans l'application | État |
 |---|---|---|---|---|
 | Khalil Abdelmoumen | M1 client-generator | **RAG** (Séance 4) = Knowledge generation (PDF p. 18) | génération du scénario appuyée sur une base de fiches métier | ✅ réalisé (P-M1-001) |
-| Kenza Baccar | M2 interview | **Chain-of-Thought** + Few-shot (PDF p. 20-22), défense contre le prompt injection (p. 32) | réponse du client : analyse de la question avant le score de proximité | à faire |
+| Kenza Baccar | M2 interview | **Chain-of-Thought** + Few-shot (PDF p. 20-22), défense contre le prompt injection (p. 32) | réponse du client : analyse de la question avant le score de proximité | ✅ réalisé par Khalil (P-M2-003) |
 | Ismail Ismail | M3 change-requests | **Self-consistency** (PDF p. 16) | évaluation de la réponse de l'étudiant : 3 évaluations, vote majoritaire | à faire |
 | Nadhem Hmida | M4 requirements | **Least-to-most** (PDF p. 14) + Few-shot | matching entre le besoin caché et les exigences (P-M4-003) | code déjà réalisé, à présenter |
 | Aziz Louati | M5 dashboard | **Few-shot** + données anonymisées (PDF p. 20, 34-35) | recommandation du prochain scénario | intégré à son prompt de départ |
@@ -56,7 +56,9 @@ Dans « Difficultés et apport de l'IA », chacun présente aussi l'usage de l'I
   4. **Génération** : les blocs sont insérés dans le prompt `generate-scenario` (v0.3) avec la consigne de s'appuyer uniquement sur ces fiches pour les faits du secteur ; le LLM cite ses sources, vérifiées par Zod.
 - **Preuve** : 17 nouveaux tests du module et 10 tests du service d'embeddings ; capture de l'écran avec l'encadré du RAG ; extrait réel du prompt ; tableau avant/après dans la section 5.1.
 
-### M2 — Kenza : Chain-of-Thought + Few-shot
+### M2 — Kenza : Chain-of-Thought + Few-shot — ✅ réalisé (P-M2-003)
+
+> Réalisé par Khalil Abdelmoumen à la place de Kenza, à la demande du chef de projet. Kenza n'a donc pas à envoyer le prompt de la section 5 : il lui reste à relire P-M2-003 dans `docs/prompts/interview.md` et à remplir « Modifications de l'équipe ». Le type de chaque question est enregistré (migration `ajout_type_question` : après le pull, `npm install && npm run db:deploy`), et la progression affiche la répartition des questions.
 
 - **Problème** :
   - le score `proximity` est décidé d'un seul coup, donc il varie pour des questions comparables ;
@@ -103,7 +105,9 @@ Dans « Difficultés et apport de l'IA », chacun présente aussi l'usage de l'I
 
 Ces prompts suivent eux-mêmes le cours (Séance 3, diapo 11 : contexte, objectif, contraintes, format) et demandent un plan avant le code (diapo 14). Copiez votre bloc tel quel, faites une capture du prompt, du plan et du résumé final, puis ajoutez l'entrée à votre journal.
 
-### Kenza — module 2 (entrée P-M2-003)
+### Kenza — module 2 (entrée P-M2-003) — déjà réalisé, ne pas renvoyer
+
+Ce prompt a servi de cahier des charges : la partie a été réalisée par Khalil (voir P-M2-003). Il est conservé pour mémoire.
 
 ```text
 CONTEXTE

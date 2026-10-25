@@ -74,6 +74,7 @@ erDiagram
         MessageSender sender "STUDENT | CLIENT"
         text content
         float proximity "serveur uniquement"
+        QuestionType questionType "analyse du LLM, serveur"
     }
     InterviewSummary {
         string id PK
@@ -94,6 +95,7 @@ erDiagram
         text justification
         int score
         text feedback
+        text clientReaction
     }
     RequirementsDocument {
         string id PK
@@ -115,7 +117,7 @@ erDiagram
         string id PK
         string documentId FK
         int globalScore
-        json criteria
+        json criteria "critères ; matching joint aux 2 critères de couverture"
         text feedback
         json missingPoints
         int version "version évaluée"
