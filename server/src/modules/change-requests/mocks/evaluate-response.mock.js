@@ -1,7 +1,11 @@
-// Réponses simulées du prompt evaluate-response v0.2 (variées selon la décision de l'étudiant).
+// Réponses simulées du prompt evaluate-response v0.3 (variées selon la décision de l'étudiant).
+// Comme le LLM, chaque évaluation commence par un raisonnement (reasoning), qui reste sur le serveur.
+// Le mock répond de façon identique aux 3 évaluations : le vote est donc unanime en mode simulé.
 
 const RESPONSES = {
   ACCEPT: {
+    reasoning:
+      "La demande touche plusieurs écrans et repousse la livraison. Accepter sans condition fait peser un risque sur le planning. Une négociation (report dans un lot ultérieur) était attendue.",
     score: 62,
     expectedDecision: 'NEGOTIATE',
     feedback:
@@ -9,6 +13,8 @@ const RESPONSES = {
     clientReaction: "Parfait, je compte sur vous pour tenir les délais. Ça ne doit pas prendre plus d'une semaine !",
   },
   NEGOTIATE: {
+    reasoning:
+      "La demande a un impact réel sur le délai mais reste utile au client. La négociation protège le planning tout en répondant à la demande : c'est la décision attendue. La justification propose une alternative.",
     score: 78,
     expectedDecision: 'NEGOTIATE',
     feedback:
@@ -16,6 +22,8 @@ const RESPONSES = {
     clientReaction: "D'accord, si c'est livré dans les six semaines, ça me convient. Tenez-moi au courant.",
   },
   REFUSE: {
+    reasoning:
+      "La demande est importante pour l'activité du client. Un refus sans alternative risque de dégrader la relation. Une négociation aurait permis de préserver le planning et la confiance.",
     score: 55,
     expectedDecision: 'NEGOTIATE',
     feedback:

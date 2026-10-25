@@ -167,6 +167,10 @@ test('endpoints du module change-requests', async (t) => {
         assert.ok(json.changeRequest.feedback, 'feedback présent');
         assert.ok(json.clientReaction, 'clientReaction présente');
         assertNoSecret(text);
+        // Self-consistency : 3 évaluations du mock, unanimes ; le raisonnement ne sort jamais
+        assert.equal(json.changeRequest.expectedDecision, 'NEGOTIATE');
+        assert.deepEqual(json.changeRequest.evaluationVotes, { ACCEPT: 0, NEGOTIATE: 3, REFUSE: 0 });
+        assert.ok(!text.includes('reasoning'), 'raisonnement présent dans la réponse');
 
         // La réaction du client est enregistrée : elle reste visible après un rechargement de la liste
         const list = await api('GET', `/sessions/${sessionId}`, { token: tokens.student1 });

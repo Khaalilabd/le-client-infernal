@@ -73,6 +73,7 @@ test('generatedChangeRequestSchema refuse un titre trop court', () => {
 // ---------- responseEvaluationSchema ----------
 
 const validEvaluation = {
+    reasoning: 'Impact modéré sur le délai, risque faible : une négociation est attendue et la justification le montre.',
     score: 75,
     expectedDecision: 'NEGOTIATE',
     feedback: 'Bonne analyse de l\'impact, proposez une alternative concrète.',
@@ -148,7 +149,7 @@ test('le prompt generate-change v0.2 se construit avec toutes ses variables', as
     assert.ok(prompt.includes('EF-01'), 'exigences incluses');
 });
 
-test('le prompt evaluate-response v0.2 se construit avec toutes ses variables', async () => {
+test('le prompt evaluate-response v0.3 se construit avec toutes ses variables', async () => {
     const prompt = await loadPrompt('change-requests', 'evaluate-response', {
         context: 'Une boulangerie.',
         expressedNeed: 'Commandes en ligne.',
@@ -163,6 +164,8 @@ test('le prompt evaluate-response v0.2 se construit avec toutes ses variables', 
         decision: 'NEGOTIATE',
         justification: 'Je propose de livrer ça dans le lot 2.',
     });
+    assert.ok(prompt.includes('raisonne étape par étape AVANT de noter'), 'raisonnement absent du prompt');
+    assert.ok(prompt.includes('"reasoning"'), 'champ reasoning absent du format');
     assert.ok(!prompt.includes('{{'), 'variable non remplacée');
     assert.ok(!prompt.includes('<!--'), 'commentaire non retiré');
 });
@@ -174,6 +177,7 @@ const SCENARIO_SECRETS = {
     implicitConstraints: ['Les données de santé doivent rester confidentielles et hébergées de manière conforme'],
 };
 const safeEvaluation = {
+    reasoning: 'La demande retarde la livraison ; la négociation proposée protège le planning du projet.',
     score: 70,
     expectedDecision: 'NEGOTIATE',
     feedback: 'Bonne analyse de l\'impact. Proposez un calendrier de livraison précis pour rassurer le client.',

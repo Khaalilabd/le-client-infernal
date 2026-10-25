@@ -30,8 +30,13 @@ export const generatedChangeRequestSchema = z.object({
   }),
 });
 
-/** Prompt evaluate-response v0.2 : forme de la réponse */
+/**
+ * Prompt evaluate-response v0.3 : forme de la réponse.
+ * reasoning (raisonnement étape par étape, écrit en premier) peut citer le besoin caché :
+ * il n'est jamais enregistré ni renvoyé au front-end.
+ */
 export const responseEvaluationSchema = z.object({
+  reasoning: z.string().min(20).max(2000),
   score: z.number().int().min(0).max(100),
   expectedDecision: z.enum(['ACCEPT', 'NEGOTIATE', 'REFUSE']),
   feedback: z.string().min(10),
