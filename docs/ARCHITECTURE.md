@@ -426,10 +426,10 @@ Cycle de vie : `DRAFT` → submit → `SUBMITTED` (V1) → evaluate → `EVALUAT
 |---|---|---|---|---|---|
 | ✅ | GET | `/me/stats` | STUDENT | — | `{ stats }` |
 | ✅ | GET | `/teacher/overview` | TEACHER | — | `{ overview: { counts, aiCalls, recentSessions } }` |
-| 🔲 | GET | `/me/history` | STUDENT | — | `{ sessions: [...] }` (avec notes) |
-| 🔲 | GET | `/me/recommendation` | STUDENT | — | `{ recommendation: { domain, level, focusSkill, rationale } }` |
-| 🔲 | GET | `/teacher/students/:studentId` | TEACHER | — | `{ student, sessions }` |
-| 🔲 | POST | `/teacher/sessions/:sessionId/feedback` | TEACHER | `{ comment, grade? }` | `201 { feedback }` |
+| ✅ | GET | `/me/history` | STUDENT | — | `{ sessions: [...] }` (avec notes et feedback) |
+| ✅ | GET | `/me/recommendation` | STUDENT | — | `{ recommendation: { weaknesses, domain, level, personality?, focusSkill, rationale } }` |
+| ✅ | GET | `/teacher/students/:studentId` | TEACHER | — | `{ student, sessions }` |
+| ✅ | POST | `/teacher/sessions/:sessionId/feedback` | TEACHER | `{ comment, grade? }` | `201 { feedback }` |
 
 ---
 
