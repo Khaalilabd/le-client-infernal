@@ -163,10 +163,11 @@ Le rapport Word est **généré** à partir de fichiers texte (mode d'emploi : [
 
 1. Objectif et fonctionnalités (avec un tableau des endpoints).
 2. Prompts utilisés : vos P-M<x>-NNN, et l'évolution de votre prompt système (v0.1 → v0.2…).
-3. Réalisation et captures : les écrans réels, comparés à votre maquette.
-4. Tests.
-5. Difficultés et apport de l'IA : ce que l'IA a bien fait, ce que vous avez dû corriger, vos décisions.
-6. Limites et perspectives.
+3. Technique d'IA du cours appliquée : **obligatoire** pour chaque membre. Votre technique et votre prompt prêt à coller sont dans [`docs/PARTIE_IA.md`](PARTIE_IA.md).
+4. Réalisation et captures : les écrans réels, comparés à votre maquette.
+5. Tests.
+6. Difficultés et apport de l'IA : ce que l'IA a bien fait, ce que vous avez dû corriger, vos décisions.
+7. Limites et perspectives.
 
 L'essentiel de ce contenu vient du **résumé en 6 points** de vos prompts. Déposez vos captures dans `docs/rapport/captures/`, vérifiez le rendu avec `npm run rapport`, puis committez votre fichier `.md` et vos captures (pas le `.docx`). Le chef de projet régénère le rapport après chaque fusion dans `develop`.
 

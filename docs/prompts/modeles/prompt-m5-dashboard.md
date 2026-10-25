@@ -24,6 +24,7 @@ Espace étudiant
 Analyse et recommandation par l'IA
 - Nouvel endpoint GET /api/dashboard/me/recommendation : construit un historique ANONYMISÉ (domaines, niveaux, notes, nombre de questions… jamais de nom ni d'email), appelle le prompt recommend-scenario (version 0.2), qui repère les points faibles récurrents et recommande le prochain scénario (domaine, niveau, personnalité, compétence à travailler, justification).
 - La réponse du LLM reste validée par un schéma Zod (recommendationSchema) ; enrichis-le pour inclure les points faibles repérés.
+- Technique du cours à appliquer (partie IA du rapport, voir docs/PARTIE_IA.md) : Few-shot. Le prompt recommend-scenario v0.2 contient 2 ou 3 exemples « historique anonymisé → recommandation attendue », et le modèle repère d'abord les points faibles (weaknesses) avant de recommander. L'historique est anonymisé côté serveur : le LLM ne reçoit que des domaines, des niveaux et des notes (séparer la logique des données).
 - Le bouton « Lancer ce scénario » ouvre le générateur du module 1 avec les paramètres recommandés (sans modifier le module 1 : passe-les par l'URL et signale-moi si le module 1 doit les lire).
 
 Espace enseignant
@@ -56,6 +57,7 @@ Mode sans clé API
 # 4. Traçabilité pour le rapport
 
 - Ajoute l'entrée P-M5-001 dans docs/prompts/dashboard.md, avec ce prompt mot pour mot.
+- Dans docs/rapport/sections/5.5-dashboard.md, remplis la sous-section « Technique d'IA du cours appliquée » (Few-shot : définition et page du cours, extrait du prompt, recommandation obtenue avec et sans les exemples, limites).
 - Termine par un résumé au format suivant, que je reprendrai dans le rapport :
   1. Ce qui était demandé.
   2. Ce qui a été réalisé.

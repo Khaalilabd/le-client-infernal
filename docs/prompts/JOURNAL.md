@@ -760,3 +760,46 @@ Après la revue, l'IA a proposé trois options de fusion. Choix de l'auteur : «
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-014 — Partie IA de chaque membre : techniques vues en cours
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : tout le projet (répartition, guide de l'équipe, rapport)
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Alors ma prof nous a dit que chacun d'entre vous doit intégrer une partie AI n'importe ou mais on doit chacun appliquer une partie IA dans son travail pour l'ajouter au rapport et aussi il faudrait le minium utiliser une approche vue en cour regardez les chapitres je les mise ici dans le projet les cours jetez un oeil
+```
+
+Pièces jointes : le cours « Prompt Engineering » (PDF), et une capture des trois cours déposés à la racine du projet (« Prompt Engineering(1).pdf », « Seance 3_Generation_du_code.pptx », « Séance 4.pptx »).
+
+### Résumé de la production de l'IA
+
+1. **Lecture des trois cours** :
+   - Prompt Engineering : anatomie d'un prompt ; techniques avancées (Priming, Least-to-most, Self-consistency, Knowledge generation, Zero/One/Few-shot, Chain-of-Thought) ; sortie structurée ; risques et checklist d'un prompt « safe » ;
+   - Séance 3 : génération du code (4 composants d'un prompt, Chain-of-Thought pour le code, itération, vérification avant merge) ;
+   - Séance 4 : fine-tuning, LoRA/QLoRA, RAG, RAFT, quantization, pruning, intégration d'une API IA.
+2. **Analyse des prompts existants** des 5 modules : rôle, sortie JSON et Zod, et itération sont déjà présents partout. Le matching de Nadhem (P-M4-003) applique déjà Least-to-most.
+3. **Répartition** : une technique principale différente par membre, pour que le rapport couvre le cours :
+   - M1 (Khalil) : RAG ;
+   - M2 (Kenza) : Chain-of-Thought + Few-shot + défense contre le prompt injection ;
+   - M3 (Ismail) : Self-consistency ;
+   - M4 (Nadhem) : Least-to-most, déjà réalisé, à présenter ;
+   - M5 (Aziz) : Few-shot + données anonymisées.
+
+   Fine-tuning, LoRA/QLoRA, RAFT et pruning sont exclus : il faudrait un GPU et un jeu de données.
+4. **Fichiers** :
+   - `docs/PARTIE_IA.md` (créé) : cours de référence avec les pages, répartition, contenu attendu dans le rapport, détail par membre, prompts prêts à coller pour Kenza (P-M2-003), Ismail (P-M3-003) et Nadhem (P-M4-004) ;
+   - `docs/prompts/modeles/prompt-m5-dashboard.md` : technique Few-shot et sous-section du rapport ajoutées au prompt de départ d'Aziz ;
+   - `docs/rapport/sections/5.5-dashboard.md` : sous-section « Technique d'IA du cours appliquée » ajoutée au modèle ;
+   - `docs/GUIDE_EQUIPE.md` : cette sous-section devient obligatoire, avec un lien vers `docs/PARTIE_IA.md`.
+5. **Choix laissé à l'auteur** : ces fichiers n'ont été ni committés ni poussés, en attendant la validation de la répartition. Les cours ne sont pas versionnés.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
