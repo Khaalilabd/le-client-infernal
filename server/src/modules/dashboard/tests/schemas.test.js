@@ -5,9 +5,11 @@ import {
   studentIdParamsSchema,
   teacherFeedbackBodySchema,
   recommendationSchema,
+  RECOMMENDABLE_DOMAINS,
 } from '../dashboard.schemas.js';
 import recommendScenarioMock from '../mocks/recommend-scenario.mock.js';
 import { loadPrompt } from '../../../shared/ai/promptLoader.js';
+import { PERSONALITY_PROFILES } from '../../client-generator/client-generator.catalog.js';
 
 // ---------- Tests des schémas Zod ----------
 
@@ -70,7 +72,7 @@ test('teacherFeedbackBodySchema refuse une note hors limites', () => {
 test('recommendationSchema valide une recommandation complète', () => {
   const valid = {
     weaknesses: ['Entretien trop court', 'Exigences imprécises'],
-    domain: 'e-commerce',
+    domain: 'Commerce de détail',
     level: 'BEGINNER',
     personality: 'COOPERATIVE',
     focusSkill: 'Recueil des besoins',
@@ -82,7 +84,7 @@ test('recommendationSchema valide une recommandation complète', () => {
 test('recommendationSchema valide une recommandation sans personality', () => {
   const valid = {
     weaknesses: ['Points à améliorer'],
-    domain: 'santé',
+    domain: 'Santé',
     level: 'INTERMEDIATE',
     focusSkill: 'Gestion des changements',
     rationale: 'Passez au niveau intermédiaire.',
@@ -93,7 +95,7 @@ test('recommendationSchema valide une recommandation sans personality', () => {
 test('recommendationSchema refuse une liste de faiblesses vide', () => {
   const invalid = {
     weaknesses: [],
-    domain: 'finance',
+    domain: 'Banque et assurance',
     level: 'ADVANCED',
     focusSkill: 'Analyse critique',
     rationale: 'Excellents résultats.',
@@ -104,7 +106,7 @@ test('recommendationSchema refuse une liste de faiblesses vide', () => {
 test('recommendationSchema refuse trop de faiblesses', () => {
   const invalid = {
     weaknesses: ['1', '2', '3', '4', '5', '6'],
-    domain: 'logistique',
+    domain: 'Logistique',
     level: 'BEGINNER',
     focusSkill: 'Découverte',
     rationale: 'Trop de problèmes.',
@@ -115,7 +117,7 @@ test('recommendationSchema refuse trop de faiblesses', () => {
 test('recommendationSchema refuse un niveau invalide', () => {
   const invalid = {
     weaknesses: ['Problème détecté'],
-    domain: 'industrie',
+    domain: 'Agriculture',
     level: 'EXPERT',
     focusSkill: 'Analyse',
     rationale: 'Niveau expert n\'existe pas.',
@@ -123,10 +125,10 @@ test('recommendationSchema refuse un niveau invalide', () => {
   assert.equal(recommendationSchema.safeParse(invalid).success, false);
 });
 
-test('recommendationSchema refuse un domaine trop court', () => {
+test('recommendationSchema refuse un domaine absent de la liste du module 1', () => {
   const invalid = {
     weaknesses: ['Problème'],
-    domain: 'a',
+    domain: 'e-commerce',
     level: 'BEGINNER',
     focusSkill: 'Test',
     rationale: 'Domaine invalide.',
@@ -137,10 +139,22 @@ test('recommendationSchema refuse un domaine trop court', () => {
 test('recommendationSchema refuse une rationale trop courte', () => {
   const invalid = {
     weaknesses: ['Problème'],
-    domain: 'éducation',
+    domain: 'Éducation',
     level: 'BEGINNER',
     focusSkill: 'Test',
     rationale: 'Court.',
+  };
+  assert.equal(recommendationSchema.safeParse(invalid).success, false);
+});
+
+test('recommendationSchema refuse une personnalité inexistante', () => {
+  const invalid = {
+    weaknesses: ['Entretien trop court'],
+    domain: 'Santé',
+    level: 'BEGINNER',
+    personality: 'RESERVED',
+    focusSkill: 'Découverte du besoin',
+    rationale: 'Un profil qui n\'existe pas dans le module 1.',
   };
   assert.equal(recommendationSchema.safeParse(invalid).success, false);
 });
@@ -159,7 +173,7 @@ test('le mock recommend-scenario est conforme au schéma avec historique vide', 
 test('le mock recommend-scenario détecte les faiblesses dans l\'historique', () => {
   const history = JSON.stringify([
     {
-      domain: 'santé',
+      domain: 'Santé',
       level: 'BEGINNER',
       finalScore: 55,
       interviewQuestions: 4,
@@ -190,7 +204,7 @@ test('le mock recommend-scenario détecte les faiblesses dans l\'historique', ()
 test('le mock recommend-scenario recommande un niveau supérieur pour bon étudiant', () => {
   const history = JSON.stringify([
     {
-      domain: 'e-commerce',
+      domain: 'Commerce de détail',
       level: 'BEGINNER',
       finalScore: 80,
       interviewQuestions: 12,
@@ -210,9 +224,9 @@ test('le mock recommend-scenario recommande un niveau supérieur pour bon étudi
 
 test('le mock recommend-scenario évite les domaines déjà testés', () => {
   const history = JSON.stringify([
-    { domain: 'e-commerce', level: 'BEGINNER', finalScore: 70, interviewQuestions: 10 },
-    { domain: 'santé', level: 'BEGINNER', finalScore: 65, interviewQuestions: 9 },
-    { domain: 'finance', level: 'BEGINNER', finalScore: 68, interviewQuestions: 11 },
+    { domain: 'Commerce de détail', level: 'BEGINNER', finalScore: 70, interviewQuestions: 10 },
+    { domain: 'Santé', level: 'BEGINNER', finalScore: 65, interviewQuestions: 9 },
+    { domain: 'Banque et assurance', level: 'BEGINNER', finalScore: 68, interviewQuestions: 11 },
   ]);
 
   const result = recommendScenarioMock({ variables: { history } });
@@ -220,13 +234,13 @@ test('le mock recommend-scenario évite les domaines déjà testés', () => {
   assert.ok(parsed.success, parsed.error?.issues[0]?.message);
 
   // Doit recommander un domaine différent
-  assert.ok(!['e-commerce', 'santé', 'finance'].includes(result.domain));
+  assert.ok(!['Commerce de détail', 'Santé', 'Banque et assurance'].includes(result.domain));
 });
 
 test('le mock recommend-scenario adapte la personnalité aux faiblesses', () => {
   const history = JSON.stringify([
     {
-      domain: 'logistique',
+      domain: 'Logistique',
       level: 'BEGINNER',
       finalScore: 60,
       interviewQuestions: 5,
@@ -239,16 +253,14 @@ test('le mock recommend-scenario adapte la personnalité aux faiblesses', () => 
   const parsed = recommendationSchema.safeParse(result);
   assert.ok(parsed.success, parsed.error?.issues[0]?.message);
 
-  // Peu de questions → RESERVED ; faible changements → DEMANDING
-  if (result.personality) {
-    assert.ok(['RESERVED', 'DEMANDING'].includes(result.personality));
-  }
+  // Peu de questions → client méfiant (SKEPTICAL) ; changements faibles → client contradictoire (CONTRADICTORY)
+  assert.equal(result.personality, 'SKEPTICAL');
 });
 
 test('le mock recommend-scenario identifie la compétence à travailler', () => {
   const history = JSON.stringify([
     {
-      domain: 'industrie',
+      domain: 'Agriculture',
       level: 'BEGINNER',
       finalScore: 50,
       interviewQuestions: 15,
@@ -268,10 +280,17 @@ test('le mock recommend-scenario identifie la compétence à travailler', () => 
 
 // ---------- Tests du prompt ----------
 
-test('le prompt recommend-scenario v0.2 se construit avec toutes les variables', async () => {
+// Variables envoyées par le service (domaines et profils du module 1)
+const PROMPT_VARIABLES = (history) => ({
+  history,
+  domains: RECOMMENDABLE_DOMAINS.join(', '),
+  personalities: PERSONALITY_PROFILES.map((profile) => `- ${profile.id} (${profile.label}) : ${profile.description}`).join('\n'),
+});
+
+test('le prompt recommend-scenario v0.3 se construit avec toutes les variables', async () => {
   const history = JSON.stringify([
     {
-      domain: 'e-commerce',
+      domain: 'Commerce de détail',
       level: 'BEGINNER',
       finalScore: 65,
       interviewQuestions: 8,
@@ -280,7 +299,7 @@ test('le prompt recommend-scenario v0.2 se construit avec toutes les variables',
     },
   ]);
 
-  const prompt = await loadPrompt('dashboard', 'recommend-scenario', { history });
+  const prompt = await loadPrompt('dashboard', 'recommend-scenario', PROMPT_VARIABLES(history));
 
   // Vérifie la présence des sections Few-shot
   assert.ok(prompt.includes('Historique'), 'Section Historique manquante');
@@ -293,8 +312,9 @@ test('le prompt recommend-scenario v0.2 se construit avec toutes les variables',
     'Il doit y avoir au moins 3 exemples',
   );
 
-  // Vérifie que l'historique est bien injecté
-  assert.ok(prompt.includes('e-commerce'));
+  // Vérifie que l'historique et les valeurs autorisées sont bien injectés
+  assert.ok(prompt.includes('Commerce de détail'));
+  assert.ok(prompt.includes('SKEPTICAL (Méfiant)'));
 
   // Vérifie qu'il n'y a pas de variables non remplacées
   assert.ok(!prompt.includes('{{'), 'Variable non remplacée');
@@ -304,7 +324,7 @@ test('le prompt recommend-scenario v0.2 se construit avec toutes les variables',
 test('le prompt recommend-scenario se construit avec l\'historique fourni', async () => {
   const history = JSON.stringify([
     {
-      domain: 'finance',
+      domain: 'Banque et assurance',
       level: 'BEGINNER',
       finalScore: 70,
       interviewQuestions: 10,
@@ -313,10 +333,10 @@ test('le prompt recommend-scenario se construit avec l\'historique fourni', asyn
     },
   ]);
 
-  const prompt = await loadPrompt('dashboard', 'recommend-scenario', { history });
+  const prompt = await loadPrompt('dashboard', 'recommend-scenario', PROMPT_VARIABLES(history));
 
   // Vérifie que les données de l'historique sont bien présentes
-  assert.ok(prompt.includes('finance'), 'Domaine absent du prompt');
+  assert.ok(prompt.includes('Banque et assurance'), 'Domaine absent du prompt');
   assert.ok(prompt.includes('BEGINNER'), 'Niveau absent du prompt');
   
   // Important : le service doit envoyer un historique déjà anonymisé

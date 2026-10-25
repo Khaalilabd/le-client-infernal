@@ -14,6 +14,9 @@ dashboardRouter.get('/me/stats', requireRole('STUDENT'), controller.myStats);
 dashboardRouter.get('/me/history', requireRole('STUDENT'), controller.myHistory);
 dashboardRouter.get('/me/recommendation', requireRole('STUDENT'), controller.myRecommendation);
 
+// Bilan d'une séance (étudiant propriétaire ou enseignant)
+dashboardRouter.get('/sessions/:sessionId/report', validate({ params: sessionParamsSchema }), controller.sessionReport);
+
 // Espace enseignant
 dashboardRouter.get('/teacher/overview', requireRole('TEACHER'), controller.teacherOverview);
 dashboardRouter.get(

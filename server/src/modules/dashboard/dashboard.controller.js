@@ -15,6 +15,11 @@ export async function myRecommendation(req, res) {
   res.json({ recommendation });
 }
 
+export async function sessionReport(req, res) {
+  const report = await service.getSessionReport(req.valid.params.sessionId, req.user);
+  res.json(report);
+}
+
 export async function teacherOverview(req, res) {
   const overview = await service.getTeacherOverview();
   res.json({ overview });
