@@ -93,7 +93,7 @@ Chat où le LLM joue le client du scénario. Le client **ne révèle son besoin 
 
 ## Tests
 
-- **35 tests** au total (`npm test`).
+- **36 tests** au total (`npm test`).
 - Tests unitaires : validation des schémas (dont la vérification de non-copie du besoin caché), conformité des mocks pour chaque profil, construction des prompts sans variables manquantes.
 - Partie IA (`reasoning.test.js`) : analyse obligatoire et cohérente, manipulation sans révélation, validité des 4 exemples du prompt, classement des questions, 5 formulations d'injection sur les 6 profils, personnalité respectée.
 - **Tests d'intégration** (nécessitent la base de démonstration) : endpoints, authentification, rôles, absence de secrets dans les réponses, `proximity` et `analysis` jamais exposés, message piège enregistré comme MANIPULATION, répartition des questions.

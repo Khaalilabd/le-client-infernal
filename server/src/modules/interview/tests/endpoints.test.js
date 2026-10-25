@@ -157,6 +157,13 @@ test('endpoints du module interview', async (t) => {
     assert.equal(stored.proximity, 0);
   });
 
+  await t.test('GET /messages : chaque question précède la réponse du client', async () => {
+    const { json } = await api('GET', `/sessions/${sessionId}/messages`, { token: tokens.student });
+    const senders = json.messages.map((message) => message.sender);
+    assert.ok(senders.length >= 4);
+    senders.forEach((sender, index) => assert.equal(sender, index % 2 === 0 ? 'STUDENT' : 'CLIENT', `ordre incorrect : ${senders.join(', ')}`));
+  });
+
   await t.test('POST /messages refuse un message vide', async () => {
     const { status, json } = await api('POST', `/sessions/${sessionId}/messages`, {
       token: tokens.student,

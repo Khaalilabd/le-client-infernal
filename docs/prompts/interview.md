@@ -312,3 +312,35 @@ La demande s'appuie sur la répartition de P-014 (`docs/PARTIE_IA.md`, section �
 ### Modifications de l'équipe
 
 <!-- À remplir par Kenza Baccar : relecture de la partie IA -->
+
+---
+
+## P-M2-004 — Ordre des messages de l'entretien (constaté avec Gemini)
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen (chef de projet) — **modification du module 2 signalée à Kenza Baccar**
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `develop` (dans le cadre de P-016, voir [JOURNAL.md](JOURNAL.md))
+
+### Prompt
+
+```text
+Peut on lancer le tesst icisi j'ai une cé geminie ?
+```
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : tester le module avec un vrai LLM (Gemini), dans le cadre du parcours complet.
+2. **Réalisé** :
+   - Gemini a joué un entretien de 6 questions : le client est resté dans son rôle, et la tentative d'injection a été classée MANIPULATION sans rien révéler ;
+   - **défaut constaté sur la capture** : la question de l'étudiant et la réponse du client, créées dans la même transaction, recevaient la même date ; l'historique pouvait donc afficher la réponse avant la question ;
+   - **correction** : des dates distinctes à l'enregistrement, et un tri `[createdAt, sender]` qui place la question en premier à date égale, ce qui répare aussi les messages déjà enregistrés ;
+   - la synthèse échouait avec Gemini, car la conversation se terminait par le client : ce défaut est corrigé dans le service IA partagé (P-016), sans changement dans le module.
+3. **Fichiers** : `interview.service.js`, `tests/endpoints.test.js`, `README.md`, section 5.2 du rapport.
+4. **Vérifications** : 36 tests du module, dont 1 nouveau (alternance question puis réponse) ; capture refaite avec Gemini.
+5. **Problèmes** : aucun.
+6. **Limites** : un seul entretien testé avec un vrai LLM.
+
+### Modifications de l'équipe
+
+<!-- À remplir par Kenza Baccar -->

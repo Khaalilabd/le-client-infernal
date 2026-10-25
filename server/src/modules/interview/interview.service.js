@@ -15,6 +15,10 @@ const personalities = JSON.parse(readFileSync(join(__dirname, '../client-generat
 // Champs renvoyés au front-end (proximity et questionType restent côté serveur)
 const PUBLIC_MESSAGE_FIELDS = { id: true, sender: true, content: true, createdAt: true };
 
+// Ordre chronologique ; à date égale, la question de l'étudiant passe avant la réponse du client
+// (ordre de l'enum MessageSender) : les deux messages d'un échange sont créés dans la même transaction.
+const MESSAGE_ORDER = [{ createdAt: 'asc' }, { sender: 'asc' }];
+
 // Libellés des types de question, transmis au prompt de synthèse
 const QUESTION_TYPE_LABELS = {
   OPEN: 'ouvertes',
@@ -55,7 +59,7 @@ export async function listMessages(sessionId, user) {
   await getAccessibleSession(sessionId, user);
   return prisma.interviewMessage.findMany({
     where: { sessionId },
-    orderBy: { createdAt: 'asc' },
+    orderBy: MESSAGE_ORDER,
     select: PUBLIC_MESSAGE_FIELDS,
   });
 }
@@ -75,7 +79,7 @@ export async function sendMessage(sessionId, user, content) {
   const scenario = await getScenarioSecrets(session.scenarioId);
   const allMessages = await prisma.interviewMessage.findMany({
     where: { sessionId },
-    orderBy: { createdAt: 'asc' },
+    orderBy: MESSAGE_ORDER,
     select: { sender: true, content: true },
   });
 
@@ -146,14 +150,16 @@ export async function sendMessage(sessionId, user, content) {
     userId: user.id,
   });
 
-  // Seul le type de question est conservé : le raisonnement (analysis) peut citer le besoin caché
+  // Seul le type de question est conservé : le raisonnement (analysis) peut citer le besoin caché.
+  // Dates explicites : dans une transaction, la date par défaut de PostgreSQL est la même pour les deux messages.
+  const askedAt = new Date();
   const [studentMessage, clientMessage] = await prisma.$transaction([
     prisma.interviewMessage.create({
-      data: { sessionId, sender: 'STUDENT', content, proximity: result.proximity, questionType: result.analysis.questionType },
+      data: { sessionId, sender: 'STUDENT', content, proximity: result.proximity, questionType: result.analysis.questionType, createdAt: askedAt },
       select: PUBLIC_MESSAGE_FIELDS,
     }),
     prisma.interviewMessage.create({
-      data: { sessionId, sender: 'CLIENT', content: result.reply },
+      data: { sessionId, sender: 'CLIENT', content: result.reply, createdAt: new Date(askedAt.getTime() + 1) },
       select: PUBLIC_MESSAGE_FIELDS,
     }),
   ]);
@@ -186,7 +192,7 @@ export async function endInterview(sessionId, user) {
   const scenario = await getScenarioSecrets(session.scenarioId);
   const messages = await prisma.interviewMessage.findMany({
     where: { sessionId },
-    orderBy: { createdAt: 'asc' },
+    orderBy: MESSAGE_ORDER,
     select: { sender: true, content: true, questionType: true },
   });
 
