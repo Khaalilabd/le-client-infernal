@@ -3,6 +3,7 @@
 import { prisma } from '../db/prisma.js';
 import { AppError } from '../errors/AppError.js';
 import { toPublicScenario } from '../serializers/scenario.js';
+import { computeScoreBreakdown } from './sessionScore.js';
 
 function toPublicSession(session) {
   return session.scenario ? { ...session, scenario: toPublicScenario(session.scenario) } : session;
@@ -55,11 +56,32 @@ export async function getSession(sessionId, user) {
   return toPublicSession(session);
 }
 
+/**
+ * Termine (COMPLETED) ou abandonne (ABANDONED) une séance en cours.
+ * Terminer calcule la note finale (sessionScore.js) et exige un cahier des charges évalué.
+ */
 export async function updateStatus(sessionId, user, status) {
-  await getAccessibleSession(sessionId, user, { requireOwner: true });
+  const current = await getAccessibleSession(sessionId, user, { requireOwner: true });
+  if (current.status !== 'IN_PROGRESS') {
+    throw AppError.conflict('Cette séance est déjà terminée.');
+  }
+
+  let finalScore = null;
+  if (status === 'COMPLETED') {
+    const breakdown = await computeScoreBreakdown(sessionId);
+    if (breakdown.components.requirements === null) {
+      throw new AppError(
+        409,
+        'REQUIREMENTS_NOT_EVALUATED',
+        'Faites évaluer votre cahier des charges avant de terminer la séance.',
+      );
+    }
+    finalScore = breakdown.finalScore;
+  }
+
   const session = await prisma.trainingSession.update({
     where: { id: sessionId },
-    data: { status, completedAt: new Date() },
+    data: { status, finalScore, completedAt: new Date() },
     include: { scenario: true },
   });
   return toPublicSession(session);
