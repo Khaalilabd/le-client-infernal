@@ -39,6 +39,7 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | M5 | `p-m5-003-01` à `-05-*.png` | Tableau de bord, bilans de séance, espace enseignant, fiche étudiant | ✅ (générées, campagne finale) |
 | M5 | `p-m5-003-06-prompt-fewshot.png` | Extrait du prompt recommend-scenario v0.3 | ✅ (générée à partir du prompt) |
 | M3 | `p-m3-001-04` à `-07-*.png` | Écrans réalisés du module 3 et lien avec le module 4 | ✅ (générées) |
+| Commun | `p016-01-entretien-gemini.png`, `p016-02-changement-gemini.png` | Entretien et demande de changement joués avec Gemini (section 6.4) | ✅ (générées, test avec un vrai LLM) |
 | 16 | `p-m4-001-01-prompt.png` | Prompt P-M4-001 dans Claude Code | 🔲 à prendre (Nadhem) |
 | 17 | `p-m4-001-02-plan.png` | Plan du module 4 et questions de l'IA | 🔲 à prendre (Nadhem) |
 | 18 | `p-m4-001-03-resume.png` | Résumé final de P-M4-001 | 🔲 à prendre (Nadhem) |

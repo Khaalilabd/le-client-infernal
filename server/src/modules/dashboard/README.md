@@ -66,4 +66,5 @@ Le dashboard **n'écrit jamais** dans les tables des autres modules. La fin de s
 - [x] Espace enseignant : vue d'ensemble, liste des étudiants, fiche étudiant, commentaire et note.
 - [x] Tests : 55 tests, tous exécutés (aucun ignoré, base lancée).
 - [ ] Filtres et export CSV pour l'espace enseignant.
-- [ ] Tester la recommandation avec un vrai fournisseur.
+- [x] Tester la recommandation avec un vrai fournisseur : Gemini, une fois (P-016, section 6.4 du rapport).
+- [ ] La tester sur davantage d'historiques et avec d'autres fournisseurs.

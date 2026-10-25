@@ -942,3 +942,84 @@ Elle a recommandé de fusionner la branche telle quelle, pour conserver les comm
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-016 — Test de toute l'application avec un vrai LLM (Gemini) et corrections
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : tout le projet (base commune, modules 1 et 2, rapport) — **modifications de la base commune et du module 2 signalées à l'équipe**
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Peut on lancer le tesst icisi j'ai une cé geminie ?
+```
+
+#### Échanges complémentaires
+
+Message précédent du chef de projet, auquel l'IA a répondu par un état honnête du projet : tout est livré, mais les prompts n'avaient été vérifiés qu'en mode simulé, sauf ceux du module 4 (P-013).
+
+```text
+Le projet est parfaitement terminée tout tout tout ?
+```
+
+Message suivant (la clé n'est pas reproduite) :
+
+```text
+voici la clé germinie : [clé masquée]
+```
+
+La clé a été écrite uniquement dans `server/.env`, exclu de Git (vérifié). Elle n'apparaît ni dans le code, ni dans ce journal, ni dans le rapport, ni dans les sorties des scripts. Elle a été transmise dans une conversation : elle est à renouveler dans Google AI Studio après les tests.
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : lancer l'application avec Gemini et vérifier le parcours complet avec un vrai LLM.
+2. **Réalisé** :
+   - **Configuration** : `AI_PROVIDER=openai`, `OPENAI_BASE_URL` vers l'API compatible OpenAI de Gemini, `AI_MODEL=gemini-flash-lite-latest`, `AI_TIMEOUT_MS=60000`, `AI_EMBEDDING_MODEL=gemini-embedding-001`.
+   - **Séance complète jouée par l'API** :
+     - génération d'un client (Restauration, intermédiaire, méfiant) ;
+     - entretien de 6 questions, dont une tentative de prompt injection ;
+     - cahier des charges de 4 exigences ;
+     - demande de changement négociée ;
+     - fin de séance et recommandation.
+   - **Résultats** :
+     - 17 appels au LLM, sans erreur ni nouvelle tentative ;
+     - réponses en 1,1 à 5,0 secondes ;
+     - client resté dans son rôle, injection sans effet ;
+     - cahier des charges hors sujet noté 0 sur 30 pour la couverture du besoin réel ;
+     - 3 évaluations sur 3 concordantes ;
+     - note finale 50,5 et recommandation par l'IA.
+   - **Vérification des secrets** : les 16 endpoints de lecture de la séance ont été appelés avec les comptes étudiant et enseignant. Aucun ne renvoie le besoin caché, une contrainte implicite, une proximité ou un raisonnement, et `responseGuard` n'est jamais intervenu.
+   - **Trois défauts corrigés** :
+     - **Base commune, service IA** : Gemini refuse une conversation qui se termine par le modèle, d'où une erreur 400 sur la synthèse de l'entretien. `callLLM` ajoute désormais un dernier message de l'utilisateur.
+     - **Base commune, service IA** : le modèle avait recopié une contrainte implicite. Après ce refus, chaque nouvelle tentative renvoyait la même requête, et le modèle refaisait la même erreur : 3 refus, puis une erreur 502. La nouvelle tentative transmet maintenant au modèle sa réponse et le motif du refus (champ et règle, jamais un secret).
+     - **Module 2** : la question et la réponse, créées dans la même transaction, avaient la même date, et l'historique pouvait afficher la réponse avant la question. Les deux messages ont maintenant des dates distinctes, et le tri place la question en premier à date égale (P-M2-004).
+   - **Module 1, calibrage du RAG** : les scores de `gemini-embedding-001` ont été mesurés (0,62 à 0,76 pour les bons blocs, 0,49 à 0,62 pour les autres). Une règle propre à ce modèle a été ajoutée (P-M1-003).
+   - **Rapport** :
+     - nouvelle section 6.4 « Test avec un vrai LLM (Gemini) », avec deux captures ;
+     - les deux nouvelles règles du service IA (section 3.6) ;
+     - limites des sections 5.1 à 5.5 mises à jour ;
+     - nombre de tests, perspectives et conclusion mis à jour.
+3. **Fichiers** :
+   - base commune : `server/src/shared/ai/index.js`, `server/tests/ai.test.js` (2 tests), `server/.env.example` (exemple Gemini testé) ;
+   - module 1 : `server/src/modules/client-generator/rag/retriever.js`, `tests/rag.test.js` (1 test), `README.md` ;
+   - module 2 : `server/src/modules/interview/interview.service.js`, `tests/endpoints.test.js` (1 test), `README.md` ;
+   - documentation : `docs/ARCHITECTURE.md`, `scripts/rapport/generer-rapport.cjs`, sections 5.1 à 5.5, captures `p016-01-entretien-gemini.png` et `p016-02-changement-gemini.png`.
+4. **Vérifications** :
+   - `npm test` : **241 tests sur 241, aucun ignoré**, base lancée (base commune 32, M1 36, M2 36, M3 45, M4 37, M5 55) ;
+   - les tests d'intégration forcent le fournisseur simulé : le nombre d'appels à Gemini dans `AiCallLog` est le même avant et après `npm test` ;
+   - rapport régénéré et validé.
+5. **Problèmes et corrections** :
+   - deux séances interrompues par les erreurs ci-dessus ont été supprimées de la base locale, avec leurs scénarios ;
+   - la première capture de l'entretien montrait la réponse avant la question (défaut du module 2) et l'en-tête de page au milieu de l'image ; elle a été refaite après la correction.
+6. **Limites et suite** :
+   - une seule séance, un seul modèle, sur l'offre gratuite (quota par minute et par jour) ;
+   - le commentaire d'évaluation du module 4 oriente encore vers le besoin caché, sans le recopier (limite déjà relevée en P-013) ;
+   - `server/.env` reste configuré pour Gemini sur le poste du chef de projet ; `AI_PROVIDER=mock` rétablit le mode simulé.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->
