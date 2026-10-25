@@ -40,6 +40,8 @@ export const generatedScenarioSchema = z
     expressedNeed: z.string().min(10),
     hiddenNeed: z.string().min(20),
     implicitConstraints: z.array(z.string().min(5)).min(1).max(6),
+    // Identifiants des fiches de la base de connaissances utilisées (RAG, prompt v0.3)
+    knowledgeSources: z.array(z.string().min(1)).max(5).default([]),
   })
   .refine((scenario) => normalize(scenario.hiddenNeed) !== normalize(scenario.expressedNeed), {
     path: ['hiddenNeed'],
@@ -49,14 +51,22 @@ export const generatedScenarioSchema = z
 /**
  * Schéma de la réponse du LLM pour un niveau donné : le nombre de contraintes
  * implicites doit correspondre à la difficulté demandée.
+ * Avec allowedSources (identifiants des fiches fournies par le RAG), le LLM doit citer
+ * au moins une de ces fiches et aucune autre.
  */
-export function createGeneratedScenarioSchema(level) {
+export function createGeneratedScenarioSchema(level, { allowedSources } = {}) {
   const [min, max] = IMPLICIT_CONSTRAINTS_RANGE[level];
-  return generatedScenarioSchema.refine(
-    (scenario) => scenario.implicitConstraints.length >= min && scenario.implicitConstraints.length <= max,
-    {
+  return generatedScenarioSchema
+    .refine((scenario) => scenario.implicitConstraints.length >= min && scenario.implicitConstraints.length <= max, {
       path: ['implicitConstraints'],
       message: `Le niveau ${level} demande entre ${min} et ${max} contraintes implicites`,
-    },
-  );
+    })
+    .refine((scenario) => !allowedSources || scenario.knowledgeSources.every((id) => allowedSources.includes(id)), {
+      path: ['knowledgeSources'],
+      message: 'Citez uniquement les identifiants des fiches fournies',
+    })
+    .refine((scenario) => !allowedSources?.length || scenario.knowledgeSources.length > 0, {
+      path: ['knowledgeSources'],
+      message: 'Citez au moins une fiche utilisée',
+    });
 }

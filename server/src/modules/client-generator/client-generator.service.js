@@ -5,9 +5,13 @@ import { AppError } from '../../shared/errors/AppError.js';
 import { toPublicScenario } from '../../shared/serializers/scenario.js';
 import { createGeneratedScenarioSchema } from './client-generator.schemas.js';
 import { DOMAIN_SUGGESTIONS, LEVELS, PERSONALITY_PROFILES, getLevel, resolveProfile } from './client-generator.catalog.js';
+import { createRetriever, formatKnowledge } from './rag/retriever.js';
 
 const MODULE = 'client-generator';
-const MAX_EXISTING_TITLES = 20;
+const MAX_EXISTING_SCENARIOS = 20;
+
+let retriever;
+const getRetriever = () => (retriever ??= createRetriever());
 
 /** Options proposées dans le formulaire de génération. */
 export function getOptions() {
@@ -18,26 +22,40 @@ export function getOptions() {
   };
 }
 
-async function findExistingTitles(domain) {
-  const scenarios = await prisma.scenario.findMany({
+/** Scénarios récents du domaine (champs publics) : anti-doublons et diversité du RAG. */
+function findExistingScenarios(domain) {
+  return prisma.scenario.findMany({
     where: { domain: { equals: domain, mode: 'insensitive' } },
-    select: { title: true },
+    select: { title: true, context: true, expressedNeed: true },
     orderBy: { createdAt: 'desc' },
-    take: MAX_EXISTING_TITLES,
+    take: MAX_EXISTING_SCENARIOS,
   });
-  return scenarios.map((scenario) => scenario.title);
+}
+
+/** Ce que le front-end peut savoir du RAG : jamais le contenu ni le titre des fiches. */
+function toPublicKnowledge({ mode, engine, results }, knowledgeSources) {
+  return {
+    mode,
+    engine,
+    retrieved: results.length,
+    used: knowledgeSources.length,
+    domains: [...new Set(results.map((result) => result.domain))],
+  };
 }
 
 /**
- * Génère un scénario avec le LLM, le valide (Zod, règles du niveau), l'enregistre
- * et renvoie sa version publique (sans besoin caché ni contraintes implicites).
+ * Génère un scénario avec le LLM, appuyé sur les fiches métier retrouvées par le RAG,
+ * le valide (Zod, règles du niveau, sources citées), l'enregistre et renvoie sa version
+ * publique (sans besoin caché ni contraintes implicites).
  */
 export async function generateScenario({ domain, level, personality }, user) {
   const profile = resolveProfile(personality);
   const levelInfo = getLevel(level);
-  const existingTitles = await findExistingTitles(domain);
+  const existingScenarios = await findExistingScenarios(domain);
+  const existingTitles = existingScenarios.map((scenario) => scenario.title);
+  const knowledge = await getRetriever().retrieve({ domain, existingScenarios });
 
-  const generated = await callLLM({
+  const { knowledgeSources, ...generated } = await callLLM({
     module: MODULE,
     prompt: 'generate-scenario',
     variables: {
@@ -49,8 +67,9 @@ export async function generateScenario({ domain, level, personality }, user) {
       personalityLabel: profile.label,
       personalityBehavior: profile.behavior,
       existingTitles: existingTitles.length ? existingTitles.map((title) => `- ${title}`).join('\n') : 'Aucun.',
+      knowledge: formatKnowledge(knowledge.results),
     },
-    schema: createGeneratedScenarioSchema(level),
+    schema: createGeneratedScenarioSchema(level, { allowedSources: knowledge.results.map((result) => result.id) }),
     userId: user.id,
   });
 
@@ -63,7 +82,7 @@ export async function generateScenario({ domain, level, personality }, user) {
       createdById: user.id,
     },
   });
-  return toPublicScenario(scenario);
+  return { scenario: toPublicScenario(scenario), knowledge: toPublicKnowledge(knowledge, knowledgeSources) };
 }
 
 export async function listScenarios({ domain, level, personality }) {

@@ -5,8 +5,8 @@ export function options(req, res) {
 }
 
 export async function generate(req, res) {
-  const scenario = await service.generateScenario(req.valid.body, req.user);
-  res.status(201).json({ scenario });
+  const { scenario, knowledge } = await service.generateScenario(req.valid.body, req.user);
+  res.status(201).json({ scenario, knowledge });
 }
 
 export async function list(req, res) {

@@ -115,6 +115,20 @@ test('endpoints du module client-generator', async (t) => {
     assertNoSecret(text, [secrets.hiddenNeed, ...secrets.implicitConstraints]);
   });
 
+  await t.test('POST /scenarios s\'appuie sur la base de connaissances (RAG) sans en exposer le contenu', async () => {
+    const { status, json, text } = await api('POST', '/scenarios', {
+      token: tokens.student,
+      body: { domain: 'Tourisme', level: 'BEGINNER' },
+    });
+    assert.equal(status, 201);
+    createdIds.push(json.scenario.id);
+    assert.deepEqual(json.knowledge, { mode: 'local', engine: 'tf-idf', retrieved: 2, used: 1, domains: ['Tourisme'] });
+    assert.ok(!text.includes('Besoin réel') && !text.includes('tourisme-0'), 'contenu ou identifiant de fiche exposé');
+
+    const secrets = await getScenarioSecrets(json.scenario.id);
+    assertNoSecret(text, [secrets.hiddenNeed, ...secrets.implicitConstraints]);
+  });
+
   await t.test('POST /scenarios refuse des données invalides', async () => {
     const { status, json } = await api('POST', '/scenarios', { token: tokens.student, body: { domain: 'x', level: 'EXPERT' } });
     assert.equal(status, 400);

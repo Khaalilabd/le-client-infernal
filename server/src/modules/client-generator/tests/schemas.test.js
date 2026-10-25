@@ -77,7 +77,7 @@ test('le mock évite un titre déjà existant quand c\'est possible', () => {
   assert.notEqual(first.title, second.title);
 });
 
-test('le prompt v0.2 se construit avec les variables fournies par le service', async () => {
+test('le prompt v0.3 se construit avec les variables fournies par le service', async () => {
   for (const level of LEVELS) {
     const prompt = await loadPrompt('client-generator', 'generate-scenario', {
       domain: 'Santé',
@@ -86,8 +86,11 @@ test('le prompt v0.2 se construit avec les variables fournies par le service', a
       personalityLabel: 'Méfiant',
       personalityBehavior: 'doute de tout',
       existingTitles: 'Aucun.',
+      knowledge: '[sante-01] Santé — Fiche de test\n- Organisation : Cabinet médical',
     });
     assert.ok(prompt.includes('Santé'));
+    assert.ok(prompt.includes('[sante-01]'), 'fiches du RAG absentes du prompt');
+    assert.ok(prompt.includes('knowledgeSources'));
     assert.ok(!prompt.includes('{{'), 'variable non remplacée');
     assert.ok(!prompt.includes('<!--'), 'commentaire non retiré');
   }
