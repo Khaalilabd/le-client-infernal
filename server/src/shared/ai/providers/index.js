@@ -19,7 +19,7 @@ export function createProvider(config) {
     case 'claude':
       return createClaudeProvider({ apiKey: config.ANTHROPIC_API_KEY, model: config.AI_MODEL });
     case 'openai':
-      return createOpenAiProvider({ apiKey: config.OPENAI_API_KEY, model: config.AI_MODEL });
+      return createOpenAiProvider({ apiKey: config.OPENAI_API_KEY, model: config.AI_MODEL, baseUrl: config.OPENAI_BASE_URL });
     case 'ollama':
       return createOllamaProvider({ baseUrl: config.OLLAMA_BASE_URL, model: config.AI_MODEL });
     default:

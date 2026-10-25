@@ -28,6 +28,7 @@ const envSchema = z.object({
   AI_EMBEDDING_MODEL: optionalString,
   ANTHROPIC_API_KEY: optionalString,
   OPENAI_API_KEY: optionalString,
+  OPENAI_BASE_URL: optionalString,
   OLLAMA_BASE_URL: z.string().default('http://localhost:11434'),
 });
 

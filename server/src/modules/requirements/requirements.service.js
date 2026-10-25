@@ -8,6 +8,13 @@ import { getAccessibleSession } from '../../shared/sessions/sessions.service.js'
 import { getScenarioSecrets } from '../../shared/db/scenarioSecrets.js';
 import { createDocumentEvaluationSchema, normalizeEvaluation } from './requirements.schemas.js';
 import { gridToText } from './requirements.grid.js';
+import {
+  buildReferencePoints,
+  createMatchingSchema,
+  summarizeMatching,
+  matchingToText,
+  applyMatching,
+} from './requirements.matching.js';
 
 const MODULE = 'requirements';
 
@@ -117,7 +124,11 @@ async function describeAcceptedChanges(documentId) {
 }
 
 /**
- * Évalue la version courante du cahier des charges avec le LLM, en la comparant au besoin caché.
+ * Évalue la version courante du cahier des charges avec le LLM, en la comparant au besoin caché, en deux appels :
+ * 1. match-requirements : chaque point du besoin caché et chaque contrainte implicite est mis en
+ *    correspondance avec les exigences (identifiants et codes uniquement) ;
+ * 2. evaluate-document : notation selon la grille, en tenant compte de ce matching.
+ * Les notes de couverture et de contraintes sont ensuite calculées par le serveur à partir du matching.
  * Le besoin caché est lu côté serveur et n'apparaît jamais dans la réponse.
  */
 export async function evaluateDocument(sessionId, user) {
@@ -137,6 +148,27 @@ export async function evaluateDocument(sessionId, user) {
 
   const version = document.versions[0]?.version ?? 1;
   const scenario = await getScenarioSecrets(session.scenarioId);
+  const requirements = document.requirements.map(toRequirementInput);
+  const codes = requirements.map((requirement) => requirement.code);
+  const acceptedChanges = await describeAcceptedChanges(document.id);
+  const level = LEVEL_LABELS[scenario.level] ?? scenario.level;
+
+  const points = buildReferencePoints(scenario);
+  const matching = await callLLM({
+    module: MODULE,
+    prompt: 'match-requirements',
+    variables: {
+      context: scenario.context,
+      expressedNeed: scenario.expressedNeed,
+      level,
+      referencePoints: points,
+      acceptedChanges,
+      requirements,
+    },
+    schema: createMatchingSchema(points, codes),
+    userId: user.id,
+  });
+  const summary = summarizeMatching(points, matching, codes);
 
   const raw = await callLLM({
     module: MODULE,
@@ -146,16 +178,17 @@ export async function evaluateDocument(sessionId, user) {
       expressedNeed: scenario.expressedNeed,
       hiddenNeed: scenario.hiddenNeed,
       implicitConstraints: scenario.implicitConstraints,
-      level: LEVEL_LABELS[scenario.level] ?? scenario.level,
+      level,
       grid: gridToText(),
       version: String(version),
-      acceptedChanges: await describeAcceptedChanges(document.id),
-      requirements: document.requirements.map(toRequirementInput),
+      acceptedChanges,
+      matching: matchingToText(points, summary),
+      requirements,
     },
     schema: createDocumentEvaluationSchema(scenario),
     userId: user.id,
   });
-  const evaluation = normalizeEvaluation(raw);
+  const evaluation = applyMatching(normalizeEvaluation(raw), summary);
 
   // Le passage SUBMITTED -> EVALUATED est conditionnel : deux évaluations simultanées ne peuvent pas aboutir toutes les deux.
   return prisma.$transaction(async (tx) => {

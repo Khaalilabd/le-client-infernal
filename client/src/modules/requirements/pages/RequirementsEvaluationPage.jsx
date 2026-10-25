@@ -1,5 +1,5 @@
 // Évaluation du cahier des charges par l'IA (maquette 06) : note globale, détail par critère,
-// pistes d'amélioration et historique des évaluations par version. Le besoin caché n'est jamais affiché.
+// correspondance avec le besoin réel (matching), pistes d'amélioration et historique des évaluations par version. Le besoin caché n'est jamais affiché.
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../../shared/auth/AuthContext.jsx';
@@ -10,6 +10,7 @@ import EmptyState from '../../../shared/components/EmptyState.jsx';
 import Loader from '../../../shared/components/Loader.jsx';
 import SessionStepper from '../components/SessionStepper.jsx';
 import CriterionBar from '../components/CriterionBar.jsx';
+import MatchingPanel from '../components/MatchingPanel.jsx';
 import { formatCount, modulePath } from '../requirements.constants.js';
 import { requirementsApi } from '../api.js';
 import '../requirements.css';
@@ -140,13 +141,16 @@ export default function RequirementsEvaluationPage() {
 function EvaluationDetail({ evaluation }) {
   return (
     <div className="two-columns">
-      <div className="card">
-        <h3 className="requirements-section-title">Détail par critère</h3>
-        <div className="criteria">
-          {evaluation.criteria.map((criterion) => (
-            <CriterionBar key={criterion.name} criterion={criterion} />
-          ))}
+      <div className="stack requirements-side">
+        <div className="card">
+          <h3 className="requirements-section-title">Détail par critère</h3>
+          <div className="criteria">
+            {evaluation.criteria.map((criterion) => (
+              <CriterionBar key={criterion.name} criterion={criterion} />
+            ))}
+          </div>
         </div>
+        <MatchingPanel criteria={evaluation.criteria} />
       </div>
       <div className="stack requirements-side">
         <div className="card">

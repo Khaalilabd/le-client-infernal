@@ -147,7 +147,7 @@ test('le mock signale les termes vagues', () => {
   assert.match(ambiguity.comment, /simple/);
 });
 
-test('le prompt evaluate-document v0.2 se charge avec toutes ses variables', async () => {
+test('le prompt evaluate-document v0.3 se charge avec toutes ses variables', async () => {
   const prompt = await loadPrompt('requirements', 'evaluate-document', {
     context: 'Cabinet médical',
     expressedNeed: 'Une application de rendez-vous',
@@ -157,6 +157,7 @@ test('le prompt evaluate-document v0.2 se charge avec toutes ses variables', asy
     grid: 'grille',
     version: '2',
     acceptedChanges: 'Aucune.',
+    matching: '- N1 (besoin) : couvert par EF-01',
     requirements: SAMPLE,
   });
   assert.ok(!prompt.includes('<!--'), 'les commentaires de documentation ne partent pas au LLM');

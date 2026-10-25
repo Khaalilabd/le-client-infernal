@@ -1,8 +1,12 @@
 // Fournisseur OpenAI (Chat Completions, sortie JSON forcée).
+// OPENAI_BASE_URL (facultatif) permet d'utiliser une API compatible OpenAI (ex. Gemini, Groq, OpenRouter).
 import { AiError } from '../errors.js';
 import { postJson } from './http.js';
 
-export function createOpenAiProvider({ apiKey, model }) {
+const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
+
+export function createOpenAiProvider({ apiKey, model, baseUrl = DEFAULT_BASE_URL }) {
+  const url = `${(baseUrl ?? DEFAULT_BASE_URL).replace(/\/+$/, '')}/chat/completions`;
   return {
     name: 'openai',
     model: model ?? 'gpt-4o-mini',
@@ -18,7 +22,7 @@ export function createOpenAiProvider({ apiKey, model }) {
       };
       if (temperature !== undefined) body.temperature = temperature;
 
-      const data = await postJson('https://api.openai.com/v1/chat/completions', {
+      const data = await postJson(url, {
         providerName: 'openai',
         headers: { authorization: `Bearer ${apiKey}` },
         body,

@@ -6,6 +6,7 @@ import { createAiClient, AiError } from '../src/shared/ai/index.js';
 import { sanitizeText } from '../src/shared/ai/sanitize.js';
 import { renderPrompt } from '../src/shared/ai/promptLoader.js';
 import { createMockProvider } from '../src/shared/ai/providers/mock.js';
+import { createOpenAiProvider } from '../src/shared/ai/providers/openai.js';
 import { generatedScenarioSchema } from '../src/modules/client-generator/client-generator.schemas.js';
 
 const schema = z.object({ answer: z.string() });
@@ -108,4 +109,19 @@ test('renderPrompt signale une variable manquante', () => {
 test('le fournisseur mock produit un scénario conforme au schéma du module 1', async () => {
   const result = await client(createMockProvider()).call({ ...baseCall, schema: generatedScenarioSchema });
   assert.ok(result.hiddenNeed.length > 0);
+});
+
+test('le fournisseur openai utilise OPENAI_BASE_URL si elle est fournie (API compatible OpenAI)', async (t) => {
+  const urls = [];
+  t.mock.method(globalThis, 'fetch', async (url) => {
+    urls.push(url);
+    return new Response(JSON.stringify({ choices: [{ message: { content: '{"answer":"ok"}' } }] }), { status: 200 });
+  });
+  const call = { system: 's', messages: [{ role: 'user', content: 'u' }], maxTokens: 10 };
+  await createOpenAiProvider({ apiKey: 'k' }).complete(call);
+  await createOpenAiProvider({ apiKey: 'k', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/' }).complete(call);
+  assert.deepEqual(urls, [
+    'https://api.openai.com/v1/chat/completions',
+    'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
+  ]);
 });

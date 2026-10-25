@@ -39,6 +39,10 @@ Windows : Win + Maj + S, puis clic sur la notification → Enregistrer, dans ce 
 | 20 | `p-m4-001-05-ecran-evaluation.png` | Écran réalisé du module 4 : évaluation de la version 1 | ✅ (générée) |
 | 21 | `p-m4-001-06-ecran-nouvelle-version.png` | Écran réalisé du module 4 : nouvelle version après une demande | ✅ (générée) |
 | 22 | `p-m4-001-07-ecran-versions.png` | Écran réalisé du module 4 : historique des versions (recadrée) | ✅ (générée) |
+| 23 | `p-m4-003-01-prompt.png` | Prompt P-M4-003 (texte : `sources/p-m4-003/01-prompt.md`) | ✅ |
+| 24 | `p-m4-003-02-plan.png` | Plan du matching et options A, B, C (texte : `sources/p-m4-003/02-plan.md`) | ✅ |
+| 25 | `p-m4-003-03-resume.png` | Résumé final de P-M4-003 (texte : `sources/p-m4-003/03-resume.md`) | ✅ |
+| 26 | `p-m4-003-04-ecran-matching.png` | Écran réalisé : panneau « Correspondance avec le besoin réel » (marche à suivre : `sources/p-m4-003/04-ecran-matching.md`) | ✅ |
 
 Après avoir ajouté une capture, lancez `npm run rapport` : la capture est insérée automatiquement et l'annexe B est mise à jour. Les captures des modules sont référencées dans `docs/rapport/sections/5.x-<module>.md`.
 
