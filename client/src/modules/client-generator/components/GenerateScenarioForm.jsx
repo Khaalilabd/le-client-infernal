@@ -1,5 +1,8 @@
 // Formulaire de génération : domaine (libre + suggestions), niveau et profil de personnalité.
+// Il peut être pré-rempli par l'URL (?domain=&level=&personality=), par exemple depuis la
+// recommandation du tableau de bord (module 5).
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import ErrorMessage from '../../../shared/components/ErrorMessage.jsx';
 import { clientGeneratorApi } from '../api.js';
 
@@ -35,8 +38,21 @@ function KnowledgeNote({ knowledge }) {
   );
 }
 
+/** Valeurs de l'URL, conservées seulement si elles existent dans les options du module. */
+function initialForm(searchParams, options) {
+  const level = searchParams.get('level');
+  const personality = searchParams.get('personality');
+  return {
+    domain: (searchParams.get('domain') ?? '').slice(0, 80),
+    level: options.levels.some((item) => item.id === level) ? level : 'BEGINNER',
+    personality: options.personalities.some((item) => item.id === personality) ? personality : 'RANDOM',
+  };
+}
+
 export default function GenerateScenarioForm({ options, onGenerated }) {
-  const [form, setForm] = useState({ domain: '', level: 'BEGINNER', personality: 'RANDOM' });
+  const [searchParams] = useSearchParams();
+  const [form, setForm] = useState(() => initialForm(searchParams, options));
+  const fromRecommendation = Boolean(searchParams.get('domain'));
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState(null);
   const [lastResult, setLastResult] = useState(null);
@@ -65,6 +81,12 @@ export default function GenerateScenarioForm({ options, onGenerated }) {
 
   return (
     <form className="card cg-form" onSubmit={handleSubmit} aria-busy={generating}>
+      {fromRecommendation && !lastResult && (
+        <div className="alert alert-info cg-knowledge" role="status">
+          <strong>Scénario recommandé par votre tableau de bord</strong>
+          <span>Le domaine, le niveau et la personnalité ont été pré-remplis : vous pouvez les modifier avant de générer le client.</span>
+        </div>
+      )}
       <div className="cg-form-row">
         <label>
           Domaine d'activité
