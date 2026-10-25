@@ -399,6 +399,84 @@ Ce sera l'entrée **P-M5-001** de ton journal.
 - [x] ARCHITECTURE.md mis à jour
 - [ ] Captures d'écran à créer (voir liste ci-dessous)
 
+**Détails de ce qui a été documenté :**
+
+#### 1. Journal des prompts (`docs/prompts/dashboard.md`)
+✅ Ajout de l'entrée **P-M5-002** :
+- Prompt de la session actuelle (vérification et documentation)
+- Échanges avec l'utilisateur
+- Résumé complet : vérifications (tests, build, interface), documentation créée
+- État du module : Phases 1-3 terminées, Phase 4 en cours
+
+#### 2. Section du rapport (`docs/rapport/sections/5.5-dashboard.md`)
+✅ Toutes les sections complétées :
+
+**a) Objectif et fonctionnalités**
+- Description du rôle du module
+- Tableau des 6 fonctionnalités (stats, historique, recommandation IA, vue enseignant, fiche étudiant, feedback)
+- Tableau des 6 endpoints avec méthode, route, rôle et description
+
+**b) Prompts utilisés**
+- Liste des prompts du journal (P-M5-001, P-M5-002)
+- Tableau des prompts système (recommend-scenario.md v0.2)
+- Évolution du prompt (v0.1 → v0.2 avec technique Few-shot)
+
+**c) Technique d'IA du cours appliquée (Few-shot)**
+- Définition : Few-shot learning avec exemples calibrés
+- Problème résolu : recommandations génériques → recommandations ciblées
+- Extrait complet du prompt avec les 3 exemples
+- Tableau comparatif : sans exemples (v0.1) vs avec exemples (v0.2)
+- Limites : 3 cas typiques seulement, risque de surapprentissage
+
+**d) Réalisation et captures**
+- Description détaillée de l'interface (3 sections)
+- Section 1 : Statistiques (5 cartes)
+- Section 2 : Recommandation IA (points faibles, suggestion, bouton)
+- Section 3 : Historique (tableau complet avec badges colorés)
+- Tableau comparatif : maquette vs réalisation
+- Références aux captures d'écran (à créer)
+
+**e) Tests**
+- 53 tests répartis en 3 fichiers
+- Tests des schémas (24) : validation Zod, conformité des mocks
+- Tests d'intégration (17) : 6 endpoints avec authentification et validation
+- Tests de sécurité (12) : anonymisation, besoin caché protégé, contrôle des rôles
+- Détail de ce que chaque catégorie vérifie
+
+**f) Difficultés et apport de l'IA**
+- Ce que l'IA a bien fait : structure complète, Few-shot correct, tests complets, sécurité respectée, mock intelligent
+- Ce qu'il a fallu corriger : relations Prisma, syntaxe TypeScript, commits manuels
+- Décisions de l'équipe : schéma enrichi (weaknesses, personality), règle simple + LLM, bouton avec URL, graphiques reportés
+- Apport global : squelette → module complet en 2 sessions
+
+**g) Limites et perspectives**
+- 7 limites actuelles : pas de test avec vrai LLM, pas de graphiques, note finale non calculée, pas d'export CSV, pas de filtres, bouton non branché au module 1, historique vide basique
+- 7 perspectives : graphiques interactifs, recommandation multi-critères, filtres et export, comparaison cohorte, tests avec vrai LLM, personnalisation, notifications
+
+#### 3. README du module (`server/src/modules/dashboard/README.md`)
+✅ Mise à jour complète :
+- Tableau des fichiers enrichi (ajout des tests et nouveaux composants)
+- Statut des endpoints : tous marqués ✅
+- Section "État actuel" ajoutée : module complet, 4 phases terminées
+- Tâches : historique, recommandation, espace enseignant marqués [x]
+- Tâches restantes : graphiques, filtres, calcul finalScore
+
+#### 4. ARCHITECTURE.md (`docs/ARCHITECTURE.md`)
+✅ Tableau du module 5 mis à jour :
+- Tous les endpoints marqués ✅
+- Schéma de réponse de /me/recommendation enrichi avec weaknesses et personality
+
+#### 5. Commit Git
+✅ Commit créé : `bb4d594` - docs(dashboard): Phase 4 - documentation complète du module
+- 5 fichiers modifiés
+- 444 lignes ajoutées, 32 supprimées
+
+**Historique des commits du module :**
+1. `d005602` - feat(dashboard): backend - 4 nouveaux endpoints avec Few-shot
+2. `ae09631` - fix(dashboard): correction relation Prisma
+3. `55c54f4` - test(dashboard): 53 tests complets
+4. `bb4d594` - docs(dashboard): Phase 4 - documentation complète ← ACTUEL
+
 ### Phase 5 : Vérification finale
 - [x] npm test (193 pass, 0 fail)
 - [x] npm run build (succès)
