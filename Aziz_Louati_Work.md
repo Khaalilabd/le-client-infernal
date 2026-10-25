@@ -392,17 +392,32 @@ Ce sera l'entrée **P-M5-001** de ton journal.
 
 **Résultat :** ✅ Tous les tests passent (193 pass, 0 fail)
 
-### Phase 4 : Documentation
-- [ ] Journal des prompts
-- [ ] Captures d'écran
-- [ ] Section du rapport
-- [ ] README et ARCHITECTURE
+### Phase 4 : Documentation ✅ TERMINÉE
+- [x] Journal des prompts (P-M5-002 ajouté)
+- [x] Section du rapport complète (toutes les sections)
+- [x] README du module mis à jour
+- [x] ARCHITECTURE.md mis à jour
+- [ ] Captures d'écran à créer (voir liste ci-dessous)
 
 ### Phase 5 : Vérification finale
-- [ ] npm test (fail 0)
-- [ ] npm run build
-- [ ] Test dans le navigateur
+- [x] npm test (193 pass, 0 fail)
+- [x] npm run build (succès)
+- [x] Test dans le navigateur (interface complète visible)
+- [ ] Captures d'écran finales
 - [ ] Pull request vers develop
+
+---
+
+## Captures d'écran à créer
+
+Pour finaliser le rapport, créer les captures suivantes dans `docs/rapport/captures/` :
+
+1. **`p-m5-002-01-ecran-dashboard-complet.png`** - Dashboard complet (stats + recommandation + historique)
+2. **`p-m5-002-02-ecran-stats.png`** - Section "Mes statistiques" (5 cartes)
+3. **`p-m5-002-03-ecran-recommandation.png`** - Section "Recommandation personnalisée"
+4. **`p-m5-002-04-ecran-historique.png`** - Section "Historique de mes séances"
+5. **`p-m5-002-05-tests-resultats.png`** - Terminal : `npm test` (193 pass, 0 fail)
+6. **`p-m5-002-06-ecran-enseignant.png`** - Vue enseignant (optionnel)
 
 ---
 
