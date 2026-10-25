@@ -11,7 +11,7 @@ export async function myHistory(req, res) {
 }
 
 export async function myRecommendation(req, res) {
-  const recommendation = await service.getRecommendation(req.user);
+  const recommendation = await service.getRecommendationForDisplay(req.user);
   res.json({ recommendation });
 }
 

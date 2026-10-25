@@ -1,60 +1,78 @@
-import { useEffect, useState } from 'react';
+// Tableau de bord : espace étudiant (maquette 08) ou espace enseignant (maquette 09).
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../../shared/auth/AuthContext.jsx';
+import PageHeader from '../../../shared/components/PageHeader.jsx';
 import ErrorMessage from '../../../shared/components/ErrorMessage.jsx';
 import Loader from '../../../shared/components/Loader.jsx';
 import StatCard from '../components/StatCard.jsx';
-import { HistoryTable } from '../components/HistoryTable.jsx';
+import { HistoryTimeline } from '../components/HistoryTimeline.jsx';
 import { RecommendationCard } from '../components/RecommendationCard.jsx';
+import { ProgressChart } from '../components/ProgressChart.jsx';
+import { SkillsCard } from '../components/SkillsCard.jsx';
+import { STATUS_BADGES, formatDate, formatScore } from '../format.js';
 import { dashboardApi } from '../api.js';
+import '../dashboard.css';
 
-function StudentDashboard() {
-  const [stats, setStats] = useState(null);
-  const [history, setHistory] = useState(null);
+/** La recommandation (appel au LLM) se charge à part : une erreur de l'IA ne masque pas le reste. */
+function RecommendationPanel() {
   const [recommendation, setRecommendation] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+
+  const load = useCallback(() => {
+    setError(null);
+    setRecommendation(null);
+    dashboardApi.getMyRecommendation().then(setRecommendation).catch(setError);
+  }, []);
+
+  useEffect(load, [load]);
+
+  if (error) return <ErrorMessage error={error} onRetry={load} />;
+  if (!recommendation) return <div className="card"><Loader label="Analyse de votre historique par l'IA…" /></div>;
+  return <RecommendationCard recommendation={recommendation} />;
+}
+
+function StudentDashboard() {
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    Promise.all([
-      dashboardApi.getMyStats(),
-      dashboardApi.getMyHistory(),
-      dashboardApi.getMyRecommendation(),
-    ])
-      .then(([statsData, historyData, recommendationData]) => {
-        setStats(statsData);
-        setHistory(historyData);
-        setRecommendation(recommendationData);
-      })
-      .catch(setError)
-      .finally(() => setLoading(false));
+    Promise.all([dashboardApi.getMyStats(), dashboardApi.getMyHistory()])
+      .then(([stats, history]) => setData({ stats, history }))
+      .catch(setError);
   }, []);
 
   if (error) return <ErrorMessage error={error} />;
-  if (loading) return <Loader />;
+  if (!data) return <Loader />;
+  const { stats, history } = data;
 
   return (
-    <div>
-      {/* Statistiques */}
-      <h2>📊 Mes statistiques</h2>
-      <div className="grid stats-grid mb-4">
+    <>
+      <div className="grid stats-grid">
         <StatCard label="Séances" value={stats.sessions.total} hint={`${stats.sessions.completed} terminée(s)`} />
-        <StatCard label="Note finale moyenne" value={stats.averageFinalScore} />
+        <StatCard label="Note finale moyenne" value={stats.averageFinalScore === null ? null : formatScore(stats.averageFinalScore)} />
         <StatCard label="Questions posées" value={stats.interviewMessages} />
-        <StatCard label="Demandes de changement" value={stats.changeRequests.total} hint={`Moyenne : ${stats.changeRequests.averageScore ?? '—'}`} />
-        <StatCard label="Cahiers évalués" value={stats.requirements.evaluations} hint={`Moyenne : ${stats.requirements.averageScore ?? '—'}`} />
+        <StatCard label="Changements gérés" value={stats.changeRequests.total} hint={`Moyenne : ${formatScore(stats.changeRequests.averageScore)}`} />
+        <StatCard label="Cahiers évalués" value={stats.requirements.evaluations} hint={`Moyenne : ${formatScore(stats.requirements.averageScore)}`} />
       </div>
 
-      {/* Recommandation IA */}
-      {recommendation && (
-        <div className="mb-4">
-          <RecommendationCard recommendation={recommendation} />
+      <div className="two-columns db-columns">
+        <div className="stack" style={{ marginTop: 0 }}>
+          <div className="card">
+            <h3 className="db-card-title">Historique des séances</h3>
+            <HistoryTimeline sessions={history} />
+          </div>
+          <div className="card">
+            <h3 className="db-card-title">Progression</h3>
+            <ProgressChart points={stats.progression} />
+          </div>
         </div>
-      )}
-
-      {/* Historique */}
-      <h2>📚 Historique de mes séances</h2>
-      <HistoryTable sessions={history} />
-    </div>
+        <div className="stack" style={{ marginTop: 0 }}>
+          <RecommendationPanel />
+          <SkillsCard skills={stats.skills} />
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -74,44 +92,90 @@ function TeacherDashboard() {
       <div className="grid stats-grid">
         <StatCard label="Étudiants" value={overview.counts.students} />
         <StatCard label="Séances" value={overview.counts.sessions} />
-        <StatCard label="Scénarios" value={overview.counts.scenarios} />
+        <StatCard label="Note moyenne" value={overview.averageFinalScore === null ? null : formatScore(overview.averageFinalScore)} />
         <StatCard label="Appels IA réussis" value={overview.aiCalls.SUCCESS ?? 0} hint={`Erreurs : ${overview.aiCalls.ERROR ?? 0}`} />
       </div>
-      <h2>Séances récentes</h2>
-      <table className="table">
-        <thead>
-          <tr>
-            <th>Étudiant</th>
-            <th>Scénario</th>
-            <th>Statut</th>
-            <th>Note</th>
-            <th>Début</th>
-          </tr>
-        </thead>
-        <tbody>
-          {overview.recentSessions.map((session) => (
-            <tr key={session.id}>
-              <td>
-                {session.student.firstName} {session.student.lastName}
-              </td>
-              <td>{session.scenario.title}</td>
-              <td>{session.status}</td>
-              <td>{session.finalScore ?? '—'}</td>
-              <td>{new Date(session.startedAt).toLocaleDateString('fr-FR')}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+
+      <div className="split db-columns">
+        <div>
+          <h3 className="db-card-title">Séances récentes</h3>
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Étudiant</th>
+                <th>Scénario</th>
+                <th>Statut</th>
+                <th>Note</th>
+                <th>Début</th>
+                <th />
+              </tr>
+            </thead>
+            <tbody>
+              {overview.recentSessions.map((session) => {
+                const badge = STATUS_BADGES[session.status] ?? { label: session.status, className: '' };
+                return (
+                  <tr key={session.id}>
+                    <td>
+                      <Link to={`/dashboard/students/${session.student.id}`}>
+                        <strong>
+                          {session.student.firstName} {session.student.lastName}
+                        </strong>
+                      </Link>
+                    </td>
+                    <td>{session.scenario.title}</td>
+                    <td>
+                      <span className={`badge ${badge.className}`}>{badge.label}</span>
+                    </td>
+                    <td>{formatScore(session.finalScore)}</td>
+                    <td>{formatDate(session.startedAt)}</td>
+                    <td className="db-table-actions">
+                      <Link to={`/dashboard/sessions/${session.id}`} className="btn btn-ghost btn-sm">
+                        Ouvrir
+                      </Link>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <aside className="card">
+          <h3 className="db-card-title">Étudiants</h3>
+          <ul className="timeline">
+            {overview.students.map((student) => (
+              <li key={student.id}>
+                <div>
+                  <Link to={`/dashboard/students/${student.id}`} className="db-timeline-link">
+                    {student.firstName} {student.lastName}
+                  </Link>
+                  <span className="muted small db-timeline-meta">
+                    {student.sessions} séance(s) · {student.completed} terminée(s) · moyenne {formatScore(student.averageFinalScore)}
+                  </span>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </aside>
+      </div>
     </>
   );
 }
 
 export default function DashboardHomePage() {
   const { user } = useAuth();
+  const isTeacher = user.role === 'TEACHER';
   return (
     <section>
-      <h1>{user.role === 'TEACHER' ? 'Espace enseignant' : 'Mon tableau de bord'}</h1>
-      {user.role === 'TEACHER' ? <TeacherDashboard /> : <StudentDashboard />}
+      <PageHeader
+        eyebrow="Module 5"
+        title={isTeacher ? 'Espace enseignant' : 'Mon tableau de bord'}
+        description={
+          isTeacher
+            ? 'Vue d\'ensemble de la promotion, suivi individuel et commentaires.'
+            : 'Suivez vos progrès et laissez-vous guider vers le prochain scénario.'
+        }
+      />
+      {isTeacher ? <TeacherDashboard /> : <StudentDashboard />}
     </section>
   );
 }

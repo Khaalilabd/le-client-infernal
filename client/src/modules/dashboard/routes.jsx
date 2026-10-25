@@ -1,4 +1,6 @@
 import DashboardHomePage from './pages/DashboardHomePage.jsx';
+import SessionReportPage from './pages/SessionReportPage.jsx';
+import StudentDetailPage from './pages/StudentDetailPage.jsx';
 
 export default {
   id: 'dashboard',
@@ -6,5 +8,9 @@ export default {
   label: 'Tableau de bord',
   description: 'Historique, statistiques, recommandation du prochain scénario et espace enseignant.',
   roles: ['STUDENT', 'TEACHER'],
-  routes: [{ path: '', element: <DashboardHomePage /> }],
+  routes: [
+    { path: '', element: <DashboardHomePage /> },
+    { path: 'sessions/:sessionId', element: <SessionReportPage /> },
+    { path: 'students/:studentId', element: <StudentDetailPage /> },
+  ],
 };

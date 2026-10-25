@@ -1,0 +1,33 @@
+/* Styles propres au module dashboard (préfixe db-), basés sur les jetons de la charte. */
+
+.db-columns { margin-top: var(--space-5); }
+.db-card-title { margin: 0 0 var(--space-4); }
+
+.db-recommendation { border-color: var(--brand-100); background: linear-gradient(180deg, var(--brand-50), #fff); }
+.db-recommendation h3 { margin: var(--space-1) 0 var(--space-2); }
+.db-recommendation ul { margin: var(--space-2) 0; padding-left: 1.2rem; }
+.db-recommendation .card-footer { margin-top: var(--space-3); }
+
+.db-timeline-meta { display: block; margin-top: 2px; }
+.db-timeline-link { font-weight: 600; color: var(--gray-900); text-decoration: none; }
+.db-timeline-link:hover { color: var(--primary); }
+
+.db-chart { width: 100%; height: auto; display: block; }
+.db-chart-grid { stroke: var(--border); stroke-width: 1; }
+.db-chart-axis { fill: var(--text-muted); font-size: 12px; }
+.db-chart-line { fill: none; stroke: var(--primary); stroke-width: 2.5; stroke-linejoin: round; }
+.db-chart-point { fill: #fff; stroke: var(--primary); stroke-width: 2.5; }
+.db-chart-value { fill: var(--gray-900); font-size: 12px; font-weight: 650; }
+
+.db-breakdown { display: grid; grid-template-columns: minmax(0, 1fr) 220px; gap: var(--space-5); align-items: center; }
+.db-final { text-align: center; }
+.db-final .score { justify-content: center; }
+
+.db-feedback { border-left: 3px solid var(--accent-500); padding-left: var(--space-3); }
+.db-feedback + .db-feedback { margin-top: var(--space-3); }
+.db-feedback p { margin: var(--space-1) 0 0; }
+
+.db-student-head { display: flex; align-items: center; gap: var(--space-3); }
+.db-table-actions { text-align: right; white-space: nowrap; }
+
+@media (max-width: 900px) { .db-breakdown { grid-template-columns: 1fr; } }

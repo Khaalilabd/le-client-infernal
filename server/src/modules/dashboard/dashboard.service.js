@@ -213,6 +213,16 @@ export async function getRecommendation(user) {
   return { ...recommendation, source: 'AI' };
 }
 
+const withPersonalityLabel = (recommendation) => ({
+  ...recommendation,
+  personalityLabel: PERSONALITY_PROFILES.find((profile) => profile.id === recommendation.personality)?.label ?? null,
+});
+
+/** Recommandation renvoyée au front-end, avec le libellé de la personnalité. */
+export async function getRecommendationForDisplay(user) {
+  return withPersonalityLabel(await getRecommendation(user));
+}
+
 /** Bilan d'une séance : notes de chaque étape, note finale (provisoire si en cours) et retours. */
 export async function getSessionReport(sessionId, user) {
   await getAccessibleSession(sessionId, user);
