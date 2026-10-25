@@ -28,7 +28,7 @@ export async function getStudentStats(user) {
   });
 
   const evaluations = await prisma.requirementsEvaluation.findMany({
-    where: { requirementsDocument: { session: { studentId: user.id } } },
+    where: { document: { session: { studentId: user.id } } },
     select: { globalScore: true },
   });
 
