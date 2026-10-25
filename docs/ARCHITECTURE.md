@@ -494,6 +494,11 @@ flowchart TD
     R -- non --> KO["AiCallLog ERROR → AiError → réponse HTTP claire"]
 ```
 
+Deux règles ajoutées après le test avec Gemini (P-016) :
+
+- la conversation envoyée se termine toujours par un message `user` : sinon `callLLM` ajoute « Produis maintenant la réponse au format JSON demandé. » (Gemini refuse une requête qui se termine par le modèle) ;
+- après une réponse refusée par le schéma, la nouvelle tentative transmet au modèle sa réponse et le motif du refus (chemin du champ et règle non respectée, jamais un secret), au lieu de renvoyer la même requête.
+
 ### Choix du fournisseur (`server/.env`)
 
 | `AI_PROVIDER` | Comportement |

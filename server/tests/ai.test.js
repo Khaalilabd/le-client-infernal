@@ -67,6 +67,18 @@ test('réponse invalide -> AI_INVALID_RESPONSE après les nouvelles tentatives',
   assert.equal(provider.calls.length, 3);
 });
 
+test('après une réponse refusée, la nouvelle tentative indique au modèle le motif du refus', async () => {
+  const provider = fakeProvider(['{"wrong":1}', '{"answer":"ok"}']);
+  const result = await client(provider).call(baseCall);
+  assert.equal(result.answer, 'ok');
+  const retry = provider.calls[1].messages;
+  assert.equal(retry.at(-2).role, 'assistant');
+  assert.equal(retry.at(-2).content, '{"wrong":1}');
+  assert.equal(retry.at(-1).role, 'user');
+  assert.match(retry.at(-1).content, /refusée par la vérification automatique \(answer : /);
+  assert.equal(provider.calls[0].messages.length, 1, 'la première tentative ne contient pas de correction');
+});
+
 test('429 puis succès -> nouvelle tentative réussie', async () => {
   const provider = fakeProvider([new AiError('AI_RATE_LIMIT', undefined, { retryable: true }), '{"answer":"ok"}']);
   const result = await client(provider).call(baseCall);
@@ -96,6 +108,20 @@ test('le nom et l\'email de l\'étudiant ne sont jamais envoyés au fournisseur'
   assert.ok(!/yassine/i.test(sent), 'prénom transmis');
   assert.ok(!/ferchichi/i.test(sent), 'nom transmis');
   assert.ok(!sent.includes('@demo.tn'), 'email transmis');
+});
+
+test('une conversation qui se termine par le modèle reçoit un dernier message de l\'utilisateur', async () => {
+  const provider = fakeProvider(['{"answer":"ok"}']);
+  await client(provider).call({
+    ...baseCall,
+    messages: [
+      { role: 'user', content: 'Question de l\'étudiant' },
+      { role: 'assistant', content: 'Réponse du client' },
+    ],
+  });
+  const sent = provider.calls[0].messages;
+  assert.equal(sent.length, 3);
+  assert.equal(sent.at(-1).role, 'user', 'Gemini refuse une requête qui se termine par le modèle');
 });
 
 test('sanitizeText ne masque pas les mots qui contiennent le prénom', () => {

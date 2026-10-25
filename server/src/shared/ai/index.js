@@ -24,6 +24,7 @@ import { createProvider } from './providers/index.js';
 export { AiError } from './errors.js';
 
 const DEFAULT_USER_MESSAGE = 'Produis maintenant la réponse au format JSON demandé.';
+const CORRECTION_MESSAGE = 'Ta réponse précédente a été refusée par la vérification automatique';
 const MAX_BACKOFF_MS = 10000;
 
 export const defaultSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -78,12 +79,17 @@ export function createAiClient({
     const safeVariables = sanitizeDeep(variables, identity);
     const system = await promptLoader(module, prompt, safeVariables);
     const safeMessages = sanitizeDeep(messages, identity);
-    if (safeMessages.length === 0) {
+    // Le dernier message doit venir de l'utilisateur : Gemini refuse une conversation qui se termine
+    // par le modèle, et Claude la prendrait pour un début de réponse à compléter (ex. synthèse d'un entretien).
+    if (safeMessages.length === 0 || safeMessages.at(-1).role !== 'user') {
       safeMessages.push({ role: 'user', content: DEFAULT_USER_MESSAGE });
     }
 
     const startedAt = Date.now();
     let attempt = 0;
+    // Après une réponse refusée par le schéma, la nouvelle tentative indique au modèle pourquoi
+    // (le motif du refus ne contient jamais de secret : seulement le champ et la règle non respectée).
+    let correction = [];
 
     while (true) {
       attempt += 1;
@@ -92,7 +98,7 @@ export function createAiClient({
           (signal) =>
             provider.complete({
               system,
-              messages: safeMessages,
+              messages: [...safeMessages, ...correction],
               maxTokens,
               temperature,
               signal,
@@ -105,11 +111,14 @@ export function createAiClient({
         const result = schema.safeParse(json);
         if (!result.success) {
           const firstIssue = result.error.issues[0];
-          throw new AiError(
-            'AI_INVALID_RESPONSE',
-            `La réponse de l'IA ne respecte pas le format attendu (${firstIssue?.path.join('.') || 'racine'} : ${firstIssue?.message}).`,
-            { retryable: true },
-          );
+          const reason = `${firstIssue?.path.join('.') || 'racine'} : ${firstIssue?.message}`;
+          correction = [
+            { role: 'assistant', content: text },
+            { role: 'user', content: `${CORRECTION_MESSAGE} (${reason}). Corrige-la et réponds uniquement avec l'objet JSON demandé.` },
+          ];
+          throw new AiError('AI_INVALID_RESPONSE', `La réponse de l'IA ne respecte pas le format attendu (${reason}).`, {
+            retryable: true,
+          });
         }
 
         await logCall({
