@@ -147,3 +147,35 @@ On est presque a la derniére étape non ? Je dois avoir tout les modules ready 
 ### Modifications de l'équipe
 
 <!-- À remplir par le responsable du module -->
+
+---
+
+## P-M1-003 — Calibrage du RAG pour les embeddings Gemini
+
+- **Date** : 2026-10-25
+- **Auteur** : Khalil Abdelmoumen
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+- **Branche** : `develop` (dans le cadre de P-016, voir [JOURNAL.md](JOURNAL.md))
+
+### Prompt
+
+```text
+Peut on lancer le tesst icisi j'ai une cé geminie ?
+```
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : tester le module avec un vrai LLM (Gemini), dans le cadre du parcours complet.
+2. **Réalisé** :
+   - mesure des scores de similarité de `gemini-embedding-001` pour les 12 domaines suggérés et 6 domaines sans fiche : 0,62 à 0,76 pour les bons blocs, 0,49 à 0,62 pour les autres ;
+   - la règle générale (0,3 et 85 % du meilleur) laissait passer 9 blocs d'autres fiches pour Santé, et les 36 blocs pour Aéronautique ;
+   - nouvelle règle propre au modèle dans `RELEVANCE` : score d'au moins 0,6, à moins de 0,03 du meilleur. Un domaine sans fiche n'en retrouve aucune (meilleur score 0,59 pour Aéronautique) ;
+   - génération réelle : « Le Grenier Gourmand », appuyé sur une fiche Restauration ; besoin caché reformulé (au plus 4 mots consécutifs identiques à la fiche, sur 27).
+3. **Fichiers** : `rag/retriever.js`, `tests/rag.test.js`, `README.md`, section 5.1 du rapport.
+4. **Vérifications** : 36 tests du module, dont 1 nouveau (règle par modèle) ; 241 tests au total.
+5. **Problèmes** : aucun.
+6. **Limites** : une seule génération testée avec Gemini ; la règle générale reste à recalibrer pour tout autre modèle d'embeddings.
+
+### Modifications de l'équipe
+
+<!-- À remplir par le responsable du module -->

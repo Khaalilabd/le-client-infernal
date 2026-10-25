@@ -35,7 +35,7 @@ Depuis la v0.3, la génération s'appuie sur une **base de connaissances métier
 
 - Les vecteurs des fiches sont calculés une seule fois par démarrage du serveur.
 - Si les embeddings échouent (quota, clé refusée…), le module utilise la vectorisation locale pendant 5 minutes : la génération n'est jamais bloquée.
-- Les seuils de pertinence sont dans `rag/retriever.js` (`RELEVANCE`) : ceux des embeddings sont à recalibrer avec le modèle choisi.
+- Les seuils de pertinence sont dans `rag/retriever.js` (`RELEVANCE`). `gemini-embedding-001` a sa propre règle, calibrée en P-016 (score ≥ 0,6 et à moins de 0,03 du meilleur) ; la règle générale des embeddings (0,3 et 85 % du meilleur) est à recalibrer pour tout autre modèle.
 - Les fiches ne sortent jamais du serveur : la réponse de l'API ne contient que `{ mode, engine, retrieved, used, domains }`.
 - Pour enrichir la base : ajouter une section `##` dans une fiche, au format de `knowledge/README.md` ; les tests vérifient le format.
 
@@ -97,6 +97,7 @@ Base commune (signalé, P-M1-001) : `server/src/shared/ai/embeddings.js` (nouvea
 
 ## Tâches restantes
 
-- [ ] Tester le prompt v0.3 et les embeddings avec un vrai fournisseur (`OPENAI_API_KEY` ou Ollama), recalibrer `RELEVANCE.embeddings` et comparer les sorties dans le journal.
+- [x] Tester le prompt v0.3 et les embeddings avec un vrai fournisseur : Gemini, P-016 (règle `RELEVANCE['gemini-embedding-001']`).
+- [ ] Générer plus de scénarios avec un vrai LLM et comparer plusieurs modèles d'embeddings.
 - [ ] Enrichir la base de connaissances (plus de situations par domaine).
 - [ ] Pagination de la liste si le nombre de scénarios devient important.

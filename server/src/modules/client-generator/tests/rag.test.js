@@ -118,6 +118,21 @@ test('avec un fournisseur d\'embeddings, les blocs ne sont vectorisés qu\'une f
   assert.deepEqual(calls, [knowledgeBase.chunks.length, 1, 1]);
 });
 
+test('une règle calibrée pour un modèle d\'embeddings (écart au meilleur score) l\'emporte sur la règle générale', async () => {
+  // Scores fictifs : la requête est un vecteur unitaire, chaque bloc reçoit un score imposé
+  const scores = knowledgeBase.chunks.map((chunk) => (chunk.domain === 'Santé' ? 0.66 : 0.58));
+  const embed = async (texts) => ({
+    vectors: texts.length === knowledgeBase.chunks.length ? scores.map((score) => [score, Math.sqrt(1 - score * score)]) : texts.map(() => [1, 0]),
+    provider: 'openai',
+    model: 'gemini-embedding-001',
+  });
+  const { results } = await createRetriever({ embed }).retrieve({ domain: 'Santé' });
+  assert.ok(results.length > 0 && results.every((item) => item.domain === 'Santé'), 'les blocs à plus de 0,03 du meilleur doivent être écartés');
+
+  const unknown = async (texts) => ({ ...(await embed(texts)), vectors: texts.length === knowledgeBase.chunks.length ? scores.map(() => [0.55, Math.sqrt(1 - 0.55 * 0.55)]) : texts.map(() => [1, 0]) });
+  assert.equal((await createRetriever({ embed: unknown }).retrieve({ domain: 'Aéronautique' })).results.length, 0, 'meilleur score < 0,6 : aucune fiche');
+});
+
 test('si les embeddings échouent, repli sur la vectorisation locale sans réessayer à chaque appel', async () => {
   let calls = 0;
   const warnings = [];

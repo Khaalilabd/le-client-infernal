@@ -13,12 +13,22 @@ import { cosineSimilarity, selectDiverse } from './similarity.js';
 const MODULE = 'client-generator';
 export const TOP_K = 2;
 
-// Un bloc est pertinent s'il dépasse le seuil minimal du mode ET une part du meilleur score.
-// Les seuils des embeddings dépendent du modèle : à recalibrer avec le fournisseur utilisé.
+// Un bloc est pertinent s'il dépasse le seuil minimal ET reste proche du meilleur score
+// (en proportion : relativeToBest, ou en écart absolu : maxGapToBest).
+// Les seuils des embeddings dépendent du modèle : une règle calibrée par modèle l'emporte sur la règle générale.
 export const RELEVANCE = {
   local: { minScore: 0.02, relativeToBest: 0.5 },
   embeddings: { minScore: 0.3, relativeToBest: 0.85 },
+  // Calibré le 2026-10-25 (P-016) : bons blocs entre 0,62 et 0,76, autres entre 0,49 et 0,62 ;
+  // un domaine absent de la base (Aéronautique, Jeux vidéo) a un meilleur score inférieur à 0,6.
+  'gemini-embedding-001': { minScore: 0.6, maxGapToBest: 0.03 },
 };
+
+/** Règle de pertinence du modèle d'embeddings utilisé, sinon celle du mode. */
+function relevanceRule(relevance, mode, engine) {
+  const model = engine.split('/').pop();
+  return (mode === 'embeddings' && relevance[model]) || relevance[mode];
+}
 const DIVERSITY_LAMBDA = 0.5;
 // Après un échec des embeddings, la vectorisation locale est utilisée pendant ce délai.
 const EMBEDDINGS_PAUSE_MS = 5 * 60 * 1000;
@@ -87,8 +97,9 @@ export function createRetriever({
     const scored = chunks
       .map((chunk, index) => ({ chunk, vector: chunkVectors[index], score: cosineSimilarity(queryVector, chunkVectors[index]) }))
       .sort((a, b) => b.score - a.score);
-    const { minScore, relativeToBest } = relevance[mode];
-    const threshold = Math.max(minScore, (scored[0]?.score ?? 0) * relativeToBest);
+    const { minScore, relativeToBest = 0, maxGapToBest = Infinity } = relevanceRule(relevance, mode, engine);
+    const best = scored[0]?.score ?? 0;
+    const threshold = Math.max(minScore, best * relativeToBest, best - maxGapToBest);
     const candidates = scored.filter((item) => item.score >= threshold);
 
     const selected = selectDiverse(candidates, { k, avoid, lambda: DIVERSITY_LAMBDA });
