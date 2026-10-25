@@ -8,6 +8,7 @@ export const AI_ERRORS = {
   AI_INVALID_RESPONSE: { status: 502, message: "La réponse de l'IA est invalide (format inattendu)." },
   AI_PROVIDER_ERROR: { status: 502, message: 'Le fournisseur IA a renvoyé une erreur.' },
   AI_PROMPT_ERROR: { status: 500, message: 'Prompt système introuvable ou incomplet.' },
+  AI_EMBEDDINGS_UNAVAILABLE: { status: 503, message: "Aucun fournisseur d'embeddings n'est configuré." },
 };
 
 export class AiError extends Error {

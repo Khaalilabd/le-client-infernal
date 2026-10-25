@@ -26,7 +26,7 @@ export { AiError } from './errors.js';
 const DEFAULT_USER_MESSAGE = 'Produis maintenant la réponse au format JSON demandé.';
 const MAX_BACKOFF_MS = 10000;
 
-const defaultSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+export const defaultSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 async function defaultLoadIdentity(userId) {
   if (!userId) return null;
@@ -36,7 +36,7 @@ async function defaultLoadIdentity(userId) {
   });
 }
 
-async function defaultLogCall(entry) {
+export async function defaultLogCall(entry) {
   try {
     await prisma.aiCallLog.create({ data: entry });
   } catch {
@@ -44,7 +44,7 @@ async function defaultLogCall(entry) {
   }
 }
 
-function withTimeout(run, timeoutMs) {
+export function withTimeout(run, timeoutMs) {
   const controller = new AbortController();
   let timer;
   const timeout = new Promise((_, reject) => {

@@ -24,6 +24,8 @@ const envSchema = z.object({
   AI_MODEL: optionalString,
   AI_TIMEOUT_MS: z.coerce.number().int().positive().default(30000),
   AI_MAX_RETRIES: z.coerce.number().int().min(0).max(5).default(2),
+  AI_EMBEDDING_PROVIDER: z.enum(['auto', 'none', 'openai', 'ollama']).default('auto'),
+  AI_EMBEDDING_MODEL: optionalString,
   ANTHROPIC_API_KEY: optionalString,
   OPENAI_API_KEY: optionalString,
   OLLAMA_BASE_URL: z.string().default('http://localhost:11434'),
