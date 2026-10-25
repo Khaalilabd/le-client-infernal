@@ -68,9 +68,17 @@ export default function RequirementsEvaluationPage() {
         title="Évaluation du cahier des charges"
         description="Le cahier des charges est comparé au véritable besoin du client selon la grille ci-dessous."
         actions={
-          <Link className="btn btn-ghost" to={modulePath('', sessionId)}>
-            Revenir à l'éditeur
-          </Link>
+          <>
+            <Link className="btn btn-ghost" to={modulePath('', sessionId)}>
+              Revenir à l'éditeur
+            </Link>
+            {/* Étape suivante du parcours : bilan et fin de séance (module 5) */}
+            {sessionId && evaluations?.length > 0 && (
+              <Link className="btn" to={`/dashboard/sessions/${sessionId}`}>
+                Bilan de la séance
+              </Link>
+            )}
+          </>
         }
       />
       <SessionPicker />
