@@ -37,6 +37,15 @@ enum MessageSender {
   CLIENT
 }
 
+/// Type d'une question de l'étudiant, déterminé par l'analyse du LLM (module 2, Chain-of-Thought)
+enum QuestionType {
+  OPEN
+  CLOSED
+  OFF_TOPIC
+  TECHNICAL
+  MANIPULATION
+}
+
 enum ChangeRequestStatus {
   PENDING
   ANSWERED
@@ -177,6 +186,8 @@ model InterviewMessage {
   content   String        @db.Text
   /// Proximité de la question avec le besoin caché (0 à 1), calculée par le LLM. Usage serveur.
   proximity Float?
+  /// Type de la question (messages STUDENT), issu de l'analyse du LLM. Le raisonnement complet n'est jamais enregistré.
+  questionType QuestionType?
   createdAt DateTime      @default(now())
 
   session TrainingSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)

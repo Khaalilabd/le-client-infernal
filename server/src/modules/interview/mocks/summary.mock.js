@@ -8,7 +8,7 @@ const EXPLORATION_KEYWORDS = {
   impact: ['conséquence', 'impact', 'résultat', 'effet'],
 };
 
-export default function summaryMock({ messages }) {
+export default function summaryMock({ variables = {}, messages }) {
   const studentMessages = messages.filter((msg) => msg.role === 'user');
   const questionsAsked = studentMessages.length;
   const allQuestions = studentMessages.map((msg) => msg.content.toLowerCase()).join(' ');
@@ -51,7 +51,12 @@ export default function summaryMock({ messages }) {
   } else {
     qualityFeedback = "Bon travail d'exploration ! Les questions ouvertes ont permis de faire émerger des informations importantes sur le contexte et les problèmes du client.";
   }
-  
+
+  // Répartition des questions issue de l'analyse du client (prompt v0.2)
+  if (variables.questionTypes && variables.questionTypes !== 'non disponible') {
+    qualityFeedback += ` Répartition de vos questions : ${variables.questionTypes}.`;
+  }
+
   return {
     discoveredPoints,
     questionsAsked,

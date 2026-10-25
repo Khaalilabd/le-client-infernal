@@ -3,7 +3,7 @@ import { callLLM } from '../../shared/ai/index.js';
 import { AppError } from '../../shared/errors/AppError.js';
 import { getAccessibleSession } from '../../shared/sessions/sessions.service.js';
 import { getScenarioSecrets } from '../../shared/db/scenarioSecrets.js';
-import { createClientReplySchema, interviewSummarySchema } from './interview.schemas.js';
+import { QUESTION_TYPES, createClientReplySchema, interviewSummarySchema } from './interview.schemas.js';
 import { loadPrompt } from '../../shared/ai/promptLoader.js';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -12,8 +12,31 @@ import { dirname, join } from 'node:path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const personalities = JSON.parse(readFileSync(join(__dirname, '../client-generator/data/personalities.json'), 'utf-8'));
 
-// Champs renvoyés au front-end (proximity reste côté serveur)
+// Champs renvoyés au front-end (proximity et questionType restent côté serveur)
 const PUBLIC_MESSAGE_FIELDS = { id: true, sender: true, content: true, createdAt: true };
+
+// Libellés des types de question, transmis au prompt de synthèse
+const QUESTION_TYPE_LABELS = {
+  OPEN: 'ouvertes',
+  CLOSED: 'fermées',
+  OFF_TOPIC: 'hors sujet',
+  TECHNICAL: 'techniques',
+  MANIPULATION: 'tentatives de manipulation',
+};
+
+/** Nombre de questions de chaque type (les messages antérieurs à l'analyse ne sont pas comptés). */
+function countQuestionTypes(messages) {
+  const counts = Object.fromEntries(QUESTION_TYPES.map((type) => [type, 0]));
+  for (const { questionType } of messages) {
+    if (questionType) counts[questionType] += 1;
+  }
+  return counts;
+}
+
+function describeQuestionTypes(counts) {
+  const parts = QUESTION_TYPES.filter((type) => counts[type] > 0).map((type) => `${counts[type]} ${QUESTION_TYPE_LABELS[type]}`);
+  return parts.length ? parts.join(', ') : 'non disponible';
+}
 
 // Objectif de questions selon le niveau du scénario
 const RECOMMENDED_QUESTIONS = {
@@ -123,9 +146,10 @@ export async function sendMessage(sessionId, user, content) {
     userId: user.id,
   });
 
+  // Seul le type de question est conservé : le raisonnement (analysis) peut citer le besoin caché
   const [studentMessage, clientMessage] = await prisma.$transaction([
     prisma.interviewMessage.create({
-      data: { sessionId, sender: 'STUDENT', content, proximity: result.proximity },
+      data: { sessionId, sender: 'STUDENT', content, proximity: result.proximity, questionType: result.analysis.questionType },
       select: PUBLIC_MESSAGE_FIELDS,
     }),
     prisma.interviewMessage.create({
@@ -163,11 +187,12 @@ export async function endInterview(sessionId, user) {
   const messages = await prisma.interviewMessage.findMany({
     where: { sessionId },
     orderBy: { createdAt: 'asc' },
-    select: { sender: true, content: true },
+    select: { sender: true, content: true, questionType: true },
   });
 
   const studentMessages = messages.filter((msg) => msg.sender === 'STUDENT');
   const questionsCount = studentMessages.length;
+  const questionTypes = describeQuestionTypes(countQuestionTypes(studentMessages));
 
   const historyForLLM = messages.map((message) => ({
     role: message.sender === 'STUDENT' ? 'user' : 'assistant',
@@ -182,6 +207,7 @@ export async function endInterview(sessionId, user) {
       context: scenario.context,
       expressedNeed: scenario.expressedNeed,
       questionsCount,
+      questionTypes,
     },
     messages: historyForLLM,
     schema: interviewSummarySchema,
@@ -219,7 +245,7 @@ export async function getProgress(sessionId, user) {
 
   const messages = await prisma.interviewMessage.findMany({
     where: { sessionId },
-    select: { sender: true, proximity: true },
+    select: { sender: true, proximity: true, questionType: true },
   });
 
   const studentMessages = messages.filter((msg) => msg.sender === 'STUDENT');
@@ -243,5 +269,6 @@ export async function getProgress(sessionId, user) {
     questionsCount,
     discoveryLevel,
     recommendedQuestions,
+    questionTypes: countQuestionTypes(studentMessages),
   };
 }
