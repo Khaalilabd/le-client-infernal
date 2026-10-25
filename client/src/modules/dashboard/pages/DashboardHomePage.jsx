@@ -3,26 +3,57 @@ import { useAuth } from '../../../shared/auth/AuthContext.jsx';
 import ErrorMessage from '../../../shared/components/ErrorMessage.jsx';
 import Loader from '../../../shared/components/Loader.jsx';
 import StatCard from '../components/StatCard.jsx';
+import { HistoryTable } from '../components/HistoryTable.jsx';
+import { RecommendationCard } from '../components/RecommendationCard.jsx';
 import { dashboardApi } from '../api.js';
 
 function StudentDashboard() {
   const [stats, setStats] = useState(null);
+  const [history, setHistory] = useState(null);
+  const [recommendation, setRecommendation] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dashboardApi.getMyStats().then(setStats).catch(setError);
+    Promise.all([
+      dashboardApi.getMyStats(),
+      dashboardApi.getMyHistory(),
+      dashboardApi.getMyRecommendation(),
+    ])
+      .then(([statsData, historyData, recommendationData]) => {
+        setStats(statsData);
+        setHistory(historyData);
+        setRecommendation(recommendationData);
+      })
+      .catch(setError)
+      .finally(() => setLoading(false));
   }, []);
 
   if (error) return <ErrorMessage error={error} />;
-  if (!stats) return <Loader />;
+  if (loading) return <Loader />;
 
   return (
-    <div className="grid stats-grid">
-      <StatCard label="Séances" value={stats.sessions.total} hint={`${stats.sessions.completed} terminée(s)`} />
-      <StatCard label="Note finale moyenne" value={stats.averageFinalScore} />
-      <StatCard label="Questions posées au client" value={stats.interviewMessages} />
-      <StatCard label="Demandes de changement" value={stats.changeRequests.total} hint={`Moyenne : ${stats.changeRequests.averageScore ?? '—'}`} />
-      <StatCard label="Cahiers des charges évalués" value={stats.requirements.evaluations} hint={`Moyenne : ${stats.requirements.averageScore ?? '—'}`} />
+    <div>
+      {/* Statistiques */}
+      <h2>📊 Mes statistiques</h2>
+      <div className="grid stats-grid mb-4">
+        <StatCard label="Séances" value={stats.sessions.total} hint={`${stats.sessions.completed} terminée(s)`} />
+        <StatCard label="Note finale moyenne" value={stats.averageFinalScore} />
+        <StatCard label="Questions posées" value={stats.interviewMessages} />
+        <StatCard label="Demandes de changement" value={stats.changeRequests.total} hint={`Moyenne : ${stats.changeRequests.averageScore ?? '—'}`} />
+        <StatCard label="Cahiers évalués" value={stats.requirements.evaluations} hint={`Moyenne : ${stats.requirements.averageScore ?? '—'}`} />
+      </div>
+
+      {/* Recommandation IA */}
+      {recommendation && (
+        <div className="mb-4">
+          <RecommendationCard recommendation={recommendation} />
+        </div>
+      )}
+
+      {/* Historique */}
+      <h2>📚 Historique de mes séances</h2>
+      <HistoryTable sessions={history} />
     </div>
   );
 }
