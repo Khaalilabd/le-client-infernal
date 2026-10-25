@@ -4,6 +4,7 @@ import { AppError } from '../../shared/errors/AppError.js';
 import { getAccessibleSession } from '../../shared/sessions/sessions.service.js';
 import { getScenarioSecrets } from '../../shared/db/scenarioSecrets.js';
 import { generatedChangeRequestSchema, createResponseEvaluationSchema } from './change-requests.schemas.js';
+import { SAMPLING_TEMPERATURE, evaluateWithSelfConsistency } from './change-requests.consistency.js';
 
 /** Nombre maximum de demandes de changement par séance */
 const MAX_CHANGE_REQUESTS = 3;
@@ -112,8 +113,8 @@ export async function respondToChangeRequest(changeRequestId, user, { decision, 
 
   const scenario = await getScenarioSecrets(changeRequest.session.scenarioId);
 
-  // Évaluation de la réponse par le LLM
-  const evaluation = await callLLM({
+  // Évaluation de la réponse par le LLM, plusieurs fois (Self-consistency), puis vote majoritaire
+  const request = {
     module: 'change-requests',
     prompt: 'evaluate-response',
     variables: {
@@ -132,7 +133,9 @@ export async function respondToChangeRequest(changeRequestId, user, { decision, 
     },
     schema: createResponseEvaluationSchema(scenario),
     userId: user.id,
-  });
+    temperature: SAMPLING_TEMPERATURE,
+  };
+  const evaluation = await evaluateWithSelfConsistency(request);
 
   // Enregistrer la décision, la justification, la note, le feedback et la réaction du client.
   // Mise à jour conditionnelle : si deux réponses arrivent en même temps, seule la première est enregistrée.
@@ -145,6 +148,8 @@ export async function respondToChangeRequest(changeRequestId, user, { decision, 
       score: evaluation.score,
       feedback: evaluation.feedback,
       clientReaction: evaluation.clientReaction,
+      expectedDecision: evaluation.expectedDecision,
+      evaluationVotes: evaluation.votes,
       answeredAt: new Date(),
     },
   });

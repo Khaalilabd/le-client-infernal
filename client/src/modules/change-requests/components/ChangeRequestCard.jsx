@@ -32,6 +32,29 @@ function RequirementsUpdate({ changeRequest, sessionId, version, canUpdate, comp
 }
 const DECISION_LABELS = { ACCEPT: 'Acceptée', NEGOTIATE: 'Négociée', REFUSE: 'Refusée' };
 const DECISION_BADGES = { ACCEPT: 'badge-success', NEGOTIATE: 'badge-info', REFUSE: 'badge-danger' };
+const EXPECTED_LABELS = { ACCEPT: 'accepter', NEGOTIATE: 'négocier', REFUSE: 'refuser' };
+
+/**
+ * Résultat du vote entre les évaluations indépendantes de l'IA (Self-consistency) :
+ * décision attendue et accord entre les évaluations.
+ */
+function EvaluationConsensus({ expectedDecision, evaluationVotes, compact }) {
+  if (!expectedDecision || !evaluationVotes) return null;
+  const counts = Object.values(evaluationVotes);
+  const samples = counts.reduce((sum, count) => sum + count, 0);
+  const agreement = Math.max(...counts);
+  const uncertain = agreement * 2 <= samples;
+  return (
+    <p className={`cr-consensus ${uncertain ? 'is-uncertain' : ''} small`}>
+      Décision attendue : <strong>{EXPECTED_LABELS[expectedDecision] ?? expectedDecision}</strong>
+      {' · '}
+      {uncertain
+        ? `évaluation incertaine : les ${samples} évaluations de l'IA ne s'accordent pas`
+        : `${agreement} évaluation${agreement > 1 ? 's' : ''} de l'IA sur ${samples} concordante${agreement > 1 ? 's' : ''}`}
+      {!compact && !uncertain && agreement < samples && ' (la note retient la majorité)'}
+    </p>
+  );
+}
 
 /**
  * Carte d'une demande de changement.
@@ -42,8 +65,9 @@ export default function ChangeRequestCard({ changeRequest, compact = false, inde
   const requirementsUpdate = (
     <RequirementsUpdate changeRequest={changeRequest} sessionId={sessionId} version={version} canUpdate={canUpdate} compact={compact} />
   );
-  const { title, description, reason, impact, status, decision, score, feedback, clientReaction, createdAt } =
+  const { title, description, reason, impact, status, decision, score, feedback, clientReaction, createdAt, expectedDecision, evaluationVotes } =
     changeRequest;
+  const consensus = <EvaluationConsensus expectedDecision={expectedDecision} evaluationVotes={evaluationVotes} compact={compact} />;
 
   const isAnswered = status === 'ANSWERED';
   const badgeClass = isAnswered ? (DECISION_BADGES[decision] ?? 'badge-info') : 'badge-warning';
@@ -60,6 +84,7 @@ export default function ChangeRequestCard({ changeRequest, compact = false, inde
           <span className="score-value" style={{ fontSize: '1.8rem' }}>{score}</span>
           <span className="score-max">/ 100</span>
         </div>
+        {consensus}
         {feedback && <p className="small" style={{ margin: '6px 0 0' }}>{feedback}</p>}
         {clientReaction && (
           <p className="small muted" style={{ margin: '6px 0 0' }}>
@@ -103,6 +128,7 @@ export default function ChangeRequestCard({ changeRequest, compact = false, inde
             <span className="score-value" style={{ fontSize: '2rem' }}>{score}</span>
             <span className="score-max">/ 100</span>
           </div>
+          {consensus}
           {feedback && <p style={{ marginTop: 'var(--space-2)' }}>{feedback}</p>}
           {clientReaction && (
             <div className="cr-client-reaction">

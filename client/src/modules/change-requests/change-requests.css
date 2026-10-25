@@ -104,3 +104,7 @@
     background: var(--info-50);
     color: var(--info-600);
 }
+
+/* Résultat du vote entre les évaluations de l'IA (Self-consistency) */
+.cr-consensus { margin: var(--space-1) 0 0; color: var(--success-600); }
+.cr-consensus.is-uncertain { color: var(--warning-600); }

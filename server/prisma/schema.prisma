@@ -230,6 +230,10 @@ model ChangeRequest {
   feedback      String?             @db.Text
   /// Réaction du client à la réponse de l'étudiant (générée par le LLM)
   clientReaction String?            @db.Text
+  /// Décision attendue, élue par vote majoritaire entre les évaluations du LLM (Self-consistency)
+  expectedDecision ChangeDecision?
+  /// Votes des évaluations : { ACCEPT: n, NEGOTIATE: n, REFUSE: n }
+  evaluationVotes Json?
   createdAt     DateTime            @default(now())
   answeredAt    DateTime?
 
