@@ -1072,6 +1072,14 @@ Comencez a corriger ce que vous pouvez faire et faîtes moi le bilan ici
      - chapitre 7 : performance et fiabilité, tokens, techniques d'optimisation de la note 2 de la grille, choix des modèles et des outils, limites éthiques et techniques ;
      - chapitre 8 : répartition et commits, gain de productivité mesuré, valeurs ajoutées ;
      - deux encadrés « À compléter » laissés aux membres : justification de leur outil, estimation du temps sans IA.
+   - **Présentation** : `docs/presentation/Presentation_Client_Infernal.pptx`, 19 diapositives aux couleurs de la charte :
+     - projet et architecture ;
+     - méthode et anatomie du prompt P-001 ;
+     - prompts de l'application ;
+     - une diapositive par module, présentée par son responsable ;
+     - Gemini, tokens, optimisation, anomalies, éthique, productivité, conclusion.
+     
+     Les notes de l'orateur proposent qui présente quoi. Le fichier a été généré par un script (pptxgenjs), puis rendu et relu diapositive par diapositive.
    - **Équipe** : `docs/prompts/modeles/taches-finales.md`, une tâche réelle par membre avec son prompt : campagne d'injection (Kenza), mesure de l'auto-cohérence (Ismail), prompt d'évaluation renforcé (Nadhem), cache de la recommandation (Aziz). Lien ajouté dans `docs/GUIDE_EQUIPE.md`.
 4. **Fichiers** :
    - base commune : `server/prisma/schema.prisma` et migration, `server/src/shared/ai/index.js`, `embeddings.js`, `providers/claude.js`, `openai.js`, `ollama.js`, `server/tests/ai.test.js`, `server/tests/embeddings.test.js`, `package-lock.json` ;
@@ -1083,8 +1091,8 @@ Comencez a corriger ce que vous pouvez faire et faîtes moi le bilan ici
 6. **Limites et suite** :
    - après le pull : `npm install && npm run db:deploy` ;
    - Gemini n'indique pas les tokens des embeddings ;
-   - les tâches des membres, leurs justifications et leurs estimations restent à faire ;
-   - la présentation (slides) est préparée séparément.
+   - les tâches des membres, leurs justifications et leurs estimations restent à faire ; les estimations sont à dire à l'oral sur la diapositive 18 ;
+   - la présentation a été rendue avec LibreOffice : un dernier coup d'œil dans PowerPoint est conseillé, car les polices peuvent légèrement différer.
 
 ### Modifications de l'équipe
 
