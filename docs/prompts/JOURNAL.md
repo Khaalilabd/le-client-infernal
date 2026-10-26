@@ -1023,3 +1023,69 @@ La clé a été écrite uniquement dans `server/.env`, exclu de Git (vérifié).
 ### Modifications de l'équipe
 
 <!-- À remplir par l'équipe -->
+
+---
+
+## P-017 — Contrôle du projet selon la grille de validation et corrections
+
+- **Date** : 2026-10-26
+- **Auteur** : Khalil Abdelmoumen (chef de projet)
+- **Module** : tout le projet (base commune, rapport, consignes de l'équipe) — **migration de la base commune signalée à l'équipe**
+- **Outil / modèle** : Claude Code (extension VS Code) — Claude Opus 5.5
+
+### Prompt
+
+```text
+Vous êtes sur qu'on a terminer tout et tout sembe parfait ? voici la grille d'évaluation
+```
+
+La grille de validation « IA for Software Engineering » était jointe en image.
+
+#### Échanges complémentaires
+
+Après le bilan critère par critère de l'IA :
+
+```text
+Comencez a corriger ce que vous pouvez faire et faîtes moi le bilan ici
+```
+
+### Résumé de la production de l'IA
+
+1. **Demandé** : comparer le projet à la grille, puis corriger ce qui relève du chef de projet.
+2. **Constat** :
+   - le rapport ne parlait ni d'éthique, ni de vulnérabilités, ni de refactoring, ni de productivité ;
+   - les techniques d'optimisation étaient appliquées sans être présentées ;
+   - les tokens n'étaient pas mesurés ;
+   - `npm audit` signalait 4 failles graves ;
+   - 30 rubriques « Modifications de l'équipe » sur 39 étaient vides ;
+   - les commits étaient déséquilibrés (Ismail : 1 commit).
+3. **Réalisé** :
+   - **Failles** : body-parser 2.4.0, dont la version précédente permettait un déni de service sur chaque requête Express. Les 3 autres alertes (deepmerge-ts, outil Prisma en ligne de commande, développement seulement) sont analysées et documentées. Leur correction demande Prisma 7 ; une tentative de forcer la version corrigée n'a pas abouti proprement et a été annulée.
+   - **Tokens** :
+     - les fournisseurs renvoient `{ text, usage }` ;
+     - `callLLM` et `embedTexts` additionnent les tokens de toutes les tentatives ;
+     - `AiCallLog` les enregistre dans les colonnes `inputTokens` et `outputTokens` (migration `ajout_tokens_appels_ia`) ;
+     - 2 tests ajoutés.
+   - **Mesure avec Gemini** : une séance complète rejouée consomme 27 382 tokens en entrée et 4 058 en sortie, sur 15 appels. L'entretien représente 54 % des tokens en entrée. Aucun secret dans les 16 endpoints de lecture.
+   - **Rapport** :
+     - section 6.5 : anomalies trouvées par l'IA, vulnérabilités, recommandations de refactoring ;
+     - chapitre 7 : performance et fiabilité, tokens, techniques d'optimisation de la note 2 de la grille, choix des modèles et des outils, limites éthiques et techniques ;
+     - chapitre 8 : répartition et commits, gain de productivité mesuré, valeurs ajoutées ;
+     - deux encadrés « À compléter » laissés aux membres : justification de leur outil, estimation du temps sans IA.
+   - **Équipe** : `docs/prompts/modeles/taches-finales.md`, une tâche réelle par membre avec son prompt : campagne d'injection (Kenza), mesure de l'auto-cohérence (Ismail), prompt d'évaluation renforcé (Nadhem), cache de la recommandation (Aziz). Lien ajouté dans `docs/GUIDE_EQUIPE.md`.
+4. **Fichiers** :
+   - base commune : `server/prisma/schema.prisma` et migration, `server/src/shared/ai/index.js`, `embeddings.js`, `providers/claude.js`, `openai.js`, `ollama.js`, `server/tests/ai.test.js`, `server/tests/embeddings.test.js`, `package-lock.json` ;
+   - documentation : `docs/ARCHITECTURE.md`, `docs/GUIDE_EQUIPE.md`, `docs/prompts/modeles/taches-finales.md`, `scripts/rapport/generer-rapport.cjs`.
+5. **Vérifications** :
+   - `npm test` : **243 tests sur 243, aucun ignoré**, base lancée ;
+   - `npm audit` : il ne reste que la chaîne Prisma documentée ;
+   - rapport régénéré : aucun Markdown brut, 2 encadrés « À compléter » volontaires.
+6. **Limites et suite** :
+   - après le pull : `npm install && npm run db:deploy` ;
+   - Gemini n'indique pas les tokens des embeddings ;
+   - les tâches des membres, leurs justifications et leurs estimations restent à faire ;
+   - la présentation (slides) est préparée séparément.
+
+### Modifications de l'équipe
+
+<!-- À remplir par l'équipe -->

@@ -2,6 +2,8 @@
 
 > À lire avant de commencer. Rédigé par le chef de projet (Khalil Abdelmoumen).
 > Rappel : la note individuelle dépend **de vos commits** et de **votre usage de l'IA** (prompts, vérifications, esprit critique).
+>
+> **Avant la validation : voir [les tâches finales de chaque membre](prompts/modeles/taches-finales.md) (P-017).**
 
 | Membre | Module | Branche | Prompt de départ |
 |---|---|---|---|

@@ -3,7 +3,7 @@
 //   npm run rapport
 //
 // Sources :
-//   - chapitres communs (1 à 4, 6, conclusion, annexes) : ce fichier (chef de projet) ;
+//   - chapitres communs (1 à 4, 6 à 8, conclusion, annexes) : ce fichier (chef de projet) ;
 //   - section de chaque module (chapitre 5) : docs/rapport/sections/5.x-<module>.md, rédigée par son responsable ;
 //   - captures : docs/rapport/captures/ ; journaux de prompts : docs/prompts/.
 //
@@ -233,7 +233,7 @@ children.push(
   p('Le recueil des besoins est l\'une des étapes les plus délicates du génie logiciel : un client exprime rarement son besoin réel du premier coup. Il le formule de manière vague, oublie des contraintes qui lui semblent évidentes et change d\'avis en cours de projet. Ces compétences s\'acquièrent surtout par la pratique, alors que les occasions de s\'exercer face à un vrai client sont rares pendant la formation.'),
   p('Le projet **« Le Client Infernal »** répond à ce problème : une plateforme web où l\'étudiant joue le rôle de l\'ingénieur et un grand modèle de langage (LLM) joue celui d\'un client fictif doté d\'une personnalité et d\'un **besoin caché**. L\'étudiant doit découvrir ce besoin lors d\'un entretien en chat, rédiger un cahier des charges, gérer des demandes de changement, puis il est évalué.'),
   p('Ce projet est réalisé dans le cadre du module « IA for Software Engineering ». Il a donc un double objectif : construire une application qui **utilise** l\'IA, et **utiliser l\'IA pour construire** cette application. C\'est pourquoi ce rapport accorde une place importante à la démarche : chaque étape importante a été conduite à l\'aide d\'un assistant de programmation (Claude Code), et chaque prompt est tracé dans un journal versionné avec le code.'),
-  p('Le rapport est organisé comme suit. Le chapitre 1 présente le projet et l\'organisation de l\'équipe. Le chapitre 2 décrit la démarche d\'ingénierie assistée par l\'IA et analyse les prompts utilisés. Le chapitre 3 détaille l\'architecture technique, et le chapitre 4 la conception de l\'interface. Le chapitre 5 présente la réalisation de chaque module, le chapitre 6 les tests, avant une conclusion.'),
+  p('Le rapport est organisé comme suit. Le chapitre 1 présente le projet et l\'organisation de l\'équipe. Le chapitre 2 décrit la démarche d\'ingénierie assistée par l\'IA et analyse les prompts utilisés. Le chapitre 3 détaille l\'architecture technique, et le chapitre 4 la conception de l\'interface. Le chapitre 5 présente la réalisation de chaque module, le chapitre 6 les tests et l\'apport de l\'IA pour détecter les anomalies. Le chapitre 7 évalue le modèle d\'IA (performance, tokens, optimisations, limites éthiques), et le chapitre 8 l\'organisation de l\'équipe, la productivité et les valeurs ajoutées, avant une conclusion.'),
 );
 
 // Chapitre 1
@@ -322,6 +322,7 @@ children.push(
       ['P-014', '25/10/2026', 'Khalil Abdelmoumen', 'Partie IA de chaque membre : techniques vues en cours'],
       ['P-015', '25/10/2026', 'Khalil Abdelmoumen', 'Finalisation : module 5, fin de séance, partie IA du module 3, rapport complet'],
       ['P-016', '25/10/2026', 'Khalil Abdelmoumen', 'Test de toute l\'application avec un vrai LLM (Gemini) et corrections'],
+      ['P-017', '26/10/2026', 'Khalil Abdelmoumen', 'Contrôle selon la grille d\'évaluation : failles, tokens, chapitres 7 et 8'],
     ],
     [1, 1.4, 2.4, 5],
     'Prompts du journal commun (base commune et projet)',
@@ -674,17 +675,17 @@ function markdownSection(markdown) {
 children.push(
   h1('6. Tests et validation'),
   h2('6.1 Tests automatisés'),
-  p('Le projet compte **241 tests automatisés**, tous réussis et aucun ignoré (`npm test`, base de démonstration lancée).'),
+  p('Le projet compte **243 tests automatisés**, tous réussis et aucun ignoré (`npm test`, base de démonstration lancée).'),
   ...tbl(
     ['Partie', 'Tests', 'Ce qui est vérifié en priorité'],
     [
-      ['Base commune', '32', 'Service IA (dont la correction demandée après un refus), embeddings, données personnelles, besoin caché, fin de séance et note finale'],
+      ['Base commune', '34', 'Service IA (dont la correction demandée après un refus et le relevé des tokens), embeddings, données personnelles, besoin caché, fin de séance et note finale'],
       ['M1 Générateur de clients', '36', 'Schémas, RAG (découpage, cosinus, TF-IDF, MMR, embeddings et seuils par modèle), sources citées, endpoints'],
       ['M2 Entretien client', '36', 'Schémas, Chain-of-Thought et Few-shot, prompt injection, ordre des messages, endpoints'],
       ['M3 Demandes de changement', '45', 'Schémas, protection du besoin caché, Self-consistency, endpoints'],
       ['M4 Cahier des charges', '37', 'Schémas, correspondance (Least-to-most), versions, endpoints'],
       ['M5 Tableau de bord', '55', 'Schémas, Few-shot, anonymisation, bilan de séance, rôles et isolation'],
-      ['Total', '241', ''],
+      ['Total', '243', ''],
     ],
     [3, 1, 6],
     'Répartition des tests automatisés',
@@ -755,6 +756,174 @@ children.push(
   bullet('Il porte sur une seule séance, avec un seul modèle, sur l\'offre gratuite de Gemini, qui limite le nombre d\'appels par minute et par jour.'),
   bullet('Le commentaire d\'évaluation du module 4 oriente l\'étudiant vers « les véritables problématiques de gestion et de chiffrage » du client, sans recopier le besoin caché. La limite relevée par Nadhem lors de P-013 est donc confirmée : le prompt evaluate-document reste à renforcer.'),
   bullet('Les 3 évaluations de l\'auto-cohérence ont concordé sur l\'unique réponse évaluée : la proportion d\'évaluations incertaines reste à mesurer sur davantage de réponses.'),
+  h2('6.5 Détection d\'anomalies et de vulnérabilités, refactoring : l\'apport de l\'IA'),
+  p('L\'IA n\'a pas seulement écrit le code. À chaque intégration, le chef de projet lui a demandé de relire la branche, de lancer réellement les tests et le parcours, puis de chercher ce qui pouvait casser. La même méthode a été appliquée à chaque fois :'),
+  bullet('exécuter toute la suite de tests, base lancée, en exigeant « 0 échec et 0 ignoré » ;'),
+  bullet('jouer le parcours complet par l\'API avec un script, puis dans un navigateur piloté automatiquement ;'),
+  bullet('appeler chaque endpoint de lecture avec les deux rôles et y chercher le besoin caché, les contraintes implicites, les proximités et le raisonnement de l\'IA ;'),
+  bullet('tenter de contourner les protections : prompt injection, recopie du besoin caché, accès à la séance d\'un autre étudiant ;'),
+  bullet('relire les captures d\'écran, qui montrent des défauts invisibles dans les tests.'),
+  ...tbl(
+    ['Anomalie', 'Comment l\'IA l\'a détectée', 'Correction'],
+    [
+      ['Port de PostgreSQL déjà occupé (P-001)', 'Démarrage réel de la base', 'Port 5434, modifiable'],
+      ['Tests de la base commune dépendant du prompt du module 1 (P-005)', 'Échec des tests après la v0.2 du prompt', 'Tests découplés, après accord du chef de projet'],
+      ['Fin de l\'entretien qui terminait la séance et bloquait le module 3 (P-012)', 'Parcours joué après la fusion des modules 2 et 3', 'Fin d\'entretien enregistrée dans une table du module 2'],
+      ['Protection du besoin caché limitée aux mots « besoin caché » (P-M3-002)', 'Test qui recopie réellement le besoin caché', 'Contrôle de 6 mots consécutifs, accents ignorés'],
+      ['Personnalité ignorée par le mock : client toujours coopératif (P-M2-003)', 'Écriture des tests pour chaque profil', 'Lecture du profil corrigée'],
+      ['Tests d\'intégration ignorés en silence, 12 tests sur 34 en échec (P-M5-003)', 'Exécution avec la base lancée et lecture des tests « ignorés »', 'Tests réécrits avec leurs propres données'],
+      ['Erreur 404 transformée en erreur 500 (P-M5-003)', 'Appel d\'une séance inexistante', 'Arguments de `AppError` remis dans l\'ordre'],
+      ['Domaines et personnalités inexistants dans la recommandation (P-M5-003)', 'Comparaison des exemples Few-shot avec le catalogue du module 1', 'Valeurs limitées par le schéma Zod'],
+      ['Aucune séance ne pouvait être terminée : note finale toujours vide (P-015)', 'Parcours complet jusqu\'au tableau de bord', 'Fin de séance et note finale communes'],
+      ['Trois défauts révélés par un vrai LLM (P-016)', 'Parcours rejoué avec Gemini', 'Voir la section 6.4'],
+      ['Accords « Mme …, Directeur », guillemets imbriqués, liste déroulante qui déborde', 'Relecture des captures', 'Corrigés, vérifiés sur une nouvelle capture'],
+    ],
+    [3.6, 3.2, 3.2],
+    'Anomalies détectées par l\'IA, puis corrigées',
+  ),
+  h3('Vulnérabilités'),
+  p('Les failles propres à une application qui utilise un LLM ont été traitées dès l\'architecture (section 3.7). Elles sont vérifiées par des tests qui tentent réellement l\'attaque :'),
+  bullet('**Prompt injection** : les messages de l\'étudiant sont traités comme des données, jamais comme des instructions. 5 formulations d\'attaque sont testées sur les 6 personnalités, et une tentative a été jouée avec Gemini (section 6.4).'),
+  bullet('**Fuite du besoin caché** : triple protection et contrôle de recopie dans les sorties des modules 2, 3 et 4. Tous les endpoints de lecture sont vérifiés.'),
+  bullet('**Données personnelles** : le nom, le prénom et l\'email sont masqués avant tout envoi au LLM, et l\'historique envoyé par le module 5 est anonymisé.'),
+  bullet('**Contrôle d\'accès** : erreur 403 pour la séance d\'un autre étudiant et pour un enseignant qui agit à la place d\'un étudiant.'),
+  bullet('**Secrets** : les clés API restent dans `server/.env`, exclu de Git. Un contrôle a vérifié que la clé utilisée pour Gemini n\'apparaît dans aucun fichier ni aucun commit.'),
+  p('**Dépendances (`npm audit`, 26/10/2026).** L\'audit signalait 4 failles de gravité élevée. La première concernait body-parser, qui lit chaque requête reçue par Express : elle permettait un déni de service, et body-parser est passé en version 2.4.0. Les 3 autres alertes forment une seule chaîne : deepmerge-ts, utilisé par l\'outil Prisma en ligne de commande pour lire un fichier de configuration que le projet n\'a pas. Cet outil ne sert qu\'en développement et ne reçoit aucune donnée d\'un utilisateur. Sa correction impose Prisma 7, une version majeure ; une tentative de forcer la version corrigée n\'a pas abouti proprement. La correction est donc reportée, et ce risque résiduel est documenté.'),
+  h3('Recommandations de refactoring'),
+  bullet('**Contrôle de recopie dupliqué.** La normalisation des textes et la recherche de 6 mots consécutifs sont réécrites dans les schémas des modules 2, 3 et 4. Une seule fonction dans la base commune, testée une fois, servirait aux trois modules.'),
+  bullet('**Personnalité devinée à partir des traits.** Le module 2 reconstitue par mots-clés le profil des anciens scénarios. Tous les scénarios ayant désormais un profil, ce code peut disparaître après une migration des données anciennes.'),
+  bullet('**Recommandation recalculée à chaque visite.** Le tableau de bord rappelle le LLM à chaque ouverture, pour environ 1 800 tokens. Une mise en cache jusqu\'à la prochaine séance terminée supprimerait ces appels (section 7.3).'),
+  bullet('**Branches obsolètes.** Toutes les branches distantes sont fusionnées dans `develop` ; `change-requests` et `docs/guide-equipe` peuvent être supprimées.'),
+);
+
+// Chapitre 7 : évaluation et optimisation du modèle d'IA
+children.push(
+  h1('7. Évaluation, optimisation et limites du modèle d\'IA'),
+  h2('7.1 Performance et fiabilité mesurées'),
+  p('Les mesures ci-dessous viennent de deux séances complètes jouées avec `gemini-flash-lite-latest` (sections 6.4 et 7.2), relevées dans le journal technique `AiCallLog`.'),
+  ...tbl(
+    ['Indicateur', 'Mesure'],
+    [
+      ['Message de l\'entretien', '1,1 à 1,8 s'],
+      ['Génération d\'un client avec le RAG', '5,0 à 6,0 s, dont la vectorisation des 36 blocs au premier appel'],
+      ['Évaluation d\'un cahier des charges (2 appels)', '4,0 à 4,3 s'],
+      ['3 évaluations d\'une réponse, en parallèle (auto-cohérence)', '2,2 à 2,4 s'],
+      ['Appels réussis', '34 sur 34, sans nouvelle tentative'],
+      ['Accord des 3 évaluations', '3 sur 3 dans les deux séances'],
+      ['Réponses de l\'API contenant un secret', '0, sur 16 endpoints de lecture et 2 séances'],
+      ['Sorties du LLM', 'Toutes validées par Zod ; en cas de refus, nouvelle tentative avec le motif'],
+    ],
+    [5, 5],
+    'Performance et fiabilité avec Gemini',
+  ),
+  h2('7.2 Consommation de tokens'),
+  p('Depuis P-017, `AiCallLog` enregistre les tokens consommés par chaque appel, toutes tentatives comprises (migration `ajout_tokens_appels_ia`), toujours sans aucun contenu. Une séance complète a été rejouée avec Gemini le 26/10/2026 pour les mesurer.'),
+  ...tbl(
+    ['Étape', 'Appels', 'Tokens en entrée', 'Tokens en sortie'],
+    [
+      ['M1 Génération du client', '1', '1 602', '465'],
+      ['M2 Entretien (6 questions)', '6', '14 741', '1 012'],
+      ['M2 Synthèse', '1', '1 266', '265'],
+      ['M4 Correspondance et évaluation', '2', '3 262', '894'],
+      ['M3 Génération et 3 évaluations', '4', '4 682', '1 276'],
+      ['M5 Recommandation', '1', '1 829', '146'],
+      ['Total', '15', '27 382', '4 058'],
+    ],
+    [4, 1.4, 2.3, 2.3],
+    'Tokens consommés par une séance complète (Gemini)',
+  ),
+  p('L\'entretien représente 54 % des tokens en entrée. Chaque message renvoie le prompt système, avec ses exemples Few-shot, et tout l\'historique : de 2 237 tokens au premier message à 2 666 au sixième. L\'auto-cohérence du module 3 triple le coût d\'une évaluation. Gemini n\'indique pas les tokens des embeddings par cette API : ils ne sont pas comptés.'),
+  h2('7.3 Techniques d\'adaptation et d\'optimisation'),
+  ...tbl(
+    ['Technique', 'Mise en œuvre dans le projet', 'Effet'],
+    [
+      ['Prompt tuning', 'Prompts système versionnés (v0.1 à v0.3) ; Chain-of-Thought, Few-shot, Least-to-most, Self-consistency (section 2.9)', 'Chaque version vérifiée par des tests et sur les écrans'],
+      ['RAG', 'Module 1 : fiches métier retrouvées par similarité, sources citées et vérifiées', 'Scénario ancré dans le métier, besoin caché reformulé'],
+      ['Fine-tuning', 'Non appliqué : ni GPU ni jeu de données. Le RAG et les exemples Few-shot apportent la connaissance sans entraînement.', '—'],
+      ['Hyperparamètres', 'Température de 0,7 pour les 3 évaluations du module 3 ; réponse limitée à 2 000 tokens par défaut ; délai de 60 s ; seuils du RAG calibrés pour chaque modèle d\'embeddings', 'Votes indépendants ; aucun délai dépassé'],
+      ['Choix et comparaison de modèles', '`gemini-2.5-flash` dépassait le délai de 30 s (P-013), flash-lite répond en 1 à 3 s ; vectorisation locale comparée aux embeddings Gemini (section 6.4)', 'Modèles retenus : flash-lite et `gemini-embedding-001`'],
+      ['Cache', 'Vecteurs des 36 fiches calculés une seule fois par démarrage ; après une panne des embeddings, repli local pendant 5 minutes sans nouvel essai', 'Une seule vectorisation de la base au lieu d\'une par génération'],
+      ['Réduction du coût', 'Fournisseur simulé pour le développement et les 243 tests ; offre gratuite de Gemini ; Ollama possible en local', 'Aucun appel payant pendant le développement'],
+      ['Réduction de la latence', '3 évaluations lancées en parallèle ; modèle léger', '3 évaluations dans le temps d\'une seule'],
+      ['Réduction des tokens', 'Au-delà de 30 messages, l\'entretien n\'envoie que les 10 premiers et les 20 derniers ; historique agrégé et anonymisé pour le module 5 ; tokens mesurés', 'Coût d\'un message borné, quelle que soit la longueur de l\'entretien'],
+    ],
+    [2.2, 5, 2.8],
+    'Techniques d\'adaptation et d\'optimisation du modèle',
+  ),
+  p('La mesure a fait apparaître deux pistes, non réalisées. La première est la mise en cache de la recommandation du module 5. La seconde est le cache de prompt proposé par les fournisseurs (prompt caching) : il réduirait le coût de la partie fixe du prompt, renvoyée à chaque message de l\'entretien.'),
+  h2('7.4 Choix des modèles et des outils'),
+  p('**Modèles de l\'application.** Le service IA accepte des fournisseurs interchangeables, choisis par une variable d\'environnement (section 3.6).'),
+  ...tbl(
+    ['Fournisseur', 'Rôle', 'Justification'],
+    [
+      ['Simulé (mock)', 'Développement, tests, démonstration hors ligne', 'Aucun coût, résultats reproductibles, mêmes schémas Zod que les vrais modèles'],
+      ['Gemini flash-lite (API compatible OpenAI)', 'Test avec un vrai LLM', 'Offre gratuite, réponses en 1 à 3 s ; `gemini-2.5-flash`, plus lourd, dépassait le délai (P-013)'],
+      ['gemini-embedding-001', 'Embeddings du RAG', 'Même clé que le modèle ; scores mesurés et seuils calibrés (section 6.4)'],
+      ['Claude (claude-sonnet-5-5 par défaut)', 'Fournisseur choisi par défaut si une clé Anthropic est présente', 'Pas encore testé, faute de clé'],
+      ['Ollama (llama3.1)', 'Exécution locale, sans clé', 'Les données restent sur la machine ; modèles quantifiés (section 3.6) ; pas encore testé'],
+    ],
+    [3, 3, 4],
+    'Modèles de l\'application',
+  ),
+  p('**Outils de développement**, tels que déclarés dans les journaux des prompts :'),
+  ...tbl(
+    ['Outil', 'Modèle', 'Membres', 'Usage constaté'],
+    [
+      ['Claude Code (VS Code)', 'Claude Opus 5.5', 'Khalil Abdelmoumen, Nadhem Hmida', 'Lit et modifie les fichiers, exécute les tests, la base et le navigateur ; contexte partagé par `CLAUDE.md`'],
+      ['Kiro', 'Claude Sonnet 4.5', 'Kenza Baccar, Aziz Louati', 'Mode agent ; règles du projet chargées automatiquement (`.kiro/steering`, qui inclut `CLAUDE.md`, P-010)'],
+      ['Antigravity', 'Google DeepMind', 'Ismail Ismail', 'Module 3 généré à partir d\'un prompt détaillé (P-M3-001)'],
+    ],
+    [2, 1.8, 2.6, 3.6],
+    'Assistants de programmation utilisés',
+  ),
+  todo('chaque membre justifie en une ou deux phrases le choix de son outil et de son modèle (raison, points forts et limites constatés).'),
+  h2('7.5 Limites éthiques'),
+  bullet('**Évaluer des étudiants avec un LLM.** Les notes servent à l\'entraînement, pas à l\'examen. Chaque note est expliquée (grille, critères, retour), et l\'auto-cohérence réduit l\'effet du hasard. L\'enseignant commente chaque séance et peut la noter : la décision finale reste humaine.'),
+  bullet('**Biais.** Les clients sont générés par le modèle, qui peut reproduire des stéréotypes. Les personnalités sont limitées à un catalogue fixe, et les accords de genre ont été vérifiés. Aucun contrôle systématique des biais n\'a été fait.'),
+  bullet('**Hallucinations.** Le RAG fournit les faits du métier, et le schéma refuse une source inventée. Le reste du scénario est une fiction générée, présentée comme telle.'),
+  bullet('**Confidentialité.** Aucune donnée d\'identité n\'est envoyée au LLM, et `AiCallLog` ne conserve aucun contenu. Les questions des étudiants partent toutefois chez le fournisseur choisi. Pour un usage réel, il faudrait un fournisseur sous contrat ou Ollama en local, et en informer les étudiants.'),
+  bullet('**Manipulation.** Les tentatives d\'injection sont repérées et comptées. La synthèse rappelle à l\'étudiant qu\'un entretien repose sur l\'écoute.'),
+  bullet('**Coût environnemental.** Une séance consomme environ 31 000 tokens, et l\'auto-cohérence triple les appels d\'une évaluation. Un modèle léger et la mesure des tokens permettent de suivre ce coût.'),
+  bullet('**Usage de l\'IA pour développer.** Tout le code a été produit avec un assistant. La traçabilité des prompts et les décisions humaines consignées permettent d\'en rendre compte. Une clé API transmise dans une conversation a dû être renouvelée : un secret ne doit jamais figurer dans un prompt.'),
+  h2('7.6 Limites techniques'),
+  bullet('Deux séances seulement avec un vrai LLM, et un seul fournisseur ; Claude et Ollama n\'ont pas été testés.'),
+  bullet('Quota de l\'offre gratuite de Gemini, par minute et par jour.'),
+  bullet('Le commentaire d\'évaluation du module 4 oriente encore vers le besoin caché, sans le recopier.'),
+  bullet('La qualité pédagogique des réponses n\'a pas été évaluée avec de vrais étudiants.'),
+);
+
+// Chapitre 8 : organisation, productivité et valeurs ajoutées
+children.push(
+  h1('8. Organisation, productivité et valeurs ajoutées'),
+  h2('8.1 Répartition du travail et dépôt Git'),
+  ...tbl(
+    ['Membre', 'Responsabilité', 'Outil', 'Commits'],
+    [
+      ['Khalil Abdelmoumen', 'Chef de projet : base commune, module 1, intégration, rapport', 'Claude Code', '56'],
+      ['Nadhem Hmida', 'Module 4 et fournisseur compatible OpenAI (P-013)', 'Claude Code', '18'],
+      ['Kenza Baccar', 'Module 2', 'Kiro', '5'],
+      ['Aziz Louati', 'Module 5', 'Kiro', '5'],
+      ['Ismail Ismail', 'Module 3', 'Antigravity', '1'],
+    ],
+    [2.4, 4.4, 1.6, 1.2],
+    'Répartition du travail (commits sur develop, le 26/10/2026 avant les corrections du jour)',
+  ),
+  p('Le travail suit la stratégie de branches de la section 3.8. La répartition des commits est déséquilibrée. Le chef de projet a assuré l\'intégration, la partie IA des modules 2 et 3 et la reprise du module 5 ; ces interventions sont signalées dans les journaux des modules concernés (P-M2-003, P-M3-003, P-M5-003).'),
+  h2('8.2 Gain de productivité'),
+  p('Mesures objectives, tirées de Git et des journaux :'),
+  bullet('**P-001** : l\'architecture, la base commune, 13 tests et la documentation ont été générés et vérifiés dans la nuit du 17 au 18 octobre 2026. Le premier commit contient 132 fichiers et 9 249 lignes.'),
+  bullet('**Projet complet en 10 jours** (17 au 26 octobre 2026) : environ 9 500 lignes de code applicatif (4 892 côté serveur, 4 582 côté client), 3 463 lignes de tests (243 tests), 11 prompts système, plus de 30 entrées de journal.'),
+  bullet('**Vérifications automatisées** : les scripts écrits par l\'IA rejouent une campagne complète (parcours, contrôle des secrets, captures) en quelques minutes.'),
+  p('Ce gain a une contrepartie : la relecture. Les défauts les plus graves (section 6.5) venaient d\'un code plausible mais non vérifié. Une partie du temps gagné à l\'écriture a donc été réinvestie dans les tests et l\'intégration.'),
+  todo('chaque membre indique le temps passé sur son module avec l\'IA et le temps qu\'il estime nécessaire sans IA (à reprendre dans la présentation).'),
+  h2('8.3 Valeurs ajoutées'),
+  bullet('Un client simulé qui résiste : besoin caché révélé progressivement, personnalités jouées, défense contre le prompt injection.'),
+  bullet('Cinq techniques du cours réunies dans une même application, chacune vérifiée par des tests.'),
+  bullet('Des fournisseurs interchangeables, dont un mode simulé complet : l\'application se démontre sans clé ni réseau, et Ollama permet un modèle local.'),
+  bullet('Une sécurité vérifiée par l\'attaque : besoin caché protégé à trois niveaux et contrôlé dans tous les endpoints.'),
+  bullet('Une application testée avec un vrai LLM, avec la mesure des temps de réponse et des tokens.'),
+  bullet('Une charte graphique et des maquettes conçues avant le code (chapitre 4).'),
+  bullet('Un rapport généré à partir des sections des membres, des captures prises automatiquement et un journal des prompts par module.'),
 );
 
 // Conclusion
@@ -777,6 +946,8 @@ children.push(
   h2('Perspectives'),
   bullet('Étendre le test avec un vrai LLM (section 6.4) : plusieurs séances par module, d\'autres fournisseurs (Claude, OpenAI) et la part d\'évaluations incertaines de l\'auto-cohérence.'),
   bullet('Renforcer le prompt d\'évaluation du cahier des charges, pour que ses commentaires n\'orientent pas vers le besoin caché.'),
+  bullet('Réduire la consommation de tokens mesurée au chapitre 7 : mise en cache de la recommandation, cache de prompt pour la partie fixe du prompt de l\'entretien.'),
+  bullet('Factoriser le contrôle de recopie du besoin caché dans la base commune et passer à Prisma 7 (section 6.5).'),
   bullet('Ajouter l\'export CSV et les filtres de l\'espace enseignant, des notifications de commentaires et un mode sombre.'),
   bullet('Enrichir la base de connaissances (plus de situations par domaine, nouveaux domaines).'),
 );
