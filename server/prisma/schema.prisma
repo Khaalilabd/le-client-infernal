@@ -137,6 +137,9 @@ model AiCallLog {
   errorCode  String?
   attempts   Int          @default(1)
   durationMs Int
+  /// Tokens consommés, toutes tentatives comprises (null si le fournisseur ne les indique pas, ex. mock)
+  inputTokens  Int?
+  outputTokens Int?
   createdAt  DateTime     @default(now())
 
   @@index([module, createdAt])

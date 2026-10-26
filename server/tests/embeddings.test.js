@@ -61,6 +61,16 @@ test('renvoie un vecteur par texte, validé', async () => {
   assert.deepEqual(result, { vectors: [[1, 0], [0, 1]], provider: 'fake', model: 'fake' });
 });
 
+test('les tokens indiqués par le fournisseur sont journalisés, toutes tentatives comprises', async () => {
+  const logs = [];
+  // La première réponse (aucun vecteur pour un texte) est refusée : la tentative suivante réussit
+  const provider = fakeProvider([{ vectors: [], usage: { inputTokens: 7 } }, { vectors: [[1, 0]], usage: { inputTokens: 7 } }]);
+  await client(provider, { logCall: async (entry) => logs.push(entry) }).embed(['a']);
+  assert.equal(provider.calls.length, 2);
+  assert.equal(logs[0].inputTokens, 14);
+  assert.equal(logs[0].outputTokens, null);
+});
+
 test('aucun appel pour une liste vide', async () => {
   const provider = fakeProvider([]);
   assert.deepEqual((await client(provider).embed([])).vectors, []);
@@ -89,7 +99,7 @@ test('timeout -> AI_TIMEOUT', async () => {
 test('openai : requête /embeddings et vecteurs remis dans l\'ordre des textes', async (t) => {
   const requests = stubFetch(t, { data: [{ index: 1, embedding: [0, 1] }, { index: 0, embedding: [1, 0] }] });
   const provider = createOpenAiEmbeddingProvider({ apiKey: 'cle', baseUrl: 'https://exemple.test/v1/' });
-  assert.deepEqual(await provider.embed(['a', 'b']), [[1, 0], [0, 1]]);
+  assert.deepEqual((await provider.embed(['a', 'b'])).vectors, [[1, 0], [0, 1]]);
   assert.equal(requests[0].url, 'https://exemple.test/v1/embeddings');
   assert.deepEqual(requests[0].body, { model: 'text-embedding-3-small', input: ['a', 'b'] });
   assert.equal(requests[0].headers.authorization, 'Bearer cle');
@@ -100,9 +110,9 @@ test('openai sans clé -> AI_MISSING_KEY', async () => {
 });
 
 test('ollama : requête /api/embed', async (t) => {
-  const requests = stubFetch(t, { embeddings: [[1, 2]] });
+  const requests = stubFetch(t, { embeddings: [[1, 2]], prompt_eval_count: 3 });
   const provider = createOllamaEmbeddingProvider({ baseUrl: 'http://localhost:11434' });
-  assert.deepEqual(await provider.embed(['a']), [[1, 2]]);
+  assert.deepEqual(await provider.embed(['a']), { vectors: [[1, 2]], usage: { inputTokens: 3 } });
   assert.equal(requests[0].url, 'http://localhost:11434/api/embed');
   assert.deepEqual(requests[0].body, { model: 'nomic-embed-text', input: ['a'] });
 });

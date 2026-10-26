@@ -12,7 +12,7 @@
 //
 // Garanties : timeout, nouvelles tentatives sur erreur temporaire (429, 5xx, réseau, timeout,
 // JSON invalide), messages d'erreur clairs (AiError), validation Zod, masquage des données
-// personnelles, journalisation technique dans AiCallLog (sans contenu).
+// personnelles, journalisation technique dans AiCallLog (sans contenu, avec les tokens consommés).
 import { env } from '../../config/env.js';
 import { prisma } from '../db/prisma.js';
 import { AiError, toAiError } from './errors.js';
@@ -28,6 +28,27 @@ const CORRECTION_MESSAGE = 'Ta réponse précédente a été refusée par la vé
 const MAX_BACKOFF_MS = 10000;
 
 export const defaultSleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** Un fournisseur renvoie le texte seul (mock) ou { text, usage } avec les tokens consommés. */
+function readReply(reply) {
+  return typeof reply === 'string' ? { text: reply, usage: null } : { text: reply?.text ?? '', usage: reply?.usage ?? null };
+}
+
+/**
+ * Compteur de tokens sur toutes les tentatives d'un appel (une tentative refusée est aussi facturée).
+ * Reste à null tant qu'aucun fournisseur n'a indiqué sa consommation.
+ */
+export function createTokenCounter() {
+  const total = { inputTokens: null, outputTokens: null };
+  return {
+    add(usage) {
+      for (const key of ['inputTokens', 'outputTokens']) {
+        if (Number.isFinite(usage?.[key])) total[key] = (total[key] ?? 0) + usage[key];
+      }
+    },
+    get: () => ({ ...total }),
+  };
+}
 
 async function defaultLoadIdentity(userId) {
   if (!userId) return null;
@@ -90,11 +111,12 @@ export function createAiClient({
     // Après une réponse refusée par le schéma, la nouvelle tentative indique au modèle pourquoi
     // (le motif du refus ne contient jamais de secret : seulement le champ et la règle non respectée).
     let correction = [];
+    const tokens = createTokenCounter();
 
     while (true) {
       attempt += 1;
       try {
-        const text = await withTimeout(
+        const reply = await withTimeout(
           (signal) =>
             provider.complete({
               system,
@@ -106,6 +128,8 @@ export function createAiClient({
             }),
           timeoutMs,
         );
+        const { text, usage } = readReply(reply);
+        tokens.add(usage);
 
         const json = parseJsonResponse(text);
         const result = schema.safeParse(json);
@@ -129,6 +153,7 @@ export function createAiClient({
           status: 'SUCCESS',
           attempts: attempt,
           durationMs: Date.now() - startedAt,
+          ...tokens.get(),
         });
         return result.data;
       } catch (err) {
@@ -147,6 +172,7 @@ export function createAiClient({
           errorCode: aiError.code,
           attempts: attempt,
           durationMs: Date.now() - startedAt,
+          ...tokens.get(),
         });
         throw aiError;
       }

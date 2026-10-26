@@ -28,7 +28,10 @@ export function createOpenAiProvider({ apiKey, model, baseUrl = DEFAULT_BASE_URL
         body,
         signal,
       });
-      return data.choices?.[0]?.message?.content ?? '';
+      return {
+        text: data.choices?.[0]?.message?.content ?? '',
+        usage: { inputTokens: data.usage?.prompt_tokens, outputTokens: data.usage?.completion_tokens },
+      };
     },
   };
 }

@@ -11,7 +11,7 @@
 import { z } from 'zod';
 import { env } from '../../config/env.js';
 import { AiError, toAiError } from './errors.js';
-import { defaultLogCall, defaultSleep, withTimeout } from './index.js';
+import { createTokenCounter, defaultLogCall, defaultSleep, withTimeout } from './index.js';
 import { postJson } from './providers/http.js';
 import { resolveProviderName } from './providers/index.js';
 
@@ -44,7 +44,10 @@ export function createOpenAiEmbeddingProvider({ apiKey, baseUrl, model }) {
         body: { model: this.model, input: texts },
         signal,
       });
-      return [...(data.data ?? [])].sort((a, b) => a.index - b.index).map((item) => item.embedding);
+      return {
+        vectors: [...(data.data ?? [])].sort((a, b) => a.index - b.index).map((item) => item.embedding),
+        usage: { inputTokens: data.usage?.prompt_tokens },
+      };
     },
   };
 }
@@ -59,7 +62,7 @@ export function createOllamaEmbeddingProvider({ baseUrl, model }) {
         body: { model: this.model, input: texts },
         signal,
       });
-      return data.embeddings;
+      return { vectors: data.embeddings, usage: { inputTokens: data.prompt_eval_count } };
     },
   };
 }
@@ -107,12 +110,16 @@ export function createEmbeddingClient({
     const schema = createVectorsSchema(texts.length);
     const startedAt = Date.now();
     let attempt = 0;
+    const tokens = createTokenCounter();
 
     while (true) {
       attempt += 1;
       try {
+        // Le fournisseur renvoie les vecteurs seuls, ou { vectors, usage } avec les tokens consommés
         const raw = await withTimeout((signal) => provider.embed(texts, signal), timeoutMs);
-        const result = schema.safeParse(raw);
+        const { vectors, usage } = Array.isArray(raw) ? { vectors: raw, usage: null } : (raw ?? {});
+        tokens.add(usage);
+        const result = schema.safeParse(vectors);
         if (!result.success) {
           throw new AiError('AI_INVALID_RESPONSE', `Embeddings invalides : ${result.error.issues[0]?.message}.`, {
             retryable: true,
@@ -126,6 +133,7 @@ export function createEmbeddingClient({
           status: 'SUCCESS',
           attempts: attempt,
           durationMs: Date.now() - startedAt,
+          ...tokens.get(),
         });
         return { vectors: result.data, provider: provider.name, model: provider.model };
       } catch (err) {
@@ -144,6 +152,7 @@ export function createEmbeddingClient({
           errorCode: aiError.code,
           attempts: attempt,
           durationMs: Date.now() - startedAt,
+          ...tokens.get(),
         });
         throw aiError;
       }

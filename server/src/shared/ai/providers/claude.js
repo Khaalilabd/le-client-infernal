@@ -19,10 +19,11 @@ export function createClaudeProvider({ apiKey, model }) {
         body,
         signal,
       });
-      return (data.content ?? [])
+      const text = (data.content ?? [])
         .filter((block) => block.type === 'text')
         .map((block) => block.text)
         .join('');
+      return { text, usage: { inputTokens: data.usage?.input_tokens, outputTokens: data.usage?.output_tokens } };
     },
   };
 }

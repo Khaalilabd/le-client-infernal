@@ -224,6 +224,8 @@ erDiagram
         string errorCode
         int attempts
         int durationMs
+        int inputTokens
+        int outputTokens
     }
     Scenario {
         string id PK
@@ -498,6 +500,8 @@ Deux règles ajoutées après le test avec Gemini (P-016) :
 
 - la conversation envoyée se termine toujours par un message `user` : sinon `callLLM` ajoute « Produis maintenant la réponse au format JSON demandé. » (Gemini refuse une requête qui se termine par le modèle) ;
 - après une réponse refusée par le schéma, la nouvelle tentative transmet au modèle sa réponse et le motif du refus (chemin du champ et règle non respectée, jamais un secret), au lieu de renvoyer la même requête.
+
+Tokens (P-017) : un fournisseur renvoie `{ text, usage: { inputTokens, outputTokens } }` (Claude `usage`, OpenAI et compatibles `usage`, Ollama `prompt_eval_count`/`eval_count`), ou le texte seul (mock). `callLLM` additionne les tokens de toutes les tentatives et les enregistre dans `AiCallLog` (`null` si le fournisseur ne les indique pas) ; les embeddings font de même pour les tokens d'entrée. Migration `ajout_tokens_appels_ia`.
 
 ### Choix du fournisseur (`server/.env`)
 

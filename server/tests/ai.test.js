@@ -79,6 +79,18 @@ test('après une réponse refusée, la nouvelle tentative indique au modèle le 
   assert.equal(provider.calls[0].messages.length, 1, 'la première tentative ne contient pas de correction');
 });
 
+test('les tokens consommés sont journalisés, tentative refusée comprise ; inconnus pour le mock', async () => {
+  const logs = [];
+  const logCall = async (entry) => logs.push(entry);
+  const reply = (text) => ({ text, usage: { inputTokens: 120, outputTokens: 8 } });
+  await client(fakeProvider([reply('{"wrong":1}'), reply('{"answer":"ok"}')]), { logCall }).call(baseCall);
+  assert.equal(logs[0].inputTokens, 240);
+  assert.equal(logs[0].outputTokens, 16);
+
+  await client(fakeProvider(['{"answer":"ok"}']), { logCall }).call(baseCall);
+  assert.equal(logs[1].inputTokens, null, 'un texte seul (mock) n\'indique pas de tokens');
+});
+
 test('429 puis succès -> nouvelle tentative réussie', async () => {
   const provider = fakeProvider([new AiError('AI_RATE_LIMIT', undefined, { retryable: true }), '{"answer":"ok"}']);
   const result = await client(provider).call(baseCall);
@@ -141,10 +153,16 @@ test('le fournisseur openai utilise OPENAI_BASE_URL si elle est fournie (API com
   const urls = [];
   t.mock.method(globalThis, 'fetch', async (url) => {
     urls.push(url);
-    return new Response(JSON.stringify({ choices: [{ message: { content: '{"answer":"ok"}' } }] }), { status: 200 });
+    return new Response(
+      JSON.stringify({ choices: [{ message: { content: '{"answer":"ok"}' } }], usage: { prompt_tokens: 12, completion_tokens: 3 } }),
+      { status: 200 },
+    );
   });
   const call = { system: 's', messages: [{ role: 'user', content: 'u' }], maxTokens: 10 };
-  await createOpenAiProvider({ apiKey: 'k' }).complete(call);
+  assert.deepEqual(await createOpenAiProvider({ apiKey: 'k' }).complete(call), {
+    text: '{"answer":"ok"}',
+    usage: { inputTokens: 12, outputTokens: 3 },
+  });
   await createOpenAiProvider({ apiKey: 'k', baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai/' }).complete(call);
   assert.deepEqual(urls, [
     'https://api.openai.com/v1/chat/completions',

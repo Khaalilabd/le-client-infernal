@@ -19,7 +19,7 @@ export function createOllamaProvider({ baseUrl, model }) {
         body,
         signal,
       });
-      return data.message?.content ?? '';
+      return { text: data.message?.content ?? '', usage: { inputTokens: data.prompt_eval_count, outputTokens: data.eval_count } };
     },
   };
 }
